@@ -2,12 +2,13 @@
 2) перенести код
 3) убрать не совместимость createQuery jpa ? на  ?1
 4) FileUpload fix with MultiPartFile, filename=getOriginalFileName()
-6) Конфиги вытащить
-7) Не совместимость с lowercase username keycloak
-8) SEND EMAIL request делать вызов на новый EMAILSERVICE
-10) в проектах entity добавить schemas
-    11)-Djava.awt.headless=true там где jasper ++ laod resources from ResourceLoader + library digest
-12) В @Entity добавить информацию про Schemas
+5) Конфиги вытащить
+6) Не совместимость с lowercase username keycloak
+7) SEND EMAIL request делать вызов на новый EMAILSERVICE
+8) в проектах entity добавить schemas
+11)-Djava.awt.headless=true там где jasper ++ laod resources from ResourceLoader + library digest
+9) В @Entity добавить информацию про Schemas
+10) Использовать CommonLibs для models, services
 
 POSTGRES улучшение
 CREATE INDEX idx_user_username on user_entity(username);

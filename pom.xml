@@ -71,16 +71,6 @@
 
         <!-- dependencies from old project -->
         <dependency>
-            <groupId>ne.railways.userswork</groupId>
-            <artifactId>hibernate3</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ne.railways.userswork</groupId>
-            <artifactId>hibernate-jpa-2.0-api-1.0.1.Final</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.ibm.db2.jcc</groupId>
             <artifactId>db2jcc</artifactId>
             <version>db2jcc4</version>

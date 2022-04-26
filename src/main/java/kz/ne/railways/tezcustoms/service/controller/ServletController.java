@@ -1,4 +1,4 @@
-package kz.ne.railways.asudkr.os.changeit.controller;
+package kz.ne.railways.tezcustoms.service.controller;
 
 import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.Operation;

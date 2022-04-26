@@ -1,4 +1,4 @@
-package kz.ne.railways.asudkr.os.changeit;
+package kz.ne.railways.tezcustoms.service;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;

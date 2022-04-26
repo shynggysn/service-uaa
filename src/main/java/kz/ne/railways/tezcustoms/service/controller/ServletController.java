@@ -2,7 +2,9 @@ package kz.ne.railways.tezcustoms.service.controller;
 
 import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.Operation;
+import kz.ne.railways.tezcustoms.service.model.Contract;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.util.HttpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 @Slf4j
 @RestController
@@ -22,6 +25,7 @@ public class ServletController {
     private static final String METHOD = "method";
 
     private final ForDataBeanLocal dataBean;
+    private final HttpUtil httpUtil;
 
     private Gson gson = new Gson();
 
@@ -37,7 +41,7 @@ public class ServletController {
     public void doPost(HttpServletRequest request, HttpServletResponse response,
                     @RequestParam(name = METHOD, required = true) String method) throws ServletException, IOException {
         String json = null;
-
+        log.debug("doPost");
         if ("getContracts".equals(method)) {
             json = dataBean.getContracts(request.getUserPrincipal().getName()); // TODO: Validate search parameter (username or id)
         } else if ("loadContract".equals(method)) {
@@ -50,7 +54,8 @@ public class ServletController {
             response.getWriter().write(json);
     }
 
-    private String loadContract(HttpServletRequest request) {
+    private String loadContract(HttpServletRequest request) throws UnsupportedEncodingException {
+        Contract contract = httpUtil.getContract();
         return null;
     }
 

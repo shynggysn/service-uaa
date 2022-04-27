@@ -60,9 +60,9 @@ public class HttpUtil {
 
                 String strResponse = null;
                 if (entity != null) {
-                    strResponse = EntityUtils.toString(entity);
-                    JsonObject obj = gson.fromJson(strResponse, JsonObject.class);
-                    log.debug("Token: {}", obj.get("token"));
+                        strResponse = EntityUtils.toString(entity);
+                        JsonObject obj = gson.fromJson(strResponse, JsonObject.class);
+                        log.debug("Token: {}", obj.get("token"));
                 }
 
 //                return gson.fromJson(strResponse, Contract.class);

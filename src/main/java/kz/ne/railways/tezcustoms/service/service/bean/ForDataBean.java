@@ -28,6 +28,8 @@ public class ForDataBean implements ForDataBeanLocal {
             if (contract.getUser().equals(username))
                 result.add(contract);
         }
+
+
         return gson.toJson(result);
     }
 }

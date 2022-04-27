@@ -37,8 +37,12 @@ public class HttpUtil {
 
     private Gson gson = new Gson();
 
-    public Contract getContract() throws UnsupportedEncodingException {
+    public Contract getContract() {
         log.debug("Util: getContract");
+        return null;
+    }
+
+    public String getToken() throws UnsupportedEncodingException {
         HttpPost httpPost = new HttpPost(asudkrUrl);
         httpPost.addHeader("Content-Type", "application/json");
 
@@ -47,7 +51,6 @@ public class HttpUtil {
         jsonObj.add("password", gson.toJsonTree(asudkr_password));
 
         httpPost.setEntity(new StringEntity(jsonObj.toString()));
-
         CloseableHttpClient httpclient = null;
         try {
 //            SSLContext ctx = SSLContexts.custom().useProtocol("TLSv1.2").build();

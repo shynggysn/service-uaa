@@ -58,7 +58,7 @@ public class ServletController {
         String json = null;
         log.debug("doPost");
         if ("getContracts".equals(method)) {
-            json = dataBean.getContracts(request.getUserPrincipal().getName()); // TODO: Validate search parameter (username or id)
+            json = dataBean.getContracts(); // TODO: Validate search parameter (username or id)
         } else if ("loadContract".equals(method)) {
             json = loadContract(request);
         } else if ("getContractData".equals(method)) {

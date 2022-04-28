@@ -2,7 +2,7 @@ package kz.ne.railways.tezcustoms.service.model.asudkr;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @Table(name="NE_SMGS_ADDITION_DOCUMENTS", schema = "KTZ")

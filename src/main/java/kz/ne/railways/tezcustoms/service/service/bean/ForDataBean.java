@@ -126,9 +126,9 @@ public class ForDataBean implements ForDataBeanLocal {
     @Override
     public void saveDocInfo(String invoiceId, String filename, Date date, String uuid) {
         NeSmgsAdditionDocuments document = new NeSmgsAdditionDocuments();
-
+        em.detach(document);
         document.setInvUn(Long.parseLong(invoiceId));
-        document.setDocDate(java.sql.Date.valueOf(date.toString()));
+        document.setDocDate(date);
         document.setDocName(filename);
         document.setFileUuid(uuid);
 

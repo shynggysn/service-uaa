@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -37,7 +38,9 @@ public class HttpUtil {
 
     private Gson gson = new Gson();
 
-    public Contract getContract() {
+    public Contract getContract() throws UnsupportedEncodingException {
+        String token = getToken();
+
         log.debug("Util: getContract");
         return null;
     }

@@ -4,15 +4,16 @@ import com.sun.xml.bind.v2.TODO;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Getter
 @Setter
 public class Contract {
 
     private String user;
-    private Timestamp creationDate;
+    private Date creationDate;
     private String invoiceId;
+    private String invoiceNum;
 
     private String departStation;
     private String destStation;

@@ -4,13 +4,16 @@ import com.google.gson.Gson;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import io.swagger.v3.oas.annotations.Operation;
+import kz.ne.railways.tezcustoms.service.LocalDatabase;
 import kz.ne.railways.tezcustoms.service.model.Contract;
+import kz.ne.railways.tezcustoms.service.model.asudkr.NeSmgsAdditionDocuments;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import kz.ne.railways.tezcustoms.service.util.HttpUtil;
 import kz.ne.railways.tezcustoms.service.util.SFtpSend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
@@ -32,8 +35,11 @@ public class ServletController {
     private final ForDataBeanLocal dataBean;
     private final HttpUtil httpUtil;
     private final SFtpSend sFtpSend;
+    private final LocalDatabase localDatabase;
 
     private Gson gson = new Gson();
+
+    private final ResourceLoader resourceLoader;
 
     @GetMapping
     @Operation(summary = "", description = "")
@@ -57,13 +63,25 @@ public class ServletController {
             json = loadContract(request);
         } else if ("getContractData".equals(method)) {
             json = getContractData(request);
+        } else if ("check".equals(method)) {
+            check();
         }
 
         if (json != null)
             response.getWriter().write(json);
     }
 
-    private String loadContract(HttpServletRequest request) throws UnsupportedEncodingException, JSchException, SftpException, FileNotFoundException {
+    private void check() {
+        log.debug("Contracts:");
+        for (Contract contract: localDatabase.contractList)
+            log.debug(contract.getInvoiceId());
+
+        log.debug("\nDocuments:");
+        for (NeSmgsAdditionDocuments document: localDatabase.documents)
+            log.debug(document.getInvUn() + "");
+    }
+
+    private String loadContract(HttpServletRequest request) throws IOException, JSchException, SftpException {
         String expCode = request.getParameter("expCode");
 
         Contract contract = dataBean.loadContractFromASUDKR(request.getParameter("startSta"), request.getParameter("destSta"),
@@ -75,8 +93,8 @@ public class ServletController {
 
         dataBean.saveContract(contract);
 
-        byte[] arr = {};
-        OutputStream out = (OutputStream) Stream.of(arr);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             sFtpSend.get(contract.getInvoiceId(), uuid, out);
             out.flush();
@@ -85,12 +103,33 @@ public class ServletController {
             return "";
         }
 
-        String docname = "Invoice Document";
+        byte[] arr = out.toByteArray();
+        out.close();
 
+        String docname = "Invoice Document";
         String filename = UUID.randomUUID().toString();
-        if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId())) {
-            dataBean.saveDocInfo(contract.getInvoiceId(), docname, contract.getCreationDate(), uuid);
-        }
+
+        File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
+        if (f.mkdir())
+            log.debug("directory created");
+        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + contract.getInvoiceId());
+        if (f.mkdir())
+            log.debug("directory created");
+
+        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + contract.getInvoiceId() + "/" + filename);
+        f.createNewFile();
+
+        FileOutputStream res = new FileOutputStream(f);
+
+        res.write(arr);
+        res.close();
+
+//        if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId())) {
+
+//        }
+
+
+        dataBean.saveDocInfo(contract.getInvoiceId(), docname, contract.getCreationDate(), uuid);
 
 
         return gson.toJson(contract);

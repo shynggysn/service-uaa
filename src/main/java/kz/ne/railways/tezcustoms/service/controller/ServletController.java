@@ -45,7 +45,8 @@ public class ServletController {
     @Operation(summary = "", description = "")
     public void doGet(HttpServletRequest request, HttpServletResponse response,
                     @RequestParam(name = METHOD, required = true) String method) throws IOException {
-
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
     }
 
     @PostMapping
@@ -82,29 +83,14 @@ public class ServletController {
     }
 
     private String loadContract(HttpServletRequest request) throws IOException, JSchException, SftpException {
-        String expCode = request.getParameter("expCode");
 
-        Contract contract = dataBean.loadContractFromASUDKR(request.getParameter("startSta"), request.getParameter("destSta"),
-                expCode == null ? -1 : Integer.parseInt(expCode), request.getParameter("invoiceNum"));
+        Contract contract = httpUtil.getContractData(request.getParameter("startSta"), request.getParameter("destSta"),
+                request.getParameter("expCode"), request.getParameter("invoiceNum"));
 
         log.debug("Pulled invoiceId: {}", contract.getInvoiceId());
-        String uuid = dataBean.getUUIDFromASUDKR(contract.getInvoiceId());
-        //Getting scan from the file server
-
         dataBean.saveContract(contract);
 
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            sFtpSend.get(contract.getInvoiceId(), uuid, out);
-            out.flush();
-        } catch (Exception e) {
-            log.debug("Error when getting a contract from ASUDKRR: ", e);
-            return "";
-        }
-
-        byte[] arr = out.toByteArray();
-        out.close();
+        byte[] arr = httpUtil.getContractDoc(contract.getInvoiceId());
 
         String docname = "Invoice Document";
         String filename = UUID.randomUUID().toString();
@@ -120,17 +106,13 @@ public class ServletController {
         f.createNewFile();
 
         FileOutputStream res = new FileOutputStream(f);
-
         res.write(arr);
-        res.close();
 
+        res.close();
 //        if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId())) {
 
 //        }
-
-
-        dataBean.saveDocInfo(contract.getInvoiceId(), docname, contract.getCreationDate(), uuid);
-
+        dataBean.saveDocInfo(contract.getInvoiceId(), docname, contract.getCreationDate(), filename);
 
         return gson.toJson(contract);
     }

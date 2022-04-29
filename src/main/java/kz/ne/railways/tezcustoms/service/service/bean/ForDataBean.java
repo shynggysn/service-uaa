@@ -31,16 +31,8 @@ public class ForDataBean implements ForDataBeanLocal {
     EntityManager em;
 
     @Override
-    public String getContracts(String username) {
-        List<Contract> list = localDatabase.contractList;
-        List<Contract> result = new ArrayList<Contract>();
-        for (Contract contract : list) {
-            if (contract.getUser().equals(username))
-                result.add(contract);
-        }
-
-
-        return gson.toJson(result);
+    public String getContracts() {
+        return gson.toJson(localDatabase.contractList);
     }
 
     @Override

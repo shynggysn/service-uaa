@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.model.asudkr;
+package kz.ne.railways.tezcustoms.service.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;

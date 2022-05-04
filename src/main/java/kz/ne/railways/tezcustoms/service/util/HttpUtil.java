@@ -2,6 +2,7 @@ package kz.ne.railways.tezcustoms.service.util;
 
 import com.google.gson.Gson;
 import kz.ne.railways.tezcustoms.service.model.Contract;
+import kz.ne.railways.tezcustoms.service.model.FormData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -72,7 +73,7 @@ public class HttpUtil {
         return null;
     }
 
-    public Contract getContractData(String startSta, String destSta, String expCode, String invoiceNum) {
+    public FormData getContractData(String startSta, String destSta, String expCode, String invoiceNum) {
         String url = gatewayContractDataUrl +"&startSta=" + startSta;
         url += "&destSta=" + destSta;
 //        url += "&expCode=" + expCode;
@@ -93,9 +94,9 @@ public class HttpUtil {
                 String strResponse = null;
                 if (entity != null) {
                     strResponse = EntityUtils.toString(entity, "UTF-8");
-                    Contract contract = gson.fromJson(strResponse, Contract.class);
-                    log.debug("invoiceId: {}", contract.getInvoiceId());
-                    return contract;
+                    FormData formData = gson.fromJson(strResponse, FormData.class);
+                    log.debug("invoiceId: {}", formData.getInvoiceId());
+                    return formData;
                 }
 
             }

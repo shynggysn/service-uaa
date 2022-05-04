@@ -1,7 +1,7 @@
 package kz.ne.railways.tezcustoms.service;
 
 import kz.ne.railways.tezcustoms.service.model.Contract;
-import kz.ne.railways.tezcustoms.service.model.asudkr.NeSmgsAdditionDocuments;
+import kz.ne.railways.tezcustoms.service.entity.NeSmgsAdditionDocuments;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

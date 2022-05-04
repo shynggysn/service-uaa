@@ -6,7 +6,8 @@ import com.jcraft.jsch.SftpException;
 import io.swagger.v3.oas.annotations.Operation;
 import kz.ne.railways.tezcustoms.service.LocalDatabase;
 import kz.ne.railways.tezcustoms.service.model.Contract;
-import kz.ne.railways.tezcustoms.service.model.asudkr.NeSmgsAdditionDocuments;
+import kz.ne.railways.tezcustoms.service.model.FormData;
+import kz.ne.railways.tezcustoms.service.entity.NeSmgsAdditionDocuments;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import kz.ne.railways.tezcustoms.service.util.HttpUtil;
 import kz.ne.railways.tezcustoms.service.util.SFtpSend;
@@ -20,9 +21,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Slf4j
 @RestController
@@ -82,15 +82,15 @@ public class ServletController {
             log.debug(document.getInvUn() + "");
     }
 
-    private String loadContract(HttpServletRequest request) throws IOException, JSchException, SftpException {
+    private String loadContract(HttpServletRequest request) throws IOException {
 
-        Contract contract = httpUtil.getContractData(request.getParameter("startSta"), request.getParameter("destSta"),
+        FormData formData = httpUtil.getContractData(request.getParameter("startSta"), request.getParameter("destSta"),
                 request.getParameter("expCode"), request.getParameter("invoiceNum"));
 
-        log.debug("Pulled invoiceId: {}", contract.getInvoiceId());
-        dataBean.saveContract(contract);
+//        TODO: Activate when database is connected
+//        dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
 
-        byte[] arr = httpUtil.getContractDoc(contract.getInvoiceId());
+        byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
 
         String docname = "Invoice Document";
         String filename = UUID.randomUUID().toString();
@@ -98,23 +98,24 @@ public class ServletController {
         File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
         if (f.mkdir())
             log.debug("directory created");
-        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + contract.getInvoiceId());
+        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId());
         if (f.mkdir())
             log.debug("directory created");
 
-        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + contract.getInvoiceId() + "/" + filename);
+        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId() + "/" + filename);
         f.createNewFile();
 
         FileOutputStream res = new FileOutputStream(f);
         res.write(arr);
 
         res.close();
-//        if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId())) {
 
-//        }
-        dataBean.saveDocInfo(contract.getInvoiceId(), docname, contract.getCreationDate(), filename);
+//         TODO: Activate when FileServer is connected
+//        if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId()))
 
-        return gson.toJson(contract);
+        dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
+
+        return gson.toJson(formData);
     }
 
     private String getContractData(HttpServletRequest request) {

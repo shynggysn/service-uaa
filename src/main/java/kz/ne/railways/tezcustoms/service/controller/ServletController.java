@@ -9,7 +9,7 @@ import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
 import kz.ne.railways.tezcustoms.service.model.Contract;
 import kz.ne.railways.tezcustoms.service.model.FormData;
-import kz.ne.railways.tezcustoms.service.entity.NeSmgsAdditionDocuments;
+import kz.ne.railways.tezcustoms.service.entity.asudkr.NeSmgsAdditionDocuments;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
@@ -66,7 +65,8 @@ public class ServletController {
     @PostMapping
     @Operation(summary = "", description = "")
     public void doPost(HttpServletRequest request, HttpServletResponse response,
-                    @RequestParam(name = METHOD, required = true) String method) throws ServletException, IOException, JSchException, SftpException {
+                    @RequestParam(name = METHOD, required = true) String method)
+                    throws ServletException, IOException, JSchException, SftpException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
@@ -88,44 +88,45 @@ public class ServletController {
 
     private void check() {
         log.debug("Contracts:");
-        for (Contract contract: localDatabase.contractList)
+        for (Contract contract : localDatabase.contractList)
             log.debug(contract.getInvoiceId());
 
         log.debug("\nDocuments:");
-        for (NeSmgsAdditionDocuments document: localDatabase.documents)
+        for (NeSmgsAdditionDocuments document : localDatabase.documents)
             log.debug(document.getInvUn() + "");
     }
 
     private String loadContract(HttpServletRequest request) throws IOException {
 
         FormData formData = httpUtil.getContractData(request.getParameter("startSta"), request.getParameter("destSta"),
-                request.getParameter("expCode"), request.getParameter("invoiceNum"));
+                        request.getParameter("expCode"), request.getParameter("invoiceNum"));
 
-//        TODO: Activate when database is connected
-//        dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
+        // TODO: Activate when database is connected
+        // dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
 
         byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
 
         String docname = "Invoice Document";
         String filename = UUID.randomUUID().toString();
 
-        File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
-        if (f.mkdir())
-            log.debug("directory created");
-        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId());
-        if (f.mkdir())
-            log.debug("directory created");
+//        File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
+//        if (f.mkdir())
+//            log.debug("directory created");
+//        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId());
+//        if (f.mkdir())
+//            log.debug("directory created");
+//
+//        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId() + "/"
+//                        + filename);
+//        f.createNewFile();
+//
+//        FileOutputStream res = new FileOutputStream(f);
+//        res.write(arr);
+//
+//        res.close();
 
-        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId() + "/" + filename);
-        f.createNewFile();
-
-        FileOutputStream res = new FileOutputStream(f);
-        res.write(arr);
-
-        res.close();
-
-//         TODO: Activate when FileServer is connected
-//        if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId()))
+        // TODO: Activate when FileServer is connected
+        // if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId()))
 
         dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
 
@@ -137,11 +138,10 @@ public class ServletController {
     }
 
     @PostMapping("/sign-ecp-data")
-//    @PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity signEcpData(@RequestBody EcpSignRequest ecpSignRequest) {
         try {
             User user = userRepository.findByEmail(SecurityUtils.getCurrentUserLogin())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+                            .orElseThrow(() -> new ResourceNotFoundException("User not found."));
             boolean isValid = ecpService.isValidSigner(ecpSignRequest.getSignedData(), user);
             if (isValid) {
                 return ResponseEntity.ok(new MessageResponse("Document successfully signed"));

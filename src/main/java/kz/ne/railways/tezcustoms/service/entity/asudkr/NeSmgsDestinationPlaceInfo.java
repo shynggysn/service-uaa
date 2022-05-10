@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 
@@ -7,10 +7,10 @@ import javax.persistence.*;
 public class NeSmgsDestinationPlaceInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "DEST_PLACE_INFO#UN")
+    @Column(name = "DEST_PLACE_INFO_UN")
     private Long destPlaceInfoUn;
 
-    @Column(name = "INVOICE#UN")
+    @Column(name = "INVOICE_UN")
     private Long invoiceUn;
 
     @Column(name = "DEST_PLACE", length = 1024)
@@ -37,7 +37,7 @@ public class NeSmgsDestinationPlaceInfo {
     @Column(name = "DEST_PLACE_BUILDING", length = 512)
     private String destPlaceBuilding;
 
-    @Column(name = "DEST_PLACE_CUSTOM_ORG#UN")
+    @Column(name = "DEST_PLACE_CUSTOM_ORG_UN")
     private Long destPlaceCustomOrgUn;
 
     @Column(name = "DEST_PLACE_CUSTOM_CODE", length = 10)

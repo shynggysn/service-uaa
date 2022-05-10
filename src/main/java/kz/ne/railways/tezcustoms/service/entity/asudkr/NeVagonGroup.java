@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,26 +11,26 @@ public class NeVagonGroup implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "VAG_GROUP#UN")
+    @Column(name = "VAG_GROUP_UN")
     private long vagGroupUn;
 
-    @Column(name = "SENDER#UN")
+    @Column(name = "SENDER_UN")
     private Long senderUn;
 
     @Column(name = "DATE_PODACH")
     private Date datePodach;
 
-    @Column(name = "VAG_GROUP_STATUS#UN")
+    @Column(name = "VAG_GROUP_STATUS_UN")
     private Long vagGroupStatusUn;
 
-    @Column(name = "ST#UN")
+    @Column(name = "ST_UN")
     private Long stUn;
 
 
     /*
-     * @Column(name="CONSIGNOR#UN") private Long consignorUn;
+     * @Column(name="CONSIGNOR_UN") private Long consignorUn;
      * 
-     * @Column(name="DEST_ST#UN") private Long destStUn;
+     * @Column(name="DEST_ST_UN") private Long destStUn;
      * 
      * @Column(name="VAG_GROUP_NO") private String vagGroupNo;
      * 

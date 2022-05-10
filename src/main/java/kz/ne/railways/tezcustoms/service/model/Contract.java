@@ -18,12 +18,11 @@ public class Contract {
     private String departStation;
     private String destStation;
     private String arrivalStation;
-    
+
     private String codeUINP;
     private String declarant;
     private Status status;
     private Detail detail;
 
-    public Contract() {
-    }
+    public Contract() {}
 }

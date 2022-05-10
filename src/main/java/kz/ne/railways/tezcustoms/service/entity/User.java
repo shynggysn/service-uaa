@@ -13,11 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(	name = "users",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "iinBin"),
-                @UniqueConstraint(columnNames = "email")
-        })
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iinBin"),
+        @UniqueConstraint(columnNames = "email")})
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,16 +68,14 @@ public class User implements Serializable {
     private Long chatId;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
+                    inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User() {
-    }
+    public User() {}
 
     public User(String email, String password, String iinBin, boolean isCompany, String firstName, String lastName,
-                String middleName, String companyName, String companyDirector, String address, String phone) {
+                    String middleName, String companyName, String companyDirector, String address, String phone) {
         this.email = email;
         this.password = password;
         this.iinBin = iinBin;

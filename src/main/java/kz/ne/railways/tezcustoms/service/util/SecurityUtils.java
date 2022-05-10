@@ -8,8 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class SecurityUtils {
 
-    private SecurityUtils() {
-    }
+    private SecurityUtils() {}
 
     /**
      * Get the login of the current user.

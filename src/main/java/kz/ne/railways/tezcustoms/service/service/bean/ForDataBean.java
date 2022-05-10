@@ -2,7 +2,7 @@ package kz.ne.railways.tezcustoms.service.service.bean;
 
 import com.google.gson.Gson;
 import kz.ne.railways.tezcustoms.service.LocalDatabase;
-import kz.ne.railways.tezcustoms.service.entity.*;
+import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.ContainerData;
 import kz.ne.railways.tezcustoms.service.model.ContainerDatas;
 import kz.ne.railways.tezcustoms.service.model.FormData;
@@ -36,8 +36,8 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private static final Long NEW_INVOICE = -1L;
 
-    //Станции где должно указываться транспорт - судно
-    List<String> vesselStaUns =  Arrays.asList("691607","693807","663804","689202");
+    // Станции где должно указываться транспорт - судно
+    List<String> vesselStaUns = Arrays.asList("691607", "693807", "663804", "689202");
 
     @Override
     public String getContracts() {
@@ -87,8 +87,8 @@ public class ForDataBean implements ForDataBeanLocal {
         }
 
         invoiceUn = invoice.getInvcUn();
-        System.out.println("invc#un:::::::::::::::::::::::::::::::"+invoiceUn);
-        System.out.println("getGngCode:::::::::::::::::::::::::::::::"+formData.getGngCode());
+        System.out.println("invc_UN:::::::::::::::::::::::::::::::" + invoiceUn);
+        System.out.println("getGngCode:::::::::::::::::::::::::::::::" + formData.getGngCode());
         if (StringUtils.isNotBlank(formData.getGngCode())) {
             neSmgsCargo = createNeSmgsCargo(neSmgsCargo, formData, invoiceUn);
             em.merge(neSmgsCargo);
@@ -97,41 +97,46 @@ public class ForDataBean implements ForDataBeanLocal {
         em.merge(neInvoicePrevInfo);
         NeSmgsSenderInfo senderInfoToCheckForSolrUpdate = dao.getSenderInfo(invoiceUn);
         NeSmgsRecieverInfo receiverInfoToCheckForSolrUpdate = dao.getRecieverInfo(invoiceUn);
-        //NeSmgsDeclarantInfo declarantInfoToCheckForSolrUpdate = dao.getDeclarantInfo(invoiceUn);
+        // NeSmgsDeclarantInfo declarantInfoToCheckForSolrUpdate = dao.getDeclarantInfo(invoiceUn);
         Map<String, String> solrPropertyMap = new HashMap<String, String>();
         solrPropertyMap.put("senderSolrUUID", formData.getSenderSolrUUID());
         solrPropertyMap.put("receiverSolrUUID", formData.getRecieverSolrUUID());
         solrPropertyMap.put("declarantSolrUUID", formData.getDeclarantSolrUUID());
         if (formData.getSenderSolrUUID() == null) {
-            if (senderInfoToCheckForSolrUpdate == null ) {
+            if (senderInfoToCheckForSolrUpdate == null) {
                 solrPropertyMap.put("senderSolrUUID", UUID.randomUUID().toString());
-            } else if(senderInfoToCheckForSolrUpdate.getSenderBin()!=null && !senderInfoToCheckForSolrUpdate.getSenderBin().equals(formData.getSenderBIN())){
+            } else if (senderInfoToCheckForSolrUpdate.getSenderBin() != null
+                            && !senderInfoToCheckForSolrUpdate.getSenderBin().equals(formData.getSenderBIN())) {
                 solrPropertyMap.put("senderSolrUUID", UUID.randomUUID().toString());
-            } else if(senderInfoToCheckForSolrUpdate.getSenderIin()!=null && !senderInfoToCheckForSolrUpdate.getSenderIin().equals(formData.getSenderIIN())){
+            } else if (senderInfoToCheckForSolrUpdate.getSenderIin() != null
+                            && !senderInfoToCheckForSolrUpdate.getSenderIin().equals(formData.getSenderIIN())) {
                 solrPropertyMap.put("senderSolrUUID", UUID.randomUUID().toString());
             }
         }
         if (formData.getRecieverSolrUUID() == null) {
-            if (receiverInfoToCheckForSolrUpdate == null ){
+            if (receiverInfoToCheckForSolrUpdate == null) {
                 solrPropertyMap.put("receiverSolrUUID", UUID.randomUUID().toString());
-            } else if(receiverInfoToCheckForSolrUpdate.getRecieverBin()!=null && !receiverInfoToCheckForSolrUpdate.getRecieverBin().equals(formData.getRecieverBIN()) ) {
+            } else if (receiverInfoToCheckForSolrUpdate.getRecieverBin() != null
+                            && !receiverInfoToCheckForSolrUpdate.getRecieverBin().equals(formData.getRecieverBIN())) {
                 solrPropertyMap.put("receiverSolrUUID", UUID.randomUUID().toString());
-            } else if(receiverInfoToCheckForSolrUpdate.getRecieverIin()!=null && !receiverInfoToCheckForSolrUpdate.getRecieverIin().equals(formData.getRecieverIIN())) {
+            } else if (receiverInfoToCheckForSolrUpdate.getRecieverIin() != null
+                            && !receiverInfoToCheckForSolrUpdate.getRecieverIin().equals(formData.getRecieverIIN())) {
                 solrPropertyMap.put("receiverSolrUUID", UUID.randomUUID().toString());
             }
         }
 
         if (declarantInfoFieldsAreNotNull(formData)) {
             neSmgsDeclarantInfo = createDeclarantInfo(neSmgsDeclarantInfo, formData, invoiceUn);
-            System.out.println("invc#un:::::::::::::::::::::::::::::::::"+neSmgsDeclarantInfo.getInvUn());
+            System.out.println("invc_UN:::::::::::::::::::::::::::::::::" + neSmgsDeclarantInfo.getInvUn());
             em.merge(neSmgsDeclarantInfo);
         }
 
         if (expeditorInfoFieldsAreNotNull(formData)) {
             neSmgsExpeditorInfo = createExpeditorInfo(neSmgsExpeditorInfo, formData, invoiceUn);
-            System.out.println("neSmgsExpeditorInfo invc#un:::::::::::::::::::::::::::::::::"+neSmgsExpeditorInfo.getInvUn());
+            System.out.println("neSmgsExpeditorInfo invc_UN:::::::::::::::::::::::::::::::::"
+                            + neSmgsExpeditorInfo.getInvUn());
             em.merge(neSmgsExpeditorInfo);
-        } else if (neSmgsExpeditorInfo!=null && neSmgsExpeditorInfo.getInvUn()==invoiceUn) {
+        } else if (neSmgsExpeditorInfo != null && neSmgsExpeditorInfo.getInvUn() == invoiceUn) {
             em.remove(neSmgsExpeditorInfo);
         }
 
@@ -144,41 +149,40 @@ public class ForDataBean implements ForDataBeanLocal {
             em.merge(recieverinfo);
         }
 
-        neSmgsDestinationPlaceInfo = createNeSmgsDestPlaceInfo(neSmgsDestinationPlaceInfo, formData,
-                invoiceUn);
+        neSmgsDestinationPlaceInfo = createNeSmgsDestPlaceInfo(neSmgsDestinationPlaceInfo, formData, invoiceUn);
         em.merge(neSmgsDestinationPlaceInfo);
 
-        if(vesselStaUns.contains(formData.getArriveStation())) {
+        if (vesselStaUns.contains(formData.getArriveStation())) {
             neSmgsShipList = createNeSmgsShipList(neSmgsShipList, formData, invoiceUn);
             em.merge(neSmgsShipList);
         }
 
 
-        /*удалить ниже этой строки*/
-        if(formData.getConteinerRef() != null&&"1".equals(formData.getConteinerRef())){
-            //containerLists = createNeContainerLists(invoiceUn,containerLists,containerData);
-            //em.merge(containerLists);
+        /* удалить ниже этой строки */
+        if (formData.getConteinerRef() != null && "1".equals(formData.getConteinerRef())) {
+            // containerLists = createNeContainerLists(invoiceUn,containerLists,containerData);
+            // em.merge(containerLists);
 
-            if(containerDatas != null) {
-                if(containerDatas.getContainerData() != null && !containerDatas.getContainerData().isEmpty()) {
-                    for (ContainerData item : containerDatas.getContainerData() ) {
+            if (containerDatas != null) {
+                if (containerDatas.getContainerData() != null && !containerDatas.getContainerData().isEmpty()) {
+                    for (ContainerData item : containerDatas.getContainerData()) {
                         NeContainerLists cl = containerListsMap.get(item.getContainerListUn());
                         boolean persist = cl == null;
-                        cl = createNeContainerLists(invoiceUn,cl,item);
-                        if(persist) {
+                        cl = createNeContainerLists(invoiceUn, cl, item);
+                        if (persist) {
                             em.persist(cl);
-                            System.out.println("++++Insert CL"+cl.getContainerListsUn());
+                            System.out.println("++++Insert CL" + cl.getContainerListsUn());
                         } else {
                             em.merge(cl);
-                            System.out.println("++++Update CL"+cl.getContainerListsUn());
+                            System.out.println("++++Update CL" + cl.getContainerListsUn());
                         }
                     }
                 }
 
-                if(containerDatas.getContainerRemData() != null && !containerDatas.getContainerRemData().isEmpty()) {
+                if (containerDatas.getContainerRemData() != null && !containerDatas.getContainerRemData().isEmpty()) {
                     for (ContainerData item : containerDatas.getContainerRemData()) {
                         NeContainerLists cl = containerListsMap.get(item.getContainerListUn());
-                        if(cl!= null) {
+                        if (cl != null) {
                             em.remove(cl);
                         }
                     }
@@ -191,13 +195,15 @@ public class ForDataBean implements ForDataBeanLocal {
                 vagonGroup = createNeVagonGroup(vagonGroup);
                 em.persist(vagonGroup);
             }
-            for(VagonItem vagonItem: vagonList) {
+            for (VagonItem vagonItem : vagonList) {
                 NeVagonLists neVagonLists = neVagonListsMap.get(vagonItem.getNumber());
-                if(formData.getVagonAccessory()!=null){
+                if (formData.getVagonAccessory() != null) {
                     String owner = getManagNoByManagUn(formData.getVagonAccessory());
-                    neVagonLists = createNeVagonLists(neVagonLists, vagonItem, invoiceUn, vagonGroup.getVagGroupUn(), owner);
-                }else{
-                    neVagonLists = createNeVagonLists(neVagonLists, vagonItem, invoiceUn, vagonGroup.getVagGroupUn(), null);
+                    neVagonLists = createNeVagonLists(neVagonLists, vagonItem, invoiceUn, vagonGroup.getVagGroupUn(),
+                                    owner);
+                } else {
+                    neVagonLists = createNeVagonLists(neVagonLists, vagonItem, invoiceUn, vagonGroup.getVagGroupUn(),
+                                    null);
                 }
                 em.merge(neVagonLists);
             }
@@ -205,11 +211,11 @@ public class ForDataBean implements ForDataBeanLocal {
             // Удаление вагонов
             List<String> deletedVagon = getDeletedVagons(neVagonListsMap, vagonList);
             if (deletedVagon != null && !deletedVagon.isEmpty()) {
-                //deleteVagonListUnByInvUn(invoiceUn);
+                // deleteVagonListUnByInvUn(invoiceUn);
                 deleteVagonList(deletedVagon, invoiceUn);
             }
-        } else if(!neVagonListsMap.isEmpty()) { // Удалить вагоны вместе с группой
-            //deleteVagonListUnByInvUn(invoiceUn);
+        } else if (!neVagonListsMap.isEmpty()) { // Удалить вагоны вместе с группой
+            // deleteVagonListUnByInvUn(invoiceUn);
             List<String> deletedVagon = getDeletedVagons(neVagonListsMap, vagonList);
             deleteVagonList(deletedVagon, invoiceUn);
             deleteVagonGroup(vagonGroup, invoiceUn);
@@ -219,10 +225,9 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private void deleteVagonGroup(NeVagonGroup vagonGroup, Long invoiceUn) {
         if (vagonGroup != null) {
-            Integer count = (Integer) em.createNativeQuery("select count(*) from ktz.NE_VAGON_LISTS WHERE VAG_GROUP#UN = (?1) and INVC#UN <> (?2)")
-                    .setParameter(1, vagonGroup.getVagGroupUn())
-                    .setParameter(2, invoiceUn)
-                    .getSingleResult();
+            Integer count = (Integer) em.createNativeQuery(
+                            "select count(*) from ktz.NE_VAGON_LISTS WHERE VAG_GROUP_UN = (?1) and INVC_UN <> (?2)")
+                            .setParameter(1, vagonGroup.getVagGroupUn()).setParameter(2, invoiceUn).getSingleResult();
             if (count == 0) {
                 em.remove(vagonGroup);
             }
@@ -231,15 +236,16 @@ public class ForDataBean implements ForDataBeanLocal {
     }
 
     private void deleteVagonList(List<String> deletedVagon, Long invoiceUn) {
-        if (deletedVagon != null && !deletedVagon.isEmpty() && invoiceUn!=null) {
+        if (deletedVagon != null && !deletedVagon.isEmpty() && invoiceUn != null) {
             StringBuffer list_str = new StringBuffer("");
-            for(String item: deletedVagon) {
+            for (String item : deletedVagon) {
                 list_str.append(",");
-                list_str.append("'"+item+"'");
+                list_str.append("'" + item + "'");
             }
             String str1 = list_str.toString();
-            str1 = str1.substring(1,str1.length());
-            String sql = "DELETE FROM KTZ.NE_VAGON_LISTS where VAG_NO IN ("+str1+") AND INVC#UN = "+invoiceUn.toString();
+            str1 = str1.substring(1, str1.length());
+            String sql = "DELETE FROM KTZ.NE_VAGON_LISTS where VAG_NO IN (" + str1 + ") AND INVC_UN = "
+                            + invoiceUn.toString();
             em.createNativeQuery(sql).executeUpdate();
             em.flush();
         }
@@ -250,20 +256,20 @@ public class ForDataBean implements ForDataBeanLocal {
         List<String> result = null;
         if (neVagonListsMap != null && !neVagonListsMap.isEmpty()) {
             Set<String> forDelete = neVagonListsMap.keySet();
-            for(VagonItem item: vagonList) {
+            for (VagonItem item : vagonList) {
                 forDelete.remove(item.getNumber());
             }
             result = new ArrayList<String>();
-            for(String item : forDelete) {
+            for (String item : forDelete) {
                 result.add(item);
             }
         }
         return result;
     }
 
-    private String getManagNoByManagUn(Long managUn){
+    private String getManagNoByManagUn(Long managUn) {
         String answer = null;
-        String sql = "select m.MANAG_NO from NSI.MANAGEMENT m where m.MANAG#UN=" + managUn.toString();
+        String sql = "select m.MANAG_NO from NSI.MANAGEMENT m where m.MANAG_UN=" + managUn.toString();
         try {
             answer = String.valueOf(em.createNativeQuery(sql).getSingleResult());
         } catch (NoResultException e) {
@@ -286,7 +292,8 @@ public class ForDataBean implements ForDataBeanLocal {
         return invoice;
     }
 
-    private NeInvoicePrevInfo createInvoicePrevInfo(NeInvoicePrevInfo neInvoicePrevInfo, FormData formData,	Long invoiceUn) {
+    private NeInvoicePrevInfo createInvoicePrevInfo(NeInvoicePrevInfo neInvoicePrevInfo, FormData formData,
+                    Long invoiceUn) {
         if (neInvoicePrevInfo == null) {
             neInvoicePrevInfo = new NeInvoicePrevInfo();
             neInvoicePrevInfo.setUserUn(formData.getUserUn());
@@ -294,7 +301,7 @@ public class ForDataBean implements ForDataBeanLocal {
         System.out.println("invoiceUn");
         System.out.println(invoiceUn);
         neInvoicePrevInfo.setPrevInfoType(formData.getAppoPrInf());
-        // TODO: After transformation to combobox (customCode) sends us #UN
+        // TODO: After transformation to combobox (customCode) sends us _UN
         if (formData.getCustomCode() != null) {
             neInvoicePrevInfo.setCustomOrgUn(Long.valueOf(formData.getCustomCode()));
         }
@@ -307,11 +314,10 @@ public class ForDataBean implements ForDataBeanLocal {
             neInvoicePrevInfo.setCreateDatetime(new Timestamp(dateTime));
         }
         // FIXME: after integration with ws
-        //neInvoicePrevInfo.setResponseDatetime(new Timestamp(dateTime));
+        // neInvoicePrevInfo.setResponseDatetime(new Timestamp(dateTime));
         // FIXME: response true for now (need to fix response value)
         neInvoicePrevInfo.setArriveStaNo(formData.getArriveStation());
-        if (formData.getArrivalTime() != null
-                && formData.getArrivalDate() != null) {
+        if (formData.getArrivalTime() != null && formData.getArrivalDate() != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(formData.getArrivalTime().getTime());
             int hours = calendar.get(Calendar.HOUR_OF_DAY);
@@ -331,7 +337,7 @@ public class ForDataBean implements ForDataBeanLocal {
         List<NeSmgsTnVed> list = dao.getTnVedList(invoiceUn);
         Map<Long, NeSmgsTnVed> result = new HashMap<Long, NeSmgsTnVed>();
         if (list != null && list.size() > 0) {
-            for(NeSmgsTnVed item: list) {
+            for (NeSmgsTnVed item : list) {
                 result.put(item.getSmgsTnVedUn(), item);
             }
         }
@@ -342,7 +348,7 @@ public class ForDataBean implements ForDataBeanLocal {
         Map<String, NeVagonLists> result = new HashMap<String, NeVagonLists>();
         List<NeVagonLists> list = dao.getVagonList(invoiceUn);
         if (list != null && !list.isEmpty()) {
-            for(NeVagonLists item:list) {
+            for (NeVagonLists item : list) {
                 result.put(item.getVagNo(), item);
             }
         }
@@ -353,7 +359,7 @@ public class ForDataBean implements ForDataBeanLocal {
         Map<Long, NeContainerLists> result = new HashMap<Long, NeContainerLists>();
         List<NeContainerLists> list = dao.getContinerList(invoiceUn);
         if (list != null && !list.isEmpty()) {
-            for(NeContainerLists item:list) {
+            for (NeContainerLists item : list) {
                 result.put(item.getContainerListsUn(), item);
             }
         }
@@ -362,114 +368,114 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private boolean receiverInfoFieldsAreNotNull(FormData formData) {
         return StringUtils.isNotBlank(formData.getRecieverName())
-                || StringUtils.isNotBlank(formData.getRecieverShortNam())
-                || StringUtils.isNotBlank(formData.getRecieverCountry())
-                || StringUtils.isNotBlank(formData.getRecieverCountryName())
-                || StringUtils.isNotBlank(formData.getRecieverIndex())
-                || StringUtils.isNotBlank(formData.getRecieverPoint())
-                || StringUtils.isNotBlank(formData.getRecieverOblast())
-                || StringUtils.isNotBlank(formData.getRecieverStreetNh())
-                || StringUtils.isNotBlank(formData.getRecieverBIN())
-                || StringUtils.isNotBlank(formData.getRecieverIIN())
-                || StringUtils.isNotBlank(formData.getRecieverKatFaceCode())
-                || (formData.getRecieverKatFace() != null)
-                // We are not using this properties for now (not need to check)
-//		|| StringUtils.isNotBlank(formData.getRecieverKatFaceCode())
-//		|| StringUtils.isNotBlank(formData.getRecieverKatFaceName())
-                || StringUtils.isNotBlank(formData.getRecieverKATO())
-                // We are not using this properties for now (not need to check)
-//		|| StringUtils.isNotBlank(formData.getRecieverKATOName())
-                || StringUtils.isNotBlank(formData.getRecieverITNreserv())
-                || StringUtils.isNotBlank(formData.getRecieverKPP());
+                        || StringUtils.isNotBlank(formData.getRecieverShortNam())
+                        || StringUtils.isNotBlank(formData.getRecieverCountry())
+                        || StringUtils.isNotBlank(formData.getRecieverCountryName())
+                        || StringUtils.isNotBlank(formData.getRecieverIndex())
+                        || StringUtils.isNotBlank(formData.getRecieverPoint())
+                        || StringUtils.isNotBlank(formData.getRecieverOblast())
+                        || StringUtils.isNotBlank(formData.getRecieverStreetNh())
+                        || StringUtils.isNotBlank(formData.getRecieverBIN())
+                        || StringUtils.isNotBlank(formData.getRecieverIIN())
+                        || StringUtils.isNotBlank(formData.getRecieverKatFaceCode())
+                        || (formData.getRecieverKatFace() != null)
+                        // We are not using this properties for now (not need to check)
+                        // || StringUtils.isNotBlank(formData.getRecieverKatFaceCode())
+                        // || StringUtils.isNotBlank(formData.getRecieverKatFaceName())
+                        || StringUtils.isNotBlank(formData.getRecieverKATO())
+                        // We are not using this properties for now (not need to check)
+                        // || StringUtils.isNotBlank(formData.getRecieverKATOName())
+                        || StringUtils.isNotBlank(formData.getRecieverITNreserv())
+                        || StringUtils.isNotBlank(formData.getRecieverKPP());
     }
 
     private boolean declarantInfoFieldsAreNotNull(FormData formData) {
         return StringUtils.isNotBlank(formData.getDeclarantAddress())
-                || StringUtils.isNotBlank(formData.getDeclarantAMNZOU())
-                || StringUtils.isNotBlank(formData.getDeclarantAMUNN())
-                || StringUtils.isNotBlank(formData.getDeclarantBYIN())
-                || StringUtils.isNotBlank(formData.getDeclarantBYUNP())
-                || StringUtils.isNotBlank(formData.getDeclarantCity())
-                || StringUtils.isNotBlank(formData.getDeclarantCountry())
-                || StringUtils.isNotBlank(formData.getDeclarantIndex())
-                || StringUtils.isNotBlank(formData.getDeclarantKGINN())
-                || StringUtils.isNotBlank(formData.getDeclarantKGOKPO())
-                || StringUtils.isNotBlank(formData.getDeclarantKZBin())
-                || StringUtils.isNotBlank(formData.getDeclarantKZIin())
-                || StringUtils.isNotBlank(formData.getDeclarantKZITN())
-                || StringUtils.isNotBlank(formData.getDeclarantKZKATO())
-                || StringUtils.isNotBlank(formData.getDeclarantKZPersonsCategory())
-                || StringUtils.isNotBlank(formData.getDeclarantName())
-                || StringUtils.isNotBlank(formData.getDeclarantRegion())
-                || StringUtils.isNotBlank(formData.getDeclarantRUINN())
-                || StringUtils.isNotBlank(formData.getDeclarantRUKPP())
-                || StringUtils.isNotBlank(formData.getDeclarantRUOGRN())
-                || StringUtils.isNotBlank(formData.getDeclarantShortName());
+                        || StringUtils.isNotBlank(formData.getDeclarantAMNZOU())
+                        || StringUtils.isNotBlank(formData.getDeclarantAMUNN())
+                        || StringUtils.isNotBlank(formData.getDeclarantBYIN())
+                        || StringUtils.isNotBlank(formData.getDeclarantBYUNP())
+                        || StringUtils.isNotBlank(formData.getDeclarantCity())
+                        || StringUtils.isNotBlank(formData.getDeclarantCountry())
+                        || StringUtils.isNotBlank(formData.getDeclarantIndex())
+                        || StringUtils.isNotBlank(formData.getDeclarantKGINN())
+                        || StringUtils.isNotBlank(formData.getDeclarantKGOKPO())
+                        || StringUtils.isNotBlank(formData.getDeclarantKZBin())
+                        || StringUtils.isNotBlank(formData.getDeclarantKZIin())
+                        || StringUtils.isNotBlank(formData.getDeclarantKZITN())
+                        || StringUtils.isNotBlank(formData.getDeclarantKZKATO())
+                        || StringUtils.isNotBlank(formData.getDeclarantKZPersonsCategory())
+                        || StringUtils.isNotBlank(formData.getDeclarantName())
+                        || StringUtils.isNotBlank(formData.getDeclarantRegion())
+                        || StringUtils.isNotBlank(formData.getDeclarantRUINN())
+                        || StringUtils.isNotBlank(formData.getDeclarantRUKPP())
+                        || StringUtils.isNotBlank(formData.getDeclarantRUOGRN())
+                        || StringUtils.isNotBlank(formData.getDeclarantShortName());
     }
 
     private boolean expeditorInfoFieldsAreNotNull(FormData formData) {
         return StringUtils.isNotBlank(formData.getExpeditorAddress())
-                || StringUtils.isNotBlank(formData.getExpeditorAMNZOU())
-                || StringUtils.isNotBlank(formData.getExpeditorAMUNN())
-                || StringUtils.isNotBlank(formData.getExpeditorBYIN())
-                || StringUtils.isNotBlank(formData.getExpeditorBYUNP())
-                || StringUtils.isNotBlank(formData.getExpeditorCity())
-                || StringUtils.isNotBlank(formData.getExpeditorCountry())
-                //|| StringUtils.isNotBlank(formData.getExpeditorIndex())
-                || StringUtils.isNotBlank(formData.getExpeditorKGINN())
-                || StringUtils.isNotBlank(formData.getExpeditorKGOKPO())
-                || StringUtils.isNotBlank(formData.getExpeditorKZBin())
-                || StringUtils.isNotBlank(formData.getExpeditorKZIin())
-                || StringUtils.isNotBlank(formData.getExpeditorKZITN())
-                || StringUtils.isNotBlank(formData.getExpeditorKZKATO())
-                || StringUtils.isNotBlank(formData.getExpeditorKZPersonsCategory())
-                || StringUtils.isNotBlank(formData.getExpeditorName())
-                || StringUtils.isNotBlank(formData.getExpeditorRegion())
-                || StringUtils.isNotBlank(formData.getExpeditorRUINN())
-                || StringUtils.isNotBlank(formData.getExpeditorRUKPP())
-                || StringUtils.isNotBlank(formData.getExpeditorRUOGRN())
-                || StringUtils.isNotBlank(formData.getExpeditorShortName());
+                        || StringUtils.isNotBlank(formData.getExpeditorAMNZOU())
+                        || StringUtils.isNotBlank(formData.getExpeditorAMUNN())
+                        || StringUtils.isNotBlank(formData.getExpeditorBYIN())
+                        || StringUtils.isNotBlank(formData.getExpeditorBYUNP())
+                        || StringUtils.isNotBlank(formData.getExpeditorCity())
+                        || StringUtils.isNotBlank(formData.getExpeditorCountry())
+                        // || StringUtils.isNotBlank(formData.getExpeditorIndex())
+                        || StringUtils.isNotBlank(formData.getExpeditorKGINN())
+                        || StringUtils.isNotBlank(formData.getExpeditorKGOKPO())
+                        || StringUtils.isNotBlank(formData.getExpeditorKZBin())
+                        || StringUtils.isNotBlank(formData.getExpeditorKZIin())
+                        || StringUtils.isNotBlank(formData.getExpeditorKZITN())
+                        || StringUtils.isNotBlank(formData.getExpeditorKZKATO())
+                        || StringUtils.isNotBlank(formData.getExpeditorKZPersonsCategory())
+                        || StringUtils.isNotBlank(formData.getExpeditorName())
+                        || StringUtils.isNotBlank(formData.getExpeditorRegion())
+                        || StringUtils.isNotBlank(formData.getExpeditorRUINN())
+                        || StringUtils.isNotBlank(formData.getExpeditorRUKPP())
+                        || StringUtils.isNotBlank(formData.getExpeditorRUOGRN())
+                        || StringUtils.isNotBlank(formData.getExpeditorShortName());
     }
 
     private boolean senderInfoFieldsAreNotNull(FormData formData) {
-        return StringUtils.isNotBlank(formData.getSenderName())
-                || StringUtils.isNotBlank(formData.getSenderShortNam())
-                || StringUtils.isNotBlank(formData.getSenderCountry())
-                || StringUtils.isNotBlank(formData.getSenderCountryName())
-                || StringUtils.isNotBlank(formData.getSenderIndex())
-                || StringUtils.isNotBlank(formData.getSenderPoint())
-                || StringUtils.isNotBlank(formData.getSenderOblast())
-                || StringUtils.isNotBlank(formData.getSenderStreetNh())
-                || StringUtils.isNotBlank(formData.getSenderBIN())
-                || StringUtils.isNotBlank(formData.getSenderIIN())
-                || (formData.getSenderKatFace() != null)
-                // We are not using this properties for now (not need to check)
-//		|| StringUtils.isNotBlank(formData.getSenderKatFaceCode())
-//		|| StringUtils.isNotBlank(formData.getSenderKatFaceName())
-                || StringUtils.isNotBlank(formData.getSenderKATO())
-                // We are not using this properties for now (not need to check)
-//		|| StringUtils.isNotBlank(formData.getRecieverKATOName())
-                || StringUtils.isNotBlank(formData.getSenderITNreserv())
-                || StringUtils.isNotBlank(formData.getSenderKpp());
+        return StringUtils.isNotBlank(formData.getSenderName()) || StringUtils.isNotBlank(formData.getSenderShortNam())
+                        || StringUtils.isNotBlank(formData.getSenderCountry())
+                        || StringUtils.isNotBlank(formData.getSenderCountryName())
+                        || StringUtils.isNotBlank(formData.getSenderIndex())
+                        || StringUtils.isNotBlank(formData.getSenderPoint())
+                        || StringUtils.isNotBlank(formData.getSenderOblast())
+                        || StringUtils.isNotBlank(formData.getSenderStreetNh())
+                        || StringUtils.isNotBlank(formData.getSenderBIN())
+                        || StringUtils.isNotBlank(formData.getSenderIIN()) || (formData.getSenderKatFace() != null)
+                        // We are not using this properties for now (not need to check)
+                        // || StringUtils.isNotBlank(formData.getSenderKatFaceCode())
+                        // || StringUtils.isNotBlank(formData.getSenderKatFaceName())
+                        || StringUtils.isNotBlank(formData.getSenderKATO())
+                        // We are not using this properties for now (not need to check)
+                        // || StringUtils.isNotBlank(formData.getRecieverKATOName())
+                        || StringUtils.isNotBlank(formData.getSenderITNreserv())
+                        || StringUtils.isNotBlank(formData.getSenderKpp());
     }
 
-    private NeContainerLists createNeContainerLists(Long invoiceUn, NeContainerLists containerLists, ContainerData containerData/*, Long vagonListUn*/) {
+    private NeContainerLists createNeContainerLists(Long invoiceUn, NeContainerLists containerLists,
+                    ContainerData containerData/* , Long vagonListUn */) {
         if (containerLists == null) {
             containerLists = new NeContainerLists();
             containerLists.setInvoiceUn(invoiceUn);
         }
         containerLists.setContainerNo(containerData.getNumContainer());
         containerLists.setFilledContainer(containerData.getContainerFilled());
-        if(StringUtils.isNotBlank(containerData.getContainerMark())) {
+        if (StringUtils.isNotBlank(containerData.getContainerMark())) {
             containerLists.setContainerMark(containerData.getContainerMark().toUpperCase());
         }
         containerLists.setManagUn(containerData.getVagonAccessory());
         containerLists.setConUn(containerData.getContainerCode());
-        //containerLists.setVagonListUn(vagonListUn);
+        // containerLists.setVagonListUn(vagonListUn);
         return containerLists;
     }
 
-    private NeSmgsDeclarantInfo createDeclarantInfo(NeSmgsDeclarantInfo declarantInfo, FormData formData, Long invoiceUn) {
+    private NeSmgsDeclarantInfo createDeclarantInfo(NeSmgsDeclarantInfo declarantInfo, FormData formData,
+                    Long invoiceUn) {
         if (declarantInfo == null) {
             declarantInfo = new NeSmgsDeclarantInfo();
         }
@@ -500,7 +506,8 @@ public class ForDataBean implements ForDataBeanLocal {
         return declarantInfo;
     }
 
-    private NeSmgsExpeditorInfo createExpeditorInfo(NeSmgsExpeditorInfo expeditorInfo, FormData formData, Long invoiceUn) {
+    private NeSmgsExpeditorInfo createExpeditorInfo(NeSmgsExpeditorInfo expeditorInfo, FormData formData,
+                    Long invoiceUn) {
         if (expeditorInfo == null) {
             expeditorInfo = new NeSmgsExpeditorInfo();
         }
@@ -532,7 +539,7 @@ public class ForDataBean implements ForDataBeanLocal {
     }
 
     private NeSmgsSenderInfo createSenderInfo(NeSmgsSenderInfo senderInfo, FormData formData, Long invoiceUn) {
-        if(senderInfo == null) {
+        if (senderInfo == null) {
             senderInfo = new NeSmgsSenderInfo();
         }
         String senderCountryCode = formData.getSenderCountry();
@@ -557,8 +564,7 @@ public class ForDataBean implements ForDataBeanLocal {
         return senderInfo;
     }
 
-    private NeSmgsRecieverInfo createRecieverInfo(NeSmgsRecieverInfo recieverinfo, FormData formData,
-                                                  Long invoiceUn) {
+    private NeSmgsRecieverInfo createRecieverInfo(NeSmgsRecieverInfo recieverinfo, FormData formData, Long invoiceUn) {
         if (recieverinfo == null) {
             recieverinfo = new NeSmgsRecieverInfo();
         }
@@ -585,37 +591,28 @@ public class ForDataBean implements ForDataBeanLocal {
     }
 
     private NeSmgsDestinationPlaceInfo createNeSmgsDestPlaceInfo(NeSmgsDestinationPlaceInfo neSmgsDestinationPlaceInfo,
-                                                                 FormData formData, Long invoiceUn) {
+                    FormData formData, Long invoiceUn) {
         if (neSmgsDestinationPlaceInfo == null) {
             neSmgsDestinationPlaceInfo = new NeSmgsDestinationPlaceInfo();
         }
         neSmgsDestinationPlaceInfo.setInvoiceUn(invoiceUn);
         neSmgsDestinationPlaceInfo.setDestPlace(formData.getDestPlace());
-        neSmgsDestinationPlaceInfo.setDestPlaceSta(formData
-                .getDestPlaceStation());
-        neSmgsDestinationPlaceInfo.setDestPlaceCountryCode(formData
-                .getDestPlaceCountryCode());
-        neSmgsDestinationPlaceInfo.setDestPlaceIndex(formData
-                .getDestPlaceIndex());
-        neSmgsDestinationPlaceInfo.setDestPlaceCity(formData
-                .getDestPlacePoint());
-        neSmgsDestinationPlaceInfo.setDestPlaceRegion(formData
-                .getDestPlaceOblast());
-        neSmgsDestinationPlaceInfo.setDestPlaceStreet(formData
-                .getDestPlaceStreet());
-        neSmgsDestinationPlaceInfo.setDestPlaceCustomCode(formData
-                .getDestPlaceCustomCode());
-        neSmgsDestinationPlaceInfo.setDestPlaceCustomName(formData
-                .getDestPlaceCustomName());
-        neSmgsDestinationPlaceInfo.setDestPlaceCustomOrgUn(formData
-                .getDestPlaceCustomOrgUn());
+        neSmgsDestinationPlaceInfo.setDestPlaceSta(formData.getDestPlaceStation());
+        neSmgsDestinationPlaceInfo.setDestPlaceCountryCode(formData.getDestPlaceCountryCode());
+        neSmgsDestinationPlaceInfo.setDestPlaceIndex(formData.getDestPlaceIndex());
+        neSmgsDestinationPlaceInfo.setDestPlaceCity(formData.getDestPlacePoint());
+        neSmgsDestinationPlaceInfo.setDestPlaceRegion(formData.getDestPlaceOblast());
+        neSmgsDestinationPlaceInfo.setDestPlaceStreet(formData.getDestPlaceStreet());
+        neSmgsDestinationPlaceInfo.setDestPlaceCustomCode(formData.getDestPlaceCustomCode());
+        neSmgsDestinationPlaceInfo.setDestPlaceCustomName(formData.getDestPlaceCustomName());
+        neSmgsDestinationPlaceInfo.setDestPlaceCustomOrgUn(formData.getDestPlaceCustomOrgUn());
 
         System.out.println("orgUN: " + formData.getDestPlaceCustomOrgUn());
 
         return neSmgsDestinationPlaceInfo;
     }
 
-    private NeSmgsShipList createNeSmgsShipList(NeSmgsShipList neSmgsShipList,FormData formData, Long invoiceUn) {
+    private NeSmgsShipList createNeSmgsShipList(NeSmgsShipList neSmgsShipList, FormData formData, Long invoiceUn) {
         if (neSmgsShipList == null) {
             neSmgsShipList = new NeSmgsShipList();
         }
@@ -627,12 +624,9 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private NeVagonGroup createNeVagonGroup(NeVagonGroup vagonGroup) {
         if (vagonGroup == null) {
-			/*
-sender#UN =4397050017;
-st#un = 3848500007;
-vag_group_status#un=4;
-date_podach-current_timestamp
-			 * */
+            /*
+             * sender_UN =4397050017; st_UN = 3848500007; vag_group_status_UN=4; date_podach-current_timestamp
+             */
             vagonGroup = new NeVagonGroup();
             vagonGroup.setSenderUn(4397050017L);
             vagonGroup.setStUn(3848500007L);
@@ -642,10 +636,8 @@ date_podach-current_timestamp
         return vagonGroup;
     }
 
-    private NeVagonLists createNeVagonLists(NeVagonLists neVagonLists,
-                                            VagonItem vagonItem,
-                                            Long invoiceUn,
-                                            Long vagonGroupUn,String owner) {
+    private NeVagonLists createNeVagonLists(NeVagonLists neVagonLists, VagonItem vagonItem, Long invoiceUn,
+                    Long vagonGroupUn, String owner) {
         if (neVagonLists == null) {
             neVagonLists = new NeVagonLists();
         }
@@ -662,19 +654,18 @@ date_podach-current_timestamp
         }
         neSmgsCargo.setGngCode(formData.getGngCode());
         neSmgsCargo.setInvUn(invoiceUn);
-        //neSmgsCargo.setSenderCountry(senderCountry);
+        // neSmgsCargo.setSenderCountry(senderCountry);
         return neSmgsCargo;
     }
 
     @Override
+    @Transactional
     public void saveDocInfo(String invoiceId, String filename, Date date, String uuid) {
         NeSmgsAdditionDocuments document = new NeSmgsAdditionDocuments();
-        em.detach(document);
         document.setInvUn(Long.parseLong(invoiceId));
         document.setDocDate(date);
         document.setDocName(filename);
         document.setFileUuid(uuid);
-
-        localDatabase.documents.add(document);
+        em.persist(document);
     }
 }

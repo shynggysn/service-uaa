@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,10 +11,10 @@ import java.sql.Timestamp;
 @Table(name = "STA", schema = "NSI")
 public class Sta implements Serializable {
     @Id
-    @Column(name = "ST#UN")
+    @Column(name = "ST_UN")
     private Long stUn;
 
-    @Column(name = "ST#ID")
+    @Column(name = "ST_ID")
     private int stId;
 
     @Column(name = "STA_NO")
@@ -23,19 +23,19 @@ public class Sta implements Serializable {
     @Column(name = "STA_NAME")
     private String staName;
 
-    @Column(name = "DIV#UN")
+    @Column(name = "DIV_UN")
     private Long divUn;
 
-    @Column(name = "ROAD#UN")
+    @Column(name = "ROAD_UN")
     private Long roadUn;
 
-    @Column(name = "MANAG#UN")
+    @Column(name = "MANAG_UN")
     private Long managUn;
 
-    @Column(name = "PR#UN")
+    @Column(name = "PR_UN")
     private Long prUn;
 
-    @Column(name = "TEHPD#UN")
+    @Column(name = "TEHPD_UN")
     private Long tehpdUn;
 
     private Short sign;
@@ -45,10 +45,10 @@ public class Sta implements Serializable {
     @Column(name = "STA_EMAIL")
     private String staEmail;
 
-    @Column(name = "ST#BGN")
+    @Column(name = "ST_BGN")
     private Timestamp stBgn;
 
-    @Column(name = "ST#END")
+    @Column(name = "ST_END")
     private Timestamp stEnd;
 
     private static final Long serialVersionUID = 1L;

@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,7 +11,7 @@ public class NeContainerLists implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CONTAINER_LISTS#UN")
+    @Column(name = "CONTAINER_LISTS_UN")
     private Long containerListsUn;
 
     @Column(name = "CONTAINER_NO")
@@ -20,19 +20,19 @@ public class NeContainerLists implements Serializable {
     @Column(name = "CONTAINER_MARK")
     private String containerMark;
 
-    @Column(name = "CONTAINER_TYPE#UN")
+    @Column(name = "CONTAINER_TYPE_UN")
     private Long containerTypeUn;
 
     @Column(name = "NPP")
     private Integer npp;
 
-    @Column(name = "INVOICE#UN")
+    @Column(name = "INVOICE_UN")
     private Long invoiceUn;
 
-    @Column(name = "VAGON_LIST#UN")
+    @Column(name = "VAGON_LIST_UN")
     private Long vagonListUn;
 
-    @Column(name = "VAG_GROUP#UN")
+    @Column(name = "VAG_GROUP_UN")
     private Long vagGroupUn;
 
     @Column(name = "MASS_FACT")
@@ -44,7 +44,7 @@ public class NeContainerLists implements Serializable {
     @Column(name = "GP")
     private BigDecimal gp;
 
-    @Column(name = "MANAG#UN")
+    @Column(name = "MANAG_UN")
     private Long managUn;
 
     @Column(name = "PREV_ETSNG_CODE")
@@ -59,7 +59,7 @@ public class NeContainerLists implements Serializable {
     @Column(name = "C_OWNER_NAME")
     private String cOwnerName;
 
-    @Column(name = "LOCK_ARM_TYPE#UN")
+    @Column(name = "LOCK_ARM_TYPE_UN")
     private Long lockArmTypeUn;
 
     @Column(name = "LOCK_ARM_COUNT")
@@ -77,7 +77,7 @@ public class NeContainerLists implements Serializable {
     @Column(name = "FILLED_CONTAINER")
     private Integer filledContainer;
 
-    @Column(name = "CON#UN")
+    @Column(name = "CON_UN")
     private String conUn;
 
     public Long getContainerListsUn() {

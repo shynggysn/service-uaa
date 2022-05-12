@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.LocalDatabase;
 import kz.ne.railways.tezcustoms.service.dto.InvoiceRequestDto;
-import kz.ne.railways.tezcustoms.service.entity.NeSmgsAdditionDocuments;
+import kz.ne.railways.tezcustoms.service.entity.asudkr.NeSmgsAdditionDocuments;
 import kz.ne.railways.tezcustoms.service.model.Contract;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;

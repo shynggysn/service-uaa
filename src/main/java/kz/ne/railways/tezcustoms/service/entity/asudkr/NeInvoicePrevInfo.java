@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,10 +15,10 @@ public class NeInvoicePrevInfo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PREV_INFO#UN")
+    @Column(name = "PREV_INFO_UN")
     private Long prevInfoUn;
 
-    @Column(name = "INVOICE#UN")
+    @Column(name = "INVOICE_UN")
     private Long invoiceUn;
 
     @Column(name = "PREV_INFO_TYPE", length = 1)
@@ -30,7 +30,7 @@ public class NeInvoicePrevInfo implements Serializable {
     @Column(name = "ARRIVE_STA_NO", length = 6)
     private String arriveStaNo;
 
-    @Column(name = "CUSTOM_ORG#UN")
+    @Column(name = "CUSTOM_ORG_UN")
     private Long customOrgUn;
 
     @Column(name = "CUSTOM_CODE", length = 10)
@@ -39,7 +39,7 @@ public class NeInvoicePrevInfo implements Serializable {
     @Column(name = "CUSTOM_NAME", length = 250)
     private String customName;
 
-    @Column(name = "USER#UN")
+    @Column(name = "USER_UN")
     private Long userUn;
 
     @Column(name = "CREATE_DATETIME")

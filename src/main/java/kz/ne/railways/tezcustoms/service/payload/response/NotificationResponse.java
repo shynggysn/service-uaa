@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class NotificationResponse {
     private String message;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
 
     private UserDto user;

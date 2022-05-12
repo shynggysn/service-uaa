@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,16 +16,16 @@ public class Country implements Serializable {
     private static final long serialVersionUID = -1721762568269063141L;
 
     @Id
-    @Column(name = "COU#UN")
+    @Column(name = "COU_UN")
     private Long couUn;
 
-    @Column(name = "COU#ID")
+    @Column(name = "COU_ID")
     private int couId;
 
     @Column(name = "COUNTRY_NO")
     private String countryNo;
 
-    @Column(name = "REGION#UN")
+    @Column(name = "REGION_UN")
     private int regionUn;
 
     @Column(name = "COUNTRY_ID")
@@ -40,10 +40,10 @@ public class Country implements Serializable {
     @Column(name = "COUNTRY_ID3")
     private String countryId3;
 
-    @Column(name = "COU#BGN")
+    @Column(name = "COU_BGN")
     private Timestamp couBegin;
 
-    @Column(name = "COU#END")
+    @Column(name = "COU_END")
     private Timestamp couEnd;
 
     public Long getCouUn() {

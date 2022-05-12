@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,16 +11,16 @@ import java.sql.Timestamp;
 @Table(name = "MANAGEMENT", schema = "NSI")
 public class Management implements Serializable {
     @Id
-    @Column(name = "MANAG#UN")
+    @Column(name = "MANAG_UN")
     private long managUn;
 
-    @Column(name = "MANAG#ID")
+    @Column(name = "MANAG_ID")
     private int managId;
 
     @Column(name = "MANAG_NO")
     private short managNo;
 
-    @Column(name = "COU#UN")
+    @Column(name = "COU_UN")
     private long couUn;
 
     @Column(name = "MANAG_NAME")
@@ -32,10 +32,10 @@ public class Management implements Serializable {
     @Column(name = "M_NAME_LAT")
     private String mNameLat;
 
-    @Column(name = "MANAG#BGN")
+    @Column(name = "MANAG_BGN")
     private Timestamp managBgn;
 
-    @Column(name = "MANAG#END")
+    @Column(name = "MANAG_END")
     private Timestamp managEnd;
 
     @Column(name = "SHORT_NAME")

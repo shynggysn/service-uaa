@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,19 +10,19 @@ public class NeVagonLists implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "VAG_LISTS#UN")
+    @Column(name = "VAG_LISTS_UN")
     private Long vagListsUn;
 
     @Column(name = "VAG_NO")
     private String vagNo;
 
-    @Column(name = "INVC#UN")
+    @Column(name = "INVC_UN")
     private Long invcUn;
 
     // @Column(name="INVC_NUM")
     // private Long invcNumPP;
     //
-    // @Column(name="VPODACH#UN")
+    // @Column(name="VPODACH_UN")
     // private Long vPodachUn;
     //
     // @Column(name="ROD_VAG_UCH")
@@ -34,7 +34,7 @@ public class NeVagonLists implements Serializable {
     // @Column(name="GRP_VAG_CEN")
     // private Double grpVagCen;
 
-    @Column(name = "VAG_GROUP#UN")
+    @Column(name = "VAG_GROUP_UN")
     private Long vagGroupUn;
 
     /*
@@ -42,7 +42,7 @@ public class NeVagonLists implements Serializable {
      * 
      * @Column(name="LOCK_ARM_COUNT") private Integer lockCount;
      * 
-     * @Column(name="LOCK_ARM_TYPE#UN") private Long lockArmTypeUn;
+     * @Column(name="LOCK_ARM_TYPE_UN") private Long lockArmTypeUn;
      * 
      * @Column(name="LOCK_ARM_MARKS") private String lockArmMarks;
      */

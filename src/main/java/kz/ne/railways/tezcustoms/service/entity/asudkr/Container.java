@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,13 +17,13 @@ public class Container implements Serializable {
     private static final long serialVersionUID = -2394083416378552861L;
 
     @Id
-    @Column(name = "CON#UN")
+    @Column(name = "CON_UN")
     private Long conUn;
 
-    @Column(name = "CON#ID")
+    @Column(name = "CON_ID")
     private Integer conId;
 
-    @Column(name = "CONGROUP#UN")
+    @Column(name = "CONGROUP_UN")
     private Long conGroupUn;
 
     @Column(name = "CON_CODE")
@@ -47,10 +47,10 @@ public class Container implements Serializable {
     @Column(name = "CON_MAX_WEIGHT")
     private Double conMaxWeight;
 
-    @Column(name = "CON#BGN")
+    @Column(name = "CON_BGN")
     private Timestamp conBgn;
 
-    @Column(name = "CON#END")
+    @Column(name = "CON_END")
     private Timestamp conEnd;
 
     public Long getConUn() {

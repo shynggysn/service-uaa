@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 
 import javax.persistence.*;
@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 public class NeSmgsTnVed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SMGS_TN_VED#UN")
+    @Column(name = "SMGS_TN_VED_UN")
     private Long smgsTnVedUn;
 
-    @Column(name = "INVOICE#UN")
+    @Column(name = "INVOICE_UN")
     private Long invoiceUn;
 
     @Column(name = "TN_VED_CODE", length = 25)
@@ -27,7 +27,7 @@ public class NeSmgsTnVed {
     @Column(name = "COUNT_BY_UNIT")
     private BigDecimal countByUnit;
 
-    @Column(name = "UNIT_TYPE#UN")
+    @Column(name = "UNIT_TYPE_UN")
     private Long unitTypeUn;
 
     @Column(name = "PLACE_CARGO_COUNT")
@@ -39,7 +39,7 @@ public class NeSmgsTnVed {
     @Column(name = "PAKAGE_PART_QUANTITY")
     private BigDecimal packagePartQuantity;
 
-    @Column(name = "PACKING_TYPE#UN")
+    @Column(name = "PACKING_TYPE_UN")
     private Long packingTypeUn;
 
     @Column(name = "PLACE_CARGO_MARK", length = 512)
@@ -57,7 +57,7 @@ public class NeSmgsTnVed {
     @Column(name = "PRICE_BY_FULL")
     private BigDecimal priceByFull;
 
-    @Column(name = "CURRENCY_CODE#UN")
+    @Column(name = "CURRENCY_CODE_UN")
     private Long currencyCodeUn;
 
     @Column(name = "CONTAINER", length = 2048)

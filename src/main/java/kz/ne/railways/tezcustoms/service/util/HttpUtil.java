@@ -31,7 +31,7 @@ public class HttpUtil {
     private Gson gson = new Gson();
 
     public byte[] getContractDoc(String invoiceId) {
-        String url = gatewayContractDocUrl +"&invoiceId=" + invoiceId;
+        String url = gatewayContractDocUrl + "&invoiceId=" + invoiceId;
 
         HttpGet httpGet = new HttpGet(url);
         httpGet.addHeader("charset", "UTF-8");
@@ -39,8 +39,9 @@ public class HttpUtil {
 
         CloseableHttpClient httpclient = null;
         try {
-//            SSLContext ctx = SSLContexts.custom().useProtocol("TLSv1.2").build();
-//            httpclient = HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(ctx)).build();
+            // SSLContext ctx = SSLContexts.custom().useProtocol("TLSv1.2").build();
+            // httpclient = HttpClients.custom().setSSLSocketFactory(new
+            // SSLConnectionSocketFactory(ctx)).build();
             httpclient = new DefaultHttpClient();
             HttpResponse response = httpclient.execute(httpGet);
             HttpEntity entity = response.getEntity();
@@ -74,17 +75,18 @@ public class HttpUtil {
     }
 
     public FormData getContractData(String startSta, String destSta, String expCode, String invoiceNum) {
-        String url = gatewayContractDataUrl +"&startSta=" + startSta;
+        String url = gatewayContractDataUrl + "&startSta=" + startSta;
         url += "&destSta=" + destSta;
-//        url += "&expCode=" + expCode;
+        // url += "&expCode=" + expCode;
         url += "&invoiceNum=" + invoiceNum;
 
         HttpGet httpGet = new HttpGet(url);
         httpGet.addHeader("Accept-Encoding", "gzip, deflate, br");
         CloseableHttpClient httpclient = null;
         try {
-//            SSLContext ctx = SSLContexts.custom().useProtocol("TLSv1.2").build();
-//            httpclient = HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(ctx)).build();
+            // SSLContext ctx = SSLContexts.custom().useProtocol("TLSv1.2").build();
+            // httpclient = HttpClients.custom().setSSLSocketFactory(new
+            // SSLConnectionSocketFactory(ctx)).build();
             httpclient = new DefaultHttpClient();
             HttpResponse response = httpclient.execute(httpGet);
             HttpEntity entity = response.getEntity();

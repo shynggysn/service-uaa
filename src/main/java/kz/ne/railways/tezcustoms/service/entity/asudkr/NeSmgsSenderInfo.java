@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,10 +9,10 @@ import java.io.Serializable;
 public class NeSmgsSenderInfo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SMGS_SENDER_INFO#UN")
+    @Column(name = "SMGS_SENDER_INFO_UN")
     private Long smgsSenderInfoUn;
 
-    @Column(name = "INV#UN")
+    @Column(name = "INV_UN")
     private long invUn;
 
     @Column(name = "SENDER_CODE")

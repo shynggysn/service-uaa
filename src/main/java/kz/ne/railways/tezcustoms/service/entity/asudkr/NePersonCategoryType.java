@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class NePersonCategoryType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CATEGORY_TYPE#UN")
+    @Column(name = "CATEGORY_TYPE_UN")
     private Long categoryTypeUn;
 
     @Column(name = "CATEGORY_CODE", length = 25)
@@ -17,10 +17,10 @@ public class NePersonCategoryType {
     @Column(name = "CATEGORY_NAME", length = 512)
     private String categoryName;
 
-    @Column(name = "CATEGORY#BGN")
+    @Column(name = "CATEGORY_BGN")
     private Timestamp categoryBgn;
 
-    @Column(name = "CATEGORY#END")
+    @Column(name = "CATEGORY_END")
     private Timestamp categoryEnd;
 
     public void setCategoryTypeUn(Long categoryTypeUn) {

@@ -8,6 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 public class PasswordConfirmationValidator implements ConstraintValidator<PasswordConfirmation, Object> {
     private String password;
     private String confirmPassword;
+
     @Override
     public void initialize(PasswordConfirmation constraintAnnotation) {
         this.password = constraintAnnotation.password();
@@ -18,7 +19,7 @@ public class PasswordConfirmationValidator implements ConstraintValidator<Passwo
     public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
         Object passwordValue = new BeanWrapperImpl(o).getPropertyValue(password);
         Object confirmPasswordValue = new BeanWrapperImpl(o).getPropertyValue(confirmPassword);
-        if(passwordValue != null){
+        if (passwordValue != null) {
             return passwordValue.equals(confirmPasswordValue);
         }
         return confirmPasswordValue == null;

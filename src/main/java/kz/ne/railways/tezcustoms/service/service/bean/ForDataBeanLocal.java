@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface ForDataBeanLocal {
     public String getContracts();
+
     public void saveContractData(Long id, FormData formData, List<VagonItem> vagonList, ContainerDatas containerDatas);
+
     public void saveDocInfo(String invoiceId, String filename, Date date, String uuid);
 }

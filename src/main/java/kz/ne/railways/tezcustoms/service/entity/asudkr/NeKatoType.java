@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class NeKatoType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "KATO#UN")
+    @Column(name = "KATO_UN")
     private Long katoUn;
 
     @Column(name = "KATO_CODE", length = 25)
@@ -17,10 +17,10 @@ public class NeKatoType {
     @Column(name = "KATO_NAME", length = 512)
     private String katoName;
 
-    @Column(name = "KATO#BGN")
+    @Column(name = "KATO_BGN")
     private Timestamp katoBgn;
 
-    @Column(name = "KATO#END")
+    @Column(name = "KATO_END")
     private Timestamp katoEnd;
 
     public void setKatoUn(Long katoUn) {

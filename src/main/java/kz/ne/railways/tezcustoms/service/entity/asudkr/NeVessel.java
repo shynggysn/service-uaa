@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +16,7 @@ public class NeVessel implements Serializable {
     private static final long serialVersionUID = -1721762568269063141L;
 
     @Id
-    @Column(name = "NE_VESSEL#UN")
+    @Column(name = "NE_VESSEL_UN")
     private Long neVesselUn;
 
 

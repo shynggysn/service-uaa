@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.entity;
+package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 public class NeSmgsCargo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SMGS_CARGO#UN")
+    @Column(name = "SMGS_CARGO_UN")
     private Long smgsCargoUn;
 
-    @Column(name = "INV#UN")
+    @Column(name = "INV_UN")
     private long invUn;
 
     @Column(name = "PLACE_NUM")

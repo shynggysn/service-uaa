@@ -23,7 +23,8 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                    RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
@@ -34,19 +35,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).orElse(null);
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User user = userRepository.findByEmail(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("Email not found!"));
-//        new AccountStatusUserDetailsChecker().check(user);
-//        return user;
-//    }
+    // @Override
+    // public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    // User user = userRepository.findByEmail(username)
+    // .orElseThrow(() -> new UsernameNotFoundException("Email not found!"));
+    // new AccountStatusUserDetailsChecker().check(user);
+    // return user;
+    // }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
+                        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
 
         return UserDetailsImpl.build(user);
     }
@@ -62,7 +63,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role role = roleRepository.findById(1L).orElse(null);
-        if(role != null){
+        if (role != null) {
             user.setRoles(new HashSet<>(Collections.singletonList(role)));
             return userRepository.save(user);
         }

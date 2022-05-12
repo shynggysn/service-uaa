@@ -12,7 +12,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PasswordConfirmation {
     String password();
+
     String confirmPassword();
+
     String message() default "Passwords must match!";
 
     Class<?>[] groups() default {};
@@ -21,7 +23,7 @@ public @interface PasswordConfirmation {
 
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
-    @interface List{
+    @interface List {
         PasswordConfirmation[] value();
     }
 }

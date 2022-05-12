@@ -17,7 +17,5 @@ public class ContainerDatas {
 	public void setContainerRemData(List<ContainerData> containerRemData) {
 		this.containerRemData = containerRemData;
 	}
-	
 
-	
 }

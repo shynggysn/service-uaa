@@ -7,6 +7,7 @@ import kz.ne.railways.tezcustoms.service.model.ContainerData;
 import kz.ne.railways.tezcustoms.service.model.ContainerDatas;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.model.VagonItem;
+import kz.ne.railways.tezcustoms.service.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.Timestamp;
 import java.util.*;
 

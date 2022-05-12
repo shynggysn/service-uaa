@@ -1,5 +1,10 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.Role;
 import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.model.ERole;
@@ -45,6 +50,12 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Operation(summary = "Sign in")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully signed in",
+                    content = { @Content(mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", description = "Invalid credentials",
+                    content = @Content)})
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -69,6 +80,10 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Sign up")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully signed up",
+                    content = { @Content(mediaType = "application/json") })})
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         try {

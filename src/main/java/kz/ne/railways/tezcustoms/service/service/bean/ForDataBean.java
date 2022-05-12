@@ -3,11 +3,9 @@ package kz.ne.railways.tezcustoms.service.service.bean;
 import com.google.gson.Gson;
 import kz.ne.railways.tezcustoms.service.LocalDatabase;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
-import kz.ne.railways.tezcustoms.service.model.ContainerData;
-import kz.ne.railways.tezcustoms.service.model.ContainerDatas;
-import kz.ne.railways.tezcustoms.service.model.FormData;
-import kz.ne.railways.tezcustoms.service.model.VagonItem;
-import kz.ne.railways.tezcustoms.service.util.HttpUtil;
+import kz.ne.railways.tezcustoms.service.model.*;
+import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.util.PIHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -39,12 +39,258 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private static final Long NEW_INVOICE = -1L;
 
+    // Статусы ПИ
+    public static int PI_STATUS_IN_WORK = 0; // В работе
+    public static int PI_STATUS_SUCCESS_SEND = 1; // Принят в таможне
+    public static int PI_STATUS_FAIL_SEND = 2; // Не принят в таможне
+    public static int PI_STATUS_TO_CHECK = 3; // Оправлен на проверку
+    public static int PI_STATUS_RETURN = 4; // Возврат на оформление
+    public static int PI_STATUS_EDIT = 5; // Изменение ТД
+    public static int PI_STATUS_EXPORT_TD = 6; // Сформировать ТД
+
     // Станции где должно указываться транспорт - судно
     List<String> vesselStaUns = Arrays.asList("691607", "693807", "663804", "689202");
 
     @Override
     public String getContracts() {
         return gson.toJson(localDatabase.contractList);
+    }
+
+    @Override
+    public FormData getContractData(String invNum) {
+        StringBuilder sqlWhe = new StringBuilder(" WHERE ");
+        StringBuilder sqlBuilder = new StringBuilder();
+        StringBuilder sqlB = new StringBuilder();
+        StringBuilder sqlSelsFields = new StringBuilder("select inv.INVC_UN as id \n");
+
+        sqlB.append(" FROM KTZ.NE_INVOICE inv \n");
+
+        sqlWhe.append("inv.INVC_NUM = ? ");
+
+        sqlBuilder.append(sqlSelsFields);
+        sqlBuilder.append(sqlB);
+        sqlBuilder.append(sqlWhe);
+
+        Query searchPIQuery = em.createNativeQuery(sqlBuilder.toString());
+        searchPIQuery.setParameter(1, invNum);
+
+        String invoiceId = String.valueOf(searchPIQuery.getSingleResult());
+
+        FormData result = new FormData();
+        result.setInvoiceId(invoiceId);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        NeInvoice neInvoice = dao.getInvoice(Long.parseLong(invoiceId));
+        if (neInvoice != null) { // neInvoice @Table(name="NE_INVOICE")
+            result.setTrainIndex(neInvoice.getTrainIndex());
+            result.setInvoiceNumber(neInvoice.getInvcNum());
+            result.setConteinerRef(Byte.toString(neInvoice.getIsContainer()));
+            result.setDocType(neInvoice.getDocType());
+            if (neInvoice.getInvoiceDatetime() != null) {
+                Date date = new Date(neInvoice.getInvoiceDatetime().getTime());
+                result.setInvDateTime(dateFormat.format(date));
+            }
+            result.setStartStation(neInvoice.getReciveStationCode());
+            result.setStartStationName(dao.getStationName(neInvoice.getReciveStationCode(), false));
+            result.setDestStation(neInvoice.getDestStationCode());
+            result.setDestStationName(dao.getStationName(neInvoice.getDestStationCode(), false));
+        }
+
+        GngModel gngModel = getGngModel(Long.parseLong(invoiceId));
+        if (gngModel != null) {
+            result.setGngCode(gngModel.getCode());
+            result.setGngName(gngModel.getShortName1());
+        }
+        NeInvoicePrevInfo neInvoicePrevInfo = dao.getInvoicePrevInfo(Long.parseLong(invoiceId));
+        if (neInvoicePrevInfo != null) {
+            Date date = new Date(neInvoicePrevInfo.getCreateDatetime().getTime());
+            result.setCreateDate(dateFormat.format(date));
+            result.setAppoPrInf(neInvoicePrevInfo.getPrevInfoType());
+            result.setFeatureType(neInvoicePrevInfo.getPrevInfoFeatures());
+            result.setCustomOrgUn(neInvoicePrevInfo.getCustomOrgUn());
+            result.setCustomCode(neInvoicePrevInfo.getCustomCode());
+            result.setCustomName(neInvoicePrevInfo.getCustomName());
+            result.setArriveStation(neInvoicePrevInfo.getArriveStaNo());
+            if (neInvoicePrevInfo.getArriveTime() != null) {
+                result.setArrivalDate(neInvoicePrevInfo.getArriveTime());
+                result.setArrivalTime(neInvoicePrevInfo.getArriveTime());
+            }
+            neInvoicePrevInfo.getPrevInfoStatus();
+            result.setStartStaCountry(neInvoicePrevInfo.getStartStaCouNo());
+            result.setDestStationCountry(neInvoicePrevInfo.getDestStationCouNo());
+            result.setResponseMessage(neInvoicePrevInfo.getResponseText());
+        }
+        NeSmgsSenderInfo senderInfo = dao.getSenderInfo(Long.parseLong(invoiceId));
+        if (senderInfo != null) {
+            result.setSenderCountry(senderInfo.getSenderCountryCode());
+            result.setSenderCountryName(getCountryName(senderInfo.getSenderCountryCode()));
+            result.setSenderIndex(senderInfo.getSenderPostIndex());
+            result.setSenderShortNam(senderInfo.getSenderName());
+            result.setSenderName(senderInfo.getSenderFullName());
+            result.setSenderOblast(senderInfo.getSenderRegion());
+            result.setSenderPoint(senderInfo.getSenderSity());
+            result.setSenderStreetNh(senderInfo.getSenderStreet());
+            result.setSenderBIN(senderInfo.getSenderBin());
+            result.setSenderIIN(senderInfo.getSenderIin());
+            result.setSenderKpp(senderInfo.getKpp());
+            result.setSenderKatFace(senderInfo.getCategoryType());
+            NePersonCategoryType personCategoryType = getPersonCategoryType(senderInfo.getCategoryType());
+            if (personCategoryType != null) {
+                result.setSenderKatFaceCode(personCategoryType.getCategoryCode());
+                result.setSenderKatFaceName(personCategoryType.getCategoryName());
+            }
+            NeKatoType neKatoType =
+                    getKatoType(senderInfo.getKatoType() != null ? senderInfo.getKatoType().toString() : null);
+            if (neKatoType != null) {
+                result.setSenderKATO(neKatoType.getKatoCode());
+                result.setSenderKATOName(neKatoType.getKatoName());
+            }
+            result.setSenderITNreserv(senderInfo.getItn());
+        }
+        NeSmgsRecieverInfo recieverinfo = dao.getRecieverInfo(Long.parseLong(invoiceId));
+        if (recieverinfo != null) {
+            result.setRecieverCountry(recieverinfo.getRecieverCountryCode());
+            result.setRecieverCountryName(getCountryName(recieverinfo.getRecieverCountryCode()));
+            result.setRecieverIndex(recieverinfo.getRecieverPostIndex());
+            result.setRecieverShortNam(recieverinfo.getRecieverName());
+            result.setRecieverName(recieverinfo.getRecieverFullName());
+            result.setRecieverOblast(recieverinfo.getRecieverRegion());
+            result.setRecieverPoint(recieverinfo.getRecieverSity());
+            result.setRecieverStreetNh(recieverinfo.getRecieverStreet());
+            result.setRecieverBIN(recieverinfo.getRecieverBin());
+            result.setRecieverIIN(recieverinfo.getRecieverIin());
+            result.setRecieverKPP(recieverinfo.getKpp());
+            result.setRecieverKatFace(recieverinfo.getCategoryType());
+            NePersonCategoryType personCategoryType = getPersonCategoryType(recieverinfo.getCategoryType());
+            if (personCategoryType != null) {
+                result.setRecieverKatFaceCode(personCategoryType.getCategoryCode());
+                result.setRecieverKatFaceName(personCategoryType.getCategoryName());
+            }
+            NeKatoType neKatoType = getKatoType(
+                    recieverinfo.getKatoType() != null ? recieverinfo.getKatoType().toString() : null);
+            if (neKatoType != null) {
+                result.setRecieverKATO(neKatoType.getKatoCode());
+                result.setRecieverKATOName(neKatoType.getKatoName());
+            }
+            result.setRecieverITNreserv(recieverinfo.getItn());
+        }
+        NeSmgsDestinationPlaceInfo neSmgsDestinationPlaceInfo =
+                dao.getNeSmgsDestinationPlaceInfo(Long.parseLong(invoiceId));
+        if (neSmgsDestinationPlaceInfo != null) {
+            String destPlaceSta = neSmgsDestinationPlaceInfo.getDestPlaceSta();
+            result.setDestPlace(neSmgsDestinationPlaceInfo.getDestPlace());
+            result.setDestPlaceStation(destPlaceSta);
+            result.setDestPlaceStationName(dao.getStationName(destPlaceSta, true));
+            result.setDestPlaceCountryCode(neSmgsDestinationPlaceInfo.getDestPlaceCountryCode());
+            result.setDestPlaceIndex(neSmgsDestinationPlaceInfo.getDestPlaceIndex());
+            result.setDestPlacePoint(neSmgsDestinationPlaceInfo.getDestPlaceCity());
+            result.setDestPlaceOblast(neSmgsDestinationPlaceInfo.getDestPlaceRegion());
+            result.setDestPlaceStreet(neSmgsDestinationPlaceInfo.getDestPlaceStreet());
+            result.setDestPlaceCustomCode(neSmgsDestinationPlaceInfo.getDestPlaceCustomCode());
+            result.setDestPlaceCustomName(neSmgsDestinationPlaceInfo.getDestPlaceCustomName());
+            result.setDestPlaceCustomOrgUn(neSmgsDestinationPlaceInfo.getDestPlaceCustomOrgUn());
+        }
+
+        NeSmgsDeclarantInfo declarant = dao.getDeclarantInfo(Long.parseLong(invoiceId));
+        if (declarant != null) {
+            result.setDeclarantAddress(declarant.getDeclarantAddress());
+            result.setDeclarantAMNZOU(declarant.getDeclarantAMNZOU());
+            result.setDeclarantAMUNN(declarant.getDeclarantAMUNN());
+            result.setDeclarantBYIN(declarant.getDeclarantBYIN());
+            result.setDeclarantBYUNP(declarant.getDeclarantBYUNP());
+            result.setDeclarantCity(declarant.getDeclarantCity());
+            result.setDeclarantCountry(declarant.getDeclarantCountry());
+            result.setDeclarantCountryName(getCountryNameByCode(declarant.getDeclarantCountry()));
+            result.setDeclarantIndex(declarant.getDeclarantIndex());
+            result.setDeclarantKGINN(declarant.getDeclarantKGINN());
+            result.setDeclarantKGOKPO(declarant.getDeclarantKGOKPO());
+            result.setDeclarantKZBin(declarant.getDeclarantKZBin());
+            result.setDeclarantKZIin(declarant.getDeclarantKZIin());
+            result.setDeclarantKZITN(declarant.getDeclarantKZITN());
+            result.setDeclarantKZKATO(declarant.getDeclarantKZKATO());
+            result.setDeclarantKZPersonsCategory(declarant.getDeclarantKZPersonsCategory());
+            result.setDeclarantName(declarant.getDeclarantName());
+            result.setDeclarantRegion(declarant.getDeclarantRegion());
+            result.setDeclarantRUINN(declarant.getDeclarantRUINN());
+            result.setDeclarantRUKPP(declarant.getDeclarantRUKPP());
+            result.setDeclarantRUOGRN(declarant.getDeclarantRUOGRN());
+            result.setDeclarantShortName(declarant.getDeclarantShortName());
+        }
+        NeSmgsExpeditorInfo expeditor = dao.getExpeditorInfo(Long.parseLong(invoiceId));
+        if (expeditor != null) {
+            result.setExpeditorAddress(expeditor.getExpeditorAddress());
+            result.setExpeditorAMNZOU(expeditor.getExpeditorAMNZOU());
+            result.setExpeditorAMUNN(expeditor.getExpeditorAMUNN());
+            result.setExpeditorBYIN(expeditor.getExpeditorBYIN());
+            result.setExpeditorBYUNP(expeditor.getExpeditorBYUNP());
+            result.setExpeditorCity(expeditor.getExpeditorCity());
+            result.setExpeditorCountry(expeditor.getExpeditorCountry());
+            result.setExpeditorCountryName(getCountryNameByCode(expeditor.getExpeditorCountry()));
+            result.setExpeditorIndex(expeditor.getExpeditorIndex());
+            result.setExpeditorKGINN(expeditor.getExpeditorKGINN());
+            result.setExpeditorKGOKPO(expeditor.getExpeditorKGOKPO());
+            result.setExpeditorKZBin(expeditor.getExpeditorKZBin());
+            result.setExpeditorKZIin(expeditor.getExpeditorKZIin());
+            result.setExpeditorKZITN(expeditor.getExpeditorKZITN());
+            result.setExpeditorKZKATO(expeditor.getExpeditorKZKATO());
+            result.setExpeditorKZPersonsCategory(expeditor.getExpeditorKZPersonsCategory());
+            result.setExpeditorName(expeditor.getExpeditorName());
+            result.setExpeditorRegion(expeditor.getExpeditorRegion());
+            result.setExpeditorRUINN(expeditor.getExpeditorRUINN());
+            result.setExpeditorRUKPP(expeditor.getExpeditorRUKPP());
+            result.setExpeditorRUOGRN(expeditor.getExpeditorRUOGRN());
+            result.setExpeditorShortName(expeditor.getExpeditorShortName());
+        }
+        if (vesselStaUns.contains(result.getArriveStation())) {
+            NeSmgsShipList ship = dao.getNeSmgsShipList(Long.parseLong(invoiceId));
+            if (ship != null) {
+                result.setVesselUn(ship.getNeVesselUn());
+                if (ship.getNeVesselUn() != null) {
+                    NeVessel vessel = em.find(NeVessel.class, ship.getNeVesselUn());
+                    result.setVessel(new DicDao(vessel.getNeVesselUn(), vessel.getVesselName()));
+                }
+            }
+        }
+
+        if ("1".equals(result.getConteinerRef())) {
+
+            /*
+             * NeContainerLists containerLists = contList!=null && !contList.isEmpty() ? contList.get(0):null;
+             * if(containerLists != null){ result.setNumContainer(containerLists.getContainerNo());
+             * result.setContainerFilled(containerLists.getFilledContainer()); System.out.println("ManagUn " +
+             * containerLists.getManagUn()); result.setVagonAccessory(containerLists.getManagUn());
+             * result.setContainerMark(containerLists.getContainerMark());
+             * result.setContainerCode(containerLists.getConUn()); }
+             */
+            List<NeContainerLists> contList = dao.getContinerList(Long.parseLong(invoiceId));
+            for (NeContainerLists neContainerLists : contList) {
+                ContainerData container = new ContainerData();
+                container.setContainerListUn(neContainerLists.getContainerListsUn());
+                container.setNumContainer(neContainerLists.getContainerNo());
+                container.setContainerFilled(neContainerLists.getFilledContainer());
+                container.setVagonAccessory(neContainerLists.getManagUn());
+                container.setContainerMark(neContainerLists.getContainerMark());
+                container.setContainerCode(neContainerLists.getConUn());
+                result.addContainer(container);
+                Container code = em.find(Container.class, PIHelper.getLongVal(neContainerLists.getConUn()));
+                if (code != null) {
+                    result.setContainerCode(new DicDao(code.getConUn(), code.getConCode()));
+                    container.setContainerCodeName(code.getConCode());
+                }
+
+                Management mng = em.find(Management.class, neContainerLists.getManagUn());
+                if (mng != null) {
+                    Country cntry = em.find(Country.class, mng.getCouUn());
+                    if (cntry != null) {
+                        result.setContainerCountry(new DicDao(mng.getManagUn(), cntry.getCountryName()));
+                        container.setVagonAccessoryName(cntry.getCountryName());
+                    }
+                }
+            }
+        } else if ("0".equals(result.getConteinerRef())) {
+            result.setVagonAccessory(getManagUnByInvoiceUn(Long.parseLong(invoiceId)));
+        }
+        return result;
     }
 
     @Override
@@ -226,6 +472,17 @@ public class ForDataBean implements ForDataBeanLocal {
         em.flush();
     }
 
+    private Timestamp convertToTimestamp(String timestamp_str) {
+        Timestamp result = null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            result = new Timestamp(sdf.parse(timestamp_str).getTime());
+        } catch (Exception e) {
+            log.warn(e.getLocalizedMessage(), e);
+        }
+        return result;
+    }
+
     private void deleteVagonGroup(NeVagonGroup vagonGroup, Long invoiceUn) {
         if (vagonGroup != null) {
             Integer count = (Integer) em.createNativeQuery(
@@ -236,6 +493,38 @@ public class ForDataBean implements ForDataBeanLocal {
             }
         }
 
+    }
+
+    @Transactional
+    public void saveCustomsResponse(Long invoiceId, SaveDeclarationResponseType result, String uuid) {
+        try {
+            NeInvoicePrevInfo invoicePrevInfo = dao.getInvoicePrevInfo(invoiceId);
+            if (invoicePrevInfo != null && result != null
+                    && result.getValue() != null) {
+                String[] message = result.getValue().split("/n");
+                if (message.length > 0) {
+                    invoicePrevInfo.setResponseText(message[0]);
+                }
+                if (message.length > 1) {
+                    Timestamp timestamp = convertToTimestamp(message[1]);
+                    invoicePrevInfo.setResponseDatetime(timestamp);
+                }
+                if (result.getCode() != null) {
+                    Long code = null;
+                    try {
+                        code = Long.parseLong(result.getCode());
+                        invoicePrevInfo.setPrevInfoStatus((code.intValue() == 0 ? PI_STATUS_SUCCESS_SEND : PI_STATUS_FAIL_SEND));
+                    } catch (Exception e) {
+                        log.warn(e.getLocalizedMessage(), e);
+                    }
+                }
+                invoicePrevInfo.setResponseUUID(uuid);
+                em.merge(invoicePrevInfo);
+                em.flush();
+            }
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage(), e);
+        }
     }
 
     private void deleteVagonList(List<String> deletedVagon, Long invoiceUn) {
@@ -659,6 +948,90 @@ public class ForDataBean implements ForDataBeanLocal {
         neSmgsCargo.setInvUn(invoiceUn);
         // neSmgsCargo.setSenderCountry(senderCountry);
         return neSmgsCargo;
+    }
+
+    private String getCountryName(String code) {
+        List<Country> countrylist = em
+                .createQuery("select a from Country a where a.countryNo = ?1 and a.couEnd > CURRENT_TIMESTAMP",
+                        Country.class)
+                .setParameter(1, code).getResultList();
+        if (countrylist.size() > 0) {
+            return countrylist.get(0).getCountryName();
+        } else {
+            return null;
+        }
+    }
+
+    private String getCountryNameByCode(String code) {
+        if (code == null)
+            return null;
+        String sql = "select country_name from nsi.country where COU_END > current_timestamp and country_no = ?1";
+        Query q = em.createNativeQuery(sql);
+        q.setParameter(1, code);
+        String country = null;
+        try {
+            country = (String) q.getSingleResult();
+        } catch (NoResultException e) {
+        }
+
+        return country;
+    }
+
+    private NeKatoType getKatoType(String katoType) {
+        if (katoType != null) {
+            List<NeKatoType> list = em.createQuery(
+                    "select a from NeKatoType a where a.katoCode = ?1 AND a.katoEnd > CURRENT_TIMESTAMP",
+                    NeKatoType.class).setParameter(1, katoType).getResultList();
+            if (list.size() > 0) {
+                return list.get(0);
+            }
+        }
+        return null;
+    }
+
+    private Long getManagUnByInvoiceUn(Long invoiceUn) {
+        Long answer = null;
+        java.math.BigInteger s = null;
+        String sql = "select MANAGIN from nsi.MANAGEMENT where MANAG_NO in (select cast(OWNER_RAILWAYS as SMALLINT) from KTZ.NE_VAGON_LISTS where INVC_UN in(?1)) and MANAG_END>CURRENT_TIMESTAMP";
+        Query q = em.createNativeQuery(sql);
+        q.setParameter(1, invoiceUn);
+        try {
+            s = (java.math.BigInteger) q.getSingleResult();
+            answer = s.longValue();
+        } catch (NoResultException e) {
+        }
+        return answer;
+    }
+
+    private NePersonCategoryType getPersonCategoryType(Long categoryType) {
+        List<NePersonCategoryType> list = em.createQuery(
+                "select a from NePersonCategoryType a where a.categoryTypeUn = ?1 and a.categoryEnd > CURRENT_TIMESTAMP",
+                NePersonCategoryType.class).setParameter(1, categoryType).getResultList();
+        if (list.size() > 0) {
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    private GngModel getGngModel(Long invoiceUn) {
+        List<GngModel> gngModelList = null;
+        Query query = em.createNativeQuery(
+                "select a.SMGS_CARGOIN as id, a.INVIN as invoiceUn,a.GNG_CODE as code, b.CARGO_SHORTNAME1 as shortName1 from KTZ.NE_SMGS_CARGO a "
+                        + "left join NSI.CARGO_GNG b on a.GNG_CODE = b.CARGO_GROUP "
+                        + "where a.INVIN = ?1 and b.C_GN_END > current_timestamp "
+                        + "and b.CARGO_SHORTNAME1 is not null "
+                        + "fetch first 1 rows only OPTIMIZE FOR 1 ROWS ",
+                GngModel.class);
+        query.setParameter(1, invoiceUn);
+        gngModelList = query.getResultList();
+        if (gngModelList != null && gngModelList.size() > 0) {
+            if (gngModelList.get(0) == null)
+                return gngModelList.get(1);
+            return gngModelList.get(0);
+
+        }
+        return null;
     }
 
     @Override

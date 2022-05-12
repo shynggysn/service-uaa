@@ -1,5 +1,8 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
+import com.google.gson.Gson;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -8,13 +11,15 @@ import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
 import kz.ne.railways.tezcustoms.service.model.Contract;
 import kz.ne.railways.tezcustoms.service.model.FormData;
-import kz.ne.railways.tezcustoms.service.entity.NeSmgsAdditionDocuments;
+import kz.ne.railways.tezcustoms.service.entity.asudkr.NeSmgsAdditionDocuments;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.service.EcpService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.service.transitdeclaration.TransitDeclarationService;
+import kz.ne.railways.tezcustoms.service.util.ExcelReader;
 import kz.ne.railways.tezcustoms.service.util.HttpUtil;
 import kz.ne.railways.tezcustoms.service.util.SFtpSend;
 import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
@@ -25,6 +30,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.customs.information.customsdocuments.esadout_cu._5_11.ESADoutCUType;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +56,6 @@ public class ServletController {
     private final ForDataBeanLocal dataBean;
     private final HttpUtil httpUtil;
     private final SFtpSend sFtpSend;
-    private final LocalDatabase localDatabase;
 
     private Gson gson = new Gson();
 
@@ -59,6 +64,8 @@ public class ServletController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EcpService ecpService;
+    private final ExcelReader excelReader;
+    private final TransitDeclarationService td;
 
     @Operation(summary = "Sign ecp")
     @ApiResponses(value = {
@@ -86,4 +93,19 @@ public class ServletController {
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
     }
+
+    @PostMapping("/sendToAstana1")
+    public void sendToAstana1(@RequestBody String invNum) throws IOException {
+        FormData formData = dataBean.getContractData(invNum);
+
+        formData.setInvoiceData(excelReader.getInvoiceFromFile());
+
+        String name = "Altair";
+        String surname = "Aimenov";
+
+        td.send(formData.getInvoiceId(), name, surname);
+
+        log.debug(formData.getRecieverIIN());
+    }
+
 }

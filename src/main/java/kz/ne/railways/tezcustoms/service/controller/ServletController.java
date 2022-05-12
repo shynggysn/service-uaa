@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.customs.information.customsdocuments.esadout_cu._5_11.ESADoutCUType;
 
@@ -38,6 +42,12 @@ import java.util.UUID;
 @RequestMapping("/servlet")
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ServletController {
+
+    /* TODO make general encoding
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+   */
+
     private static final long serialVersionUID = 1L;
     private static final String METHOD = "method";
 
@@ -55,78 +65,16 @@ public class ServletController {
     private final ExcelReader excelReader;
     private final TransitDeclarationService td;
 
-    @GetMapping
-    @Operation(summary = "", description = "")
-    public void doGet(HttpServletRequest request, HttpServletResponse response,
-                    @RequestParam(name = METHOD, required = true) String method) throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-    }
-
-    @PostMapping
-    @Operation(summary = "", description = "")
-    public void doPost(HttpServletRequest request, HttpServletResponse response,
-                    @RequestParam(name = METHOD, required = true) String method)
-                    throws ServletException, IOException, JSchException, SftpException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-        String json = null;
-        log.debug("doPost");
-        if ("getContracts".equals(method)) {
-            json = dataBean.getContracts(); // TODO: Validate search parameter (username or id)
-        } else if ("loadContract".equals(method)) {
-            json = loadContract(request);
-        } else if ("getContractData".equals(method)) {
-            json = getContractData(request);
-        }
-
-        if (json != null)
-            response.getWriter().write(json);
-    }
-
-    private String loadContract(HttpServletRequest request) throws IOException {
-
-        FormData formData = httpUtil.getContractData(request.getParameter("startSta"), request.getParameter("destSta"),
-                        request.getParameter("expCode"), request.getParameter("invoiceNum"));
-
-        // TODO: Activate when database is connected
-         dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
-
-        byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
-
-        String docname = "Invoice Document";
-        String filename = UUID.randomUUID().toString();
-
-//        File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
-//        if (f.mkdir())
-//            log.debug("directory created");
-//        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId());
-//        if (f.mkdir())
-//            log.debug("directory created");
-//
-//        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId() + "/"
-//                        + filename);
-//        f.createNewFile();
-//
-//        FileOutputStream res = new FileOutputStream(f);
-//        res.write(arr);
-//
-//        res.close();
-
-        // TODO: Activate when FileServer is connected
-        // if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId()))
-
-        dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
-
-        return gson.toJson(formData);
-    }
-
-    private String getContractData(HttpServletRequest request) {
-        return null;
-    }
-
-    @PostMapping("/sign-ecp-data")
+    @Operation(summary = "Sign ecp")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Document successfully signed",
+                    content = { @Content(mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", description = "NOT_VALID_SIGNER: IIN/BIN is not allowed to sign this document",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content) })
+    @PostMapping("sign-ecp-data")
+    //@PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity signEcpData(@RequestBody EcpSignRequest ecpSignRequest) {
         try {
             User user = userRepository.findByEmail(SecurityUtils.getCurrentUserLogin())

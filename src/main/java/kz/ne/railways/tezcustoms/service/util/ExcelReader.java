@@ -21,6 +21,7 @@ import java.io.IOException;
 public class ExcelReader {
 
     private final ResourceLoader resourceLoader;
+
     public InvoiceData getInvoiceFromFile() throws IOException {
         InvoiceData invoiceData = new InvoiceData();
         File file = new File(String.valueOf(resourceLoader.getResource("classpath:templateForInvoice.xlsx").getFile()));

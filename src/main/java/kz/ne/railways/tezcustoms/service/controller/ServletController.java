@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
+import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
@@ -43,10 +44,10 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ServletController {
 
-    /* TODO make general encoding
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-   */
+    /*
+     * TODO make general encoding request.setCharacterEncoding("UTF-8");
+     * response.setCharacterEncoding("UTF-8");
+     */
 
     private static final long serialVersionUID = 1L;
     private static final String METHOD = "method";
@@ -57,8 +58,6 @@ public class ServletController {
 
     private Gson gson = new Gson();
 
-    private final ResourceLoader resourceLoader;
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EcpService ecpService;
@@ -68,13 +67,14 @@ public class ServletController {
     @Operation(summary = "Sign ecp")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document successfully signed",
-                    content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "400", description = "NOT_VALID_SIGNER: IIN/BIN is not allowed to sign this document",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content) })
+                            content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400",
+                            description = "NOT_VALID_SIGNER: IIN/BIN is not allowed to sign this document",
+                            content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
     @PostMapping("sign-ecp-data")
-    //@PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or
+    // hasRole('ADMIN')")
     public ResponseEntity signEcpData(@RequestBody EcpSignRequest ecpSignRequest) {
         try {
             User user = userRepository.findByEmail(SecurityUtils.getCurrentUserLogin())
@@ -93,17 +93,18 @@ public class ServletController {
     }
 
     @PostMapping("/sendToAstana1")
-    public void sendToAstana1(@RequestBody String invNum) throws IOException {
+    public void sendToAstana1(@RequestParam String invNum) throws IOException {
+        log.debug(invNum);
         FormData formData = dataBean.getContractData(invNum);
 
         formData.setInvoiceData(excelReader.getInvoiceFromFile());
 
-        String name = "Altair";
-        String surname = "Aimenov";
+        // String name = "Altair";
+        // String surname = "Aimenov";
+        log.debug("invoiceId is: " + formData.getInvoiceId());
+        SaveDeclarationResponseType result = td.sendTD(Long.parseLong(formData.getInvoiceId()));
 
-        td.send(formData.getInvoiceId(), name, surname);
-
-        log.debug(formData.getRecieverIIN());
+        log.debug(result.getValue());
     }
 
 }

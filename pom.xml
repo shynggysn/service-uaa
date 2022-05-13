@@ -143,6 +143,13 @@
         <dependency><groupId>ne.railways.previnfo</groupId><artifactId>axis</artifactId><version>1.0.0</version></dependency>
         <dependency><groupId>ne.railways.previnfo</groupId><artifactId>jaxrpc</artifactId><version>1.0.0</version></dependency>
         <dependency><groupId>ne.railways.previnfo</groupId><artifactId>EpdServiceClient</artifactId><version>1.0.0</version></dependency>
+        <dependency><groupId>ne.railways.previnfo</groupId><artifactId>commons-discovery-0.2</artifactId><version>1.0.0</version></dependency>
+
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>javax.xml.soap-api</artifactId>
+            <version>1.4.0</version>
+        </dependency>
 
     </dependencies>
 

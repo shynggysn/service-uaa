@@ -22,38 +22,41 @@ import java.util.UUID;
 public class ContractsServiceImpl implements ContractsService {
 
     private final HttpUtil httpUtil;
-    private final ResourceLoader resourceLoader;
+    // private final ResourceLoader resourceLoader;
     private final ForDataBeanLocal dataBean;
 
     @Override
-    public FormData loadContract(String startSta, String destSta, String expCode, String invoiceNum)  throws IOException {
+    public FormData loadContract(String startSta, String destSta, String expCode, String invoiceNum)
+                    throws IOException {
         log.debug(" starSta: {}\n destSta: {}\n expCode: {}\n invoiceNum: {}", startSta, destSta, expCode, invoiceNum);
         FormData formData = httpUtil.getContractData(startSta, destSta, expCode, invoiceNum);
-//        TODO: Activate when database is connected
-//        dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
+
+        dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
 
         byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
 
         String docname = "Invoice Document";
         String filename = UUID.randomUUID().toString();
 
-        File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
-        if (f.mkdir())
-            log.debug("directory created");
-        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId());
-        if (f.mkdir())
-            log.debug("directory created");
+        // File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
+        // if (f.mkdir())
+        // log.debug("directory created");
+        // f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" +
+        // formData.getInvoiceId());
+        // if (f.mkdir())
+        // log.debug("directory created");
+        //
+        // f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" +
+        // formData.getInvoiceId() + "/" + filename);
+        // f.createNewFile();
+        //
+        // FileOutputStream res = new FileOutputStream(f);
+        // res.write(arr);
+        //
+        // res.close();
 
-        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId() + "/" + filename);
-        f.createNewFile();
-
-        FileOutputStream res = new FileOutputStream(f);
-        res.write(arr);
-
-        res.close();
-
-//         TODO: Activate when FileServer is connected
-//        if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId()))
+        // TODO: Activate when FileServer is connected
+        // if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId()))
 
         dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
 

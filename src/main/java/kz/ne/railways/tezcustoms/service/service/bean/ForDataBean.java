@@ -65,7 +65,7 @@ public class ForDataBean implements ForDataBeanLocal {
 
         sqlB.append(" FROM KTZ.NE_INVOICE inv \n");
 
-        sqlWhe.append("inv.INVC_NUM = ? ");
+        sqlWhe.append("inv.INVC_NUM = ?1 ");
 
         sqlBuilder.append(sqlSelsFields);
         sqlBuilder.append(sqlB);
@@ -73,8 +73,8 @@ public class ForDataBean implements ForDataBeanLocal {
 
         Query searchPIQuery = em.createNativeQuery(sqlBuilder.toString());
         searchPIQuery.setParameter(1, invNum);
-
-        String invoiceId = String.valueOf(searchPIQuery.getSingleResult());
+        List<Long> qResult = searchPIQuery.getResultList();
+        String invoiceId = String.valueOf(qResult.get(0));
 
         FormData result = new FormData();
         result.setInvoiceId(invoiceId);
@@ -95,12 +95,12 @@ public class ForDataBean implements ForDataBeanLocal {
             result.setDestStation(neInvoice.getDestStationCode());
             result.setDestStationName(dao.getStationName(neInvoice.getDestStationCode(), false));
         }
-
-        GngModel gngModel = getGngModel(Long.parseLong(invoiceId));
-        if (gngModel != null) {
-            result.setGngCode(gngModel.getCode());
-            result.setGngName(gngModel.getShortName1());
-        }
+//
+//        GngModel gngModel = getGngModel(Long.parseLong(invoiceId));
+//        if (gngModel != null) {
+//            result.setGngCode(gngModel.getCode());
+//            result.setGngName(gngModel.getShortName1());
+//        }
         NeInvoicePrevInfo neInvoicePrevInfo = dao.getInvoicePrevInfo(Long.parseLong(invoiceId));
         if (neInvoicePrevInfo != null) {
             Date date = new Date(neInvoicePrevInfo.getCreateDatetime().getTime());
@@ -140,7 +140,7 @@ public class ForDataBean implements ForDataBeanLocal {
                 result.setSenderKatFaceName(personCategoryType.getCategoryName());
             }
             NeKatoType neKatoType =
-                    getKatoType(senderInfo.getKatoType() != null ? senderInfo.getKatoType().toString() : null);
+                            getKatoType(senderInfo.getKatoType() != null ? senderInfo.getKatoType().toString() : null);
             if (neKatoType != null) {
                 result.setSenderKATO(neKatoType.getKatoCode());
                 result.setSenderKATOName(neKatoType.getKatoName());
@@ -167,7 +167,7 @@ public class ForDataBean implements ForDataBeanLocal {
                 result.setRecieverKatFaceName(personCategoryType.getCategoryName());
             }
             NeKatoType neKatoType = getKatoType(
-                    recieverinfo.getKatoType() != null ? recieverinfo.getKatoType().toString() : null);
+                            recieverinfo.getKatoType() != null ? recieverinfo.getKatoType().toString() : null);
             if (neKatoType != null) {
                 result.setRecieverKATO(neKatoType.getKatoCode());
                 result.setRecieverKATOName(neKatoType.getKatoName());
@@ -175,7 +175,7 @@ public class ForDataBean implements ForDataBeanLocal {
             result.setRecieverITNreserv(recieverinfo.getItn());
         }
         NeSmgsDestinationPlaceInfo neSmgsDestinationPlaceInfo =
-                dao.getNeSmgsDestinationPlaceInfo(Long.parseLong(invoiceId));
+                        dao.getNeSmgsDestinationPlaceInfo(Long.parseLong(invoiceId));
         if (neSmgsDestinationPlaceInfo != null) {
             String destPlaceSta = neSmgsDestinationPlaceInfo.getDestPlaceSta();
             result.setDestPlace(neSmgsDestinationPlaceInfo.getDestPlace());
@@ -499,8 +499,7 @@ public class ForDataBean implements ForDataBeanLocal {
     public void saveCustomsResponse(Long invoiceId, SaveDeclarationResponseType result, String uuid) {
         try {
             NeInvoicePrevInfo invoicePrevInfo = dao.getInvoicePrevInfo(invoiceId);
-            if (invoicePrevInfo != null && result != null
-                    && result.getValue() != null) {
+            if (invoicePrevInfo != null && result != null && result.getValue() != null) {
                 String[] message = result.getValue().split("/n");
                 if (message.length > 0) {
                     invoicePrevInfo.setResponseText(message[0]);
@@ -513,7 +512,8 @@ public class ForDataBean implements ForDataBeanLocal {
                     Long code = null;
                     try {
                         code = Long.parseLong(result.getCode());
-                        invoicePrevInfo.setPrevInfoStatus((code.intValue() == 0 ? PI_STATUS_SUCCESS_SEND : PI_STATUS_FAIL_SEND));
+                        invoicePrevInfo.setPrevInfoStatus(
+                                        (code.intValue() == 0 ? PI_STATUS_SUCCESS_SEND : PI_STATUS_FAIL_SEND));
                     } catch (Exception e) {
                         log.warn(e.getLocalizedMessage(), e);
                     }
@@ -590,13 +590,14 @@ public class ForDataBean implements ForDataBeanLocal {
             neInvoicePrevInfo = new NeInvoicePrevInfo();
             neInvoicePrevInfo.setUserUn(formData.getUserUn());
         }
-        System.out.println("invoiceUn");
-        System.out.println(invoiceUn);
         neInvoicePrevInfo.setPrevInfoType(formData.getAppoPrInf());
-        // TODO: After transformation to combobox (customCode) sends us _UN
-        if (formData.getCustomCode() != null) {
-            neInvoicePrevInfo.setCustomOrgUn(Long.valueOf(formData.getCustomCode()));
-        }
+
+        neInvoicePrevInfo.setCustomOrgUn(formData.getCustomOrgUn());
+
+//        // TODO: After transformation to combobox (customCode) sends us _UN
+//        if (formData.getCustomCode() != null) {
+//            neInvoicePrevInfo.setCustomOrgUn(Long.valueOf(formData.getCustomCode()));
+//        }
         // neInvoicePrevInfo.setCustomCode(formData.getCustomCode());
         // neInvoicePrevInfo.setCustomName(formData.getCustomName());
         neInvoicePrevInfo.setPrevInfoFeatures(formData.getFeatureType());
@@ -952,9 +953,9 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private String getCountryName(String code) {
         List<Country> countrylist = em
-                .createQuery("select a from Country a where a.countryNo = ?1 and a.couEnd > CURRENT_TIMESTAMP",
-                        Country.class)
-                .setParameter(1, code).getResultList();
+                        .createQuery("select a from Country a where a.countryNo = ?1 and a.couEnd > CURRENT_TIMESTAMP",
+                                        Country.class)
+                        .setParameter(1, code).getResultList();
         if (countrylist.size() > 0) {
             return countrylist.get(0).getCountryName();
         } else {
@@ -980,8 +981,8 @@ public class ForDataBean implements ForDataBeanLocal {
     private NeKatoType getKatoType(String katoType) {
         if (katoType != null) {
             List<NeKatoType> list = em.createQuery(
-                    "select a from NeKatoType a where a.katoCode = ?1 AND a.katoEnd > CURRENT_TIMESTAMP",
-                    NeKatoType.class).setParameter(1, katoType).getResultList();
+                            "select a from NeKatoType a where a.katoCode = ?1 AND a.katoEnd > CURRENT_TIMESTAMP",
+                            NeKatoType.class).setParameter(1, katoType).getResultList();
             if (list.size() > 0) {
                 return list.get(0);
             }
@@ -992,7 +993,7 @@ public class ForDataBean implements ForDataBeanLocal {
     private Long getManagUnByInvoiceUn(Long invoiceUn) {
         Long answer = null;
         java.math.BigInteger s = null;
-        String sql = "select MANAGIN from nsi.MANAGEMENT where MANAG_NO in (select cast(OWNER_RAILWAYS as SMALLINT) from KTZ.NE_VAGON_LISTS where INVC_UN in(?1)) and MANAG_END>CURRENT_TIMESTAMP";
+        String sql = "select MANAG_UN from nsi.MANAGEMENT where MANAG_NO in (select cast(OWNER_RAILWAYS as SMALLINT) from KTZ.NE_VAGON_LISTS where INVC_UN in(?1)) and MANAG_END>CURRENT_TIMESTAMP";
         Query q = em.createNativeQuery(sql);
         q.setParameter(1, invoiceUn);
         try {
@@ -1005,8 +1006,8 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private NePersonCategoryType getPersonCategoryType(Long categoryType) {
         List<NePersonCategoryType> list = em.createQuery(
-                "select a from NePersonCategoryType a where a.categoryTypeUn = ?1 and a.categoryEnd > CURRENT_TIMESTAMP",
-                NePersonCategoryType.class).setParameter(1, categoryType).getResultList();
+                        "select a from NePersonCategoryType a where a.categoryTypeUn = ?1 and a.categoryEnd > CURRENT_TIMESTAMP",
+                        NePersonCategoryType.class).setParameter(1, categoryType).getResultList();
         if (list.size() > 0) {
             return list.get(0);
         } else {
@@ -1017,12 +1018,12 @@ public class ForDataBean implements ForDataBeanLocal {
     private GngModel getGngModel(Long invoiceUn) {
         List<GngModel> gngModelList = null;
         Query query = em.createNativeQuery(
-                "select a.SMGS_CARGOIN as id, a.INVIN as invoiceUn,a.GNG_CODE as code, b.CARGO_SHORTNAME1 as shortName1 from KTZ.NE_SMGS_CARGO a "
-                        + "left join NSI.CARGO_GNG b on a.GNG_CODE = b.CARGO_GROUP "
-                        + "where a.INVIN = ?1 and b.C_GN_END > current_timestamp "
-                        + "and b.CARGO_SHORTNAME1 is not null "
-                        + "fetch first 1 rows only OPTIMIZE FOR 1 ROWS ",
-                GngModel.class);
+                        "select a.SMGS_CARGO_UN as id, a.INV_UN as invoiceUn,a.GNG_CODE as code, b.CARGO_SHORTNAME1 as shortName1 from KTZ.NE_SMGS_CARGO a "
+                                        + "left join NSI.CARGO_GNG b on a.GNG_CODE = b.CARGO_GROUP "
+                                        + "where a.INV_UN = ?1 and b.C_GN_END > current_timestamp "
+                                        + "and b.CARGO_SHORTNAME1 is not null "
+                                        + "fetch first 1 rows only",
+                        GngModel.class);
         query.setParameter(1, invoiceUn);
         gngModelList = query.getResultList();
         if (gngModelList != null && gngModelList.size() > 0) {

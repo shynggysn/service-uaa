@@ -14,6 +14,5 @@ public class InvoiceRow {
     private String brutto;
     private String price;
 
-    public InvoiceRow() {
-    }
+    public InvoiceRow() {}
 }

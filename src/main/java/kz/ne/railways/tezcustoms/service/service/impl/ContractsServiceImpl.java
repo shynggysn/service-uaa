@@ -31,31 +31,32 @@ public class ContractsServiceImpl implements ContractsService {
         FormData formData = httpUtil.getContractData(startSta, destSta, expCode, invoiceNum);
 //        TODO: Activate when database is connected
 //        dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
+        if (formData != null){
+            byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
 
-        byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
+            String docname = "Invoice Document";
+            String filename = UUID.randomUUID().toString();
 
-        String docname = "Invoice Document";
-        String filename = UUID.randomUUID().toString();
+            File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
+            if (f.mkdir())
+                log.debug("directory created");
+            f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId());
+            if (f.mkdir())
+                log.debug("directory created");
 
-        File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
-        if (f.mkdir())
-            log.debug("directory created");
-        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId());
-        if (f.mkdir())
-            log.debug("directory created");
+            f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId() + "/" + filename);
+            f.createNewFile();
 
-        f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" + formData.getInvoiceId() + "/" + filename);
-        f.createNewFile();
+            FileOutputStream res = new FileOutputStream(f);
+            res.write(arr);
 
-        FileOutputStream res = new FileOutputStream(f);
-        res.write(arr);
-
-        res.close();
+            res.close();
 
 //         TODO: Activate when FileServer is connected
 //        if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId()))
 
-        dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
+            dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
+        }
 
         return formData;
     }

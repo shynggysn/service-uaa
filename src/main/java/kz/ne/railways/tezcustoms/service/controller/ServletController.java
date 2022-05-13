@@ -33,6 +33,7 @@ import ru.customs.information.customsdocuments.esadout_cu._5_11.ESADoutCUType;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.*;
 import java.util.Date;
 import java.util.UUID;
@@ -75,7 +76,7 @@ public class ServletController {
                     content = @Content) })
     @PostMapping("sign-ecp-data")
     //@PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity signEcpData(@RequestBody EcpSignRequest ecpSignRequest) {
+    public ResponseEntity signEcpData(@Valid @RequestBody EcpSignRequest ecpSignRequest) {
         try {
             User user = userRepository.findByEmail(SecurityUtils.getCurrentUserLogin())
                             .orElseThrow(() -> new ResourceNotFoundException("User not found."));

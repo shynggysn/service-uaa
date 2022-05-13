@@ -50,7 +50,7 @@ public class ExcelReader {
                 invoiceRow.setQuantity(formatter.formatCellValue(row.getCell(4)));
                 invoiceRow.setNetto(formatter.formatCellValue(row.getCell(5)));
                 invoiceRow.setBrutto(formatter.formatCellValue(row.getCell(6)));
-                invoiceRow.setBrutto(formatter.formatCellValue(row.getCell(7)));
+                invoiceRow.setPrice(formatter.formatCellValue(row.getCell(7)));
 
                 invoiceData.addInvoiceItems(invoiceRow);
             }

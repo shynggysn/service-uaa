@@ -11,8 +11,8 @@ import kz.ne.railways.tezcustoms.service.service.bean.ForDataBean;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import kz.ne.railways.tezcustoms.service.service.bean.PrevInfoBeanDAOLocal;
 import kz.ne.railways.tezcustoms.service.util.PredInfoSender;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.axis.AxisFault;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
+@Slf4j
 public class TransitDeclarationService implements TransitDeclarationServiceLocal {
 	public static final String GNG_ERROR = "Код товара не найден в классификаторе или не действителен";
 	public static final String GNG_FIND_START = "(индекс элемента:";
@@ -70,8 +71,6 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
 	public void setUiid(String ui) {
 		this.uuid = ui;
 	}
-
-	private static final Logger log = Logger.getLogger(TransitDeclarationService.class);
 
 	@Autowired
 	private PrevInfoBeanDAOLocal dao;

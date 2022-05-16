@@ -102,7 +102,7 @@ public class ServletController {
         // String name = "Altair";
         // String surname = "Aimenov";
         log.debug("invoiceId is: " + formData.getInvoiceId());
-        SaveDeclarationResponseType result = td.sendTD(Long.parseLong(formData.getInvoiceId()));
+        SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
 
         log.debug(result.getValue());
     }

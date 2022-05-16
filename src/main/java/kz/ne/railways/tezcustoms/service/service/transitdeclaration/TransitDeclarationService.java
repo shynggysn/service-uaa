@@ -2076,28 +2076,50 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
      * exn.printStackTrace(); } } } } } return result; }
      */
 
-    /*
-     * Send TD to service
-     */
-    public SaveDeclarationResponseType sendTD(Long invoiceUn) {
+    public SaveDeclarationResponseType send(Long invoiceUn) {
         SaveDeclarationResponseType result = null;
 
         if (invoiceUn != null) {
-            PIRWInformationCUType sendData = makeData(invoiceUn);
-            uuid = sendData.getUINP();
+            user = new User("Altair", "Aimenov");
+
+            ESADoutCUType tdDoc = build(invoiceUn);
+            if(tdDoc != null) {
+                //	System.out.println( td.getXml(tdDoc) );
+                result = sendTD(invoiceUn);
+            }
+            if (result != null && result.getValue() != null) {
+                String str = result.getValue().replaceAll("(\\r|\\n)", "<br>").replaceAll("\"", "'");
+
+                if (str != null && str.length() > 250)
+                    str = str.substring(0, 250);
+
+                result.setValue(str);
+
+                dataBean.saveCustomsResponse(invoiceUn, result, uuid);
+            }
+        }
+        return result;
+    }
+
+    /*
+     * Send TD to service
+     */
+    public SaveDeclarationResponseType sendTD(long invoiceUn) {
+        this.invoiceUn = invoiceUn;
+        SaveDeclarationResponseType result = readData();
+
+        if (sender != null) {
+            //ESADoutCUType sendData = makeDataTD(invoiceUn);
+
+            this.result.setRefDocumentID( UUID.randomUUID().toString() );
+            this.uuid = this.result.getRefDocumentID();
+
             boolean ex = true;
             while (ex) {
                 ex = false;
-                result = sender.send(sendData);
-                if (isGngError(result)) {
-                    sendData = changeGng(result, sendData);
-                    ex = true;
-                }
+                result = sender.sendTD(this.result);
             }
-        } else {
-            result = PredInfoSender.getError();
         }
-        dataBean.saveCustomsResponse(invoiceUn, result, uuid);
         return result;
     }
 

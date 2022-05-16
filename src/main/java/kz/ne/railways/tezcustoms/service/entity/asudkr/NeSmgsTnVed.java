@@ -4,7 +4,6 @@ package kz.ne.railways.tezcustoms.service.entity.asudkr;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -28,20 +27,20 @@ public class NeSmgsTnVed {
     private String productDescriptionAdd;
 
     @Column(name = "COUNT_BY_UNIT")
-    private BigDecimal countByUnit;
+    private String countByUnit;
 
     @Column(name = "UNIT_NAME")
     private String unitName;
 
     @Column(name = "PLACE_CARGO_COUNT")
-    private BigDecimal placeCargoCount;
+    private String placeCargoCount;
 
     //TODO: REMOVE
     @Column(name = "PACKING_COUNT")
-    private BigDecimal packingCount;
+    private String packingCount;
 
     @Column(name = "PAKAGE_PART_QUANTITY")
-    private BigDecimal packagePartQuantity;
+    private String packagePartQuantity;
 
     @Column(name = "PACKING_NAME")
     private Long packingName;
@@ -50,19 +49,19 @@ public class NeSmgsTnVed {
     private String placeCargoMark;
 
     @Column(name = "NETTO_WEIGHT")
-    private BigDecimal nettoWeight;
+    private String nettoWeight;
 
     @Column(name = "BRUTTO_WEIGHT")
-    private BigDecimal bruttoWeight;
+    private String bruttoWeight;
 
     @Column(name = "PRICE_BY_ONE")
-    private BigDecimal priceByOne;
+    private String priceByOne;
 
     @Column(name = "PRICE_BY_FULL")
-    private BigDecimal priceByFull;
+    private String priceByFull;
 
     @Column(name = "CURRENCY_CODE_UN")
-    private Long currencyCodeUn;
+    private String currencyCodeUn;
 
     @Column(name = "CONTAINER", length = 2048)
     private String container;
@@ -77,6 +76,6 @@ public class NeSmgsTnVed {
     private String tnVedCountry;
 
     @Column(name = "TN_VED_IS_ARMY")
-    private Short tnVedIsArmy;
+    private String tnVedIsArmy;
 
 }

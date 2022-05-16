@@ -91,7 +91,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
     public NeInvoicePrevInfo invoicePrevInfo;
     public List<NeVagonLists> vagonLists;
     public List<NeContainerLists> containerList;
-    private List<TnVedRow> tnVedList;
+    private List<NeSmgsTnVed> tnVedList;
     private NeSmgsSenderInfo senderInfo;
     private NeSmgsRecieverInfo recieverInfo;
     private NeSmgsCargo neSmgsCargo = null;

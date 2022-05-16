@@ -93,16 +93,14 @@ public class ServletController {
             FormData formData = dataBean.getContractData(invNum);
             log.debug(formData.toString());
 
-            formData.setInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()));
+            dataBean.saveInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()), Long.parseLong(formData.getInvoiceId()));
             log.debug(formData.getInvoiceData().toString());
 
-        // String name = "Altair";
-        // String surname = "Aimenov";
-        log.debug("invoiceId is: " + formData.getInvoiceId());
-        SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
+            log.debug("invoiceId is: " + formData.getInvoiceId());
+            SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
 
-        log.debug(result.getValue());
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Successfully sent to Astana 1."));
+            log.debug(result.getValue());
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
     }

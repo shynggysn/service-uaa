@@ -15,7 +15,7 @@ public class NeSmgsTnVed {
     private Long smgsTnVedUn;
 
     @Column(name = "INVOICE_UN")
-    private String invoiceUn;
+    private Long invoiceUn;
 
     @Column(name = "TN_VED_CODE", length = 25)
     private String tnVedCode;

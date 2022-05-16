@@ -1,8 +1,8 @@
 /**
  * SaveDeclarationRequestType.java
  *
- * This file was auto-generated from WSDL
- * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ * This file was auto-generated from WSDL by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT)
+ * WSDL2Java emitter.
  */
 
 package kz.ne.railways.tezcustoms.service.model.transitdeclaration;
@@ -11,7 +11,7 @@ package kz.ne.railways.tezcustoms.service.model.transitdeclaration;
 /**
  * Запрос на сожранение декларации в БД
  */
-public class SaveDeclarationRequestType  implements java.io.Serializable {
+public class SaveDeclarationRequestType implements java.io.Serializable {
     /* Имя пользователя (login) */
     private String username;
 
@@ -24,25 +24,20 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /* Содержимое декларации */
     private String xml;
 
-    public SaveDeclarationRequestType() {
-    }
+    public SaveDeclarationRequestType() {}
 
-    public SaveDeclarationRequestType(
-           String username,
-           String password,
-           String customsCode,
-           String xml) {
-           this.username = username;
-           this.password = password;
-           this.customsCode = customsCode;
-           this.xml = xml;
+    public SaveDeclarationRequestType(String username, String password, String customsCode, String xml) {
+        this.username = username;
+        this.password = password;
+        this.customsCode = customsCode;
+        this.xml = xml;
     }
 
 
     /**
      * Gets the username value for this SaveDeclarationRequestType.
      * 
-     * @return username   * Имя пользователя (login)
+     * @return username * Имя пользователя (login)
      */
     public String getUsername() {
         return username;
@@ -52,7 +47,7 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /**
      * Sets the username value for this SaveDeclarationRequestType.
      * 
-     * @param username   * Имя пользователя (login)
+     * @param username * Имя пользователя (login)
      */
     public void setUsername(String username) {
         this.username = username;
@@ -62,7 +57,7 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /**
      * Gets the password value for this SaveDeclarationRequestType.
      * 
-     * @return password   * Пароль пользователя
+     * @return password * Пароль пользователя
      */
     public String getPassword() {
         return password;
@@ -72,7 +67,7 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /**
      * Sets the password value for this SaveDeclarationRequestType.
      * 
-     * @param password   * Пароль пользователя
+     * @param password * Пароль пользователя
      */
     public void setPassword(String password) {
         this.password = password;
@@ -82,7 +77,7 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /**
      * Gets the customsCode value for this SaveDeclarationRequestType.
      * 
-     * @return customsCode   * Код таможенного органа
+     * @return customsCode * Код таможенного органа
      */
     public String getCustomsCode() {
         return customsCode;
@@ -92,7 +87,7 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /**
      * Sets the customsCode value for this SaveDeclarationRequestType.
      * 
-     * @param customsCode   * Код таможенного органа
+     * @param customsCode * Код таможенного органа
      */
     public void setCustomsCode(String customsCode) {
         this.customsCode = customsCode;
@@ -102,7 +97,7 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /**
      * Gets the xml value for this SaveDeclarationRequestType.
      * 
-     * @return xml   * Содержимое декларации
+     * @return xml * Содержимое декларации
      */
     public String getXml() {
         return xml;
@@ -112,41 +107,41 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /**
      * Sets the xml value for this SaveDeclarationRequestType.
      * 
-     * @param xml   * Содержимое декларации
+     * @param xml * Содержимое декларации
      */
     public void setXml(String xml) {
         this.xml = xml;
     }
 
     private Object __equalsCalc = null;
+
     public synchronized boolean equals(Object obj) {
-        if (!(obj instanceof SaveDeclarationRequestType)) return false;
+        if (!(obj instanceof SaveDeclarationRequestType))
+            return false;
         SaveDeclarationRequestType other = (SaveDeclarationRequestType) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null)
+            return false;
+        if (this == obj)
+            return true;
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.username==null && other.getUsername()==null) || 
-             (this.username!=null &&
-              this.username.equals(other.getUsername()))) &&
-            ((this.password==null && other.getPassword()==null) || 
-             (this.password!=null &&
-              this.password.equals(other.getPassword()))) &&
-            ((this.customsCode==null && other.getCustomsCode()==null) || 
-             (this.customsCode!=null &&
-              this.customsCode.equals(other.getCustomsCode()))) &&
-            ((this.xml==null && other.getXml()==null) || 
-             (this.xml!=null &&
-              this.xml.equals(other.getXml())));
+        _equals = true && ((this.username == null && other.getUsername() == null)
+                        || (this.username != null && this.username.equals(other.getUsername())))
+                        && ((this.password == null && other.getPassword() == null)
+                                        || (this.password != null && this.password.equals(other.getPassword())))
+                        && ((this.customsCode == null && other.getCustomsCode() == null) || (this.customsCode != null
+                                        && this.customsCode.equals(other.getCustomsCode())))
+                        && ((this.xml == null && other.getXml() == null)
+                                        || (this.xml != null && this.xml.equals(other.getXml())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -171,10 +166,11 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(SaveDeclarationRequestType.class, true);
+                    new org.apache.axis.description.TypeDesc(SaveDeclarationRequestType.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://new.webservice.namespace", "SaveDeclarationRequestType"));
+        typeDesc.setXmlType(
+                        new javax.xml.namespace.QName("http://new.webservice.namespace", "SaveDeclarationRequestType"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("username");
         elemField.setXmlName(new javax.xml.namespace.QName("http://new.webservice.namespace", "username"));
@@ -212,25 +208,17 @@ public class SaveDeclarationRequestType  implements java.io.Serializable {
     /**
      * Get Custom Serializer
      */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           String mechType,
-           Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Serializer getSerializer(String mechType, Class _javaType,
+                    javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(_javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           String mechType,
-           Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Deserializer getDeserializer(String mechType, Class _javaType,
+                    javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(_javaType, _xmlType, typeDesc);
     }
 
 }

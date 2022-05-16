@@ -1,25 +1,22 @@
 /**
  * SaveDeclarationResponseType.java
  *
- * This file was auto-generated from WSDL
- * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ * This file was auto-generated from WSDL by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT)
+ * WSDL2Java emitter.
  */
 
 package kz.ne.railways.tezcustoms.service.model.transitdeclaration;
 
-public class SaveDeclarationResponseType  implements java.io.Serializable {
+public class SaveDeclarationResponseType implements java.io.Serializable {
     private String code;
 
     private String value;
 
-    public SaveDeclarationResponseType() {
-    }
+    public SaveDeclarationResponseType() {}
 
-    public SaveDeclarationResponseType(
-           String code,
-           String value) {
-           this.code = code;
-           this.value = value;
+    public SaveDeclarationResponseType(String code, String value) {
+        this.code = code;
+        this.value = value;
     }
 
 
@@ -63,28 +60,30 @@ public class SaveDeclarationResponseType  implements java.io.Serializable {
     }
 
     private Object __equalsCalc = null;
+
     public synchronized boolean equals(Object obj) {
-        if (!(obj instanceof SaveDeclarationResponseType)) return false;
+        if (!(obj instanceof SaveDeclarationResponseType))
+            return false;
         SaveDeclarationResponseType other = (SaveDeclarationResponseType) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null)
+            return false;
+        if (this == obj)
+            return true;
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.code==null && other.getCode()==null) || 
-             (this.code!=null &&
-              this.code.equals(other.getCode()))) &&
-            ((this.value==null && other.getValue()==null) || 
-             (this.value!=null &&
-              this.value.equals(other.getValue())));
+        _equals = true && ((this.code == null && other.getCode() == null)
+                        || (this.code != null && this.code.equals(other.getCode())))
+                        && ((this.value == null && other.getValue() == null)
+                                        || (this.value != null && this.value.equals(other.getValue())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -103,10 +102,11 @@ public class SaveDeclarationResponseType  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(SaveDeclarationResponseType.class, true);
+                    new org.apache.axis.description.TypeDesc(SaveDeclarationResponseType.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://new.webservice.namespace", "SaveDeclarationResponseType"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("http://new.webservice.namespace",
+                        "SaveDeclarationResponseType"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("code");
         elemField.setXmlName(new javax.xml.namespace.QName("http://new.webservice.namespace", "code"));
@@ -131,25 +131,17 @@ public class SaveDeclarationResponseType  implements java.io.Serializable {
     /**
      * Get Custom Serializer
      */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           String mechType,
-           Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Serializer getSerializer(String mechType, Class _javaType,
+                    javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(_javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           String mechType,
-           Class _javaType,
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+    public static org.apache.axis.encoding.Deserializer getDeserializer(String mechType, Class _javaType,
+                    javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(_javaType, _xmlType, typeDesc);
     }
 
 }

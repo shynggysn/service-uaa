@@ -27,9 +27,9 @@ import java.io.IOException;
 @Slf4j
 public class ContractController {
 
-    /* TODO make general encoding
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
+    /*
+     * TODO make general encoding request.setCharacterEncoding("UTF-8");
+     * response.setCharacterEncoding("UTF-8");
      */
 
     private static final long serialVersionUID = 1L;
@@ -41,39 +41,36 @@ public class ContractController {
     @Operation(summary = "Get a contracts list")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the contracts list",
-                    content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "400", description = "Invalid parameters supplied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Contracts not found",
-                    content = @Content) })
+                            content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Contracts not found", content = @Content)})
     @GetMapping("")
-    public String getContracts(){
+    public String getContracts() {
         return dataBean.getContracts();
     }
 
     @Operation(summary = "Load a contract from ASU DKR")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Contract successfully loaded",
-                    content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "400", description = "Invalid parameters supplied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Contract not found",
-                    content = @Content) })
+                            content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")
     public FormData loadContract(@Valid @RequestBody InvoiceRequestDto requestDto) throws IOException {
         log.debug("In loadContract...");
-        return contractsService.loadContract(requestDto.getStartSta(), requestDto.getDestSta(), requestDto.getExpCode(), requestDto.getInvoiceNum());
+        return contractsService.loadContract(requestDto.getStartSta(), requestDto.getDestSta(), requestDto.getExpCode(),
+                        requestDto.getInvoiceNum());
     }
 
     @Operation(summary = "Check logs in console")
     @GetMapping("check")
     private void check() {
         log.debug("Contracts:");
-        for (Contract contract: localDatabase.contractList)
+        for (Contract contract : localDatabase.contractList)
             log.debug(contract.getInvoiceId());
 
         log.debug("\nDocuments:");
-        for (NeSmgsAdditionDocuments document: localDatabase.documents)
+        for (NeSmgsAdditionDocuments document : localDatabase.documents)
             log.debug(document.getInvUn() + "");
     }
 

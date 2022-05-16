@@ -3,6 +3,7 @@ package kz.ne.railways.tezcustoms.service.service.bean;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.DataCaneVagInfo;
 import kz.ne.railways.tezcustoms.service.model.VagonItem;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,37 +15,38 @@ import javax.persistence.Query;
 import java.util.*;
 
 @Service
+@Slf4j
 public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     @PersistenceContext
     private EntityManager em;
 
     public Integer existLikeInvoiceByNumAndSta(Long invoiceId) {
-        Integer count = 0; //Если 0 даем отправить!
+        Integer count = 0; // Если 0 даем отправить!
 
-		/*-->TDG-5086 Ввиду совершенствования логики определения дублированных из ПИ и IFTMIN, приостановить публикацию на промышленный сервер задачи 4763
-		NeInvoice invoicePI = getInvoice(invoiceId);
-		if (invoicePI!=null && invoicePI.getInvcNum()!=null && invoicePI.getReciveStationCode()!=null && invoicePI.getDestStationCode()!=null) {
-			String sqlText = "";
-
-			sqlText = "SELECT count(*) AS cnt FROM KTZ.NE_INVOICE ni " +
-					"INNER JOIN ktz.NE_INVOICE_INFO nii ON nii.INVOICE_UN = ni.INVC_UN " +
-					"WHERE ni.INVC_NUM = '" + invoicePI.getInvcNum() + "' " +
-					"AND ni.DEST_STATION_CODE = '" + invoicePI.getDestStationCode() + "' " +
-					"AND ni.RECIVE_STATION_CODE = '" + invoicePI.getReciveStationCode() + "' " +
-					"AND nii.INVOICE_CREATED_BY = 'IFTMIN' " +
-					"AND ni.INVOICE_DATETIME > CURRENT_TIMESTAMP - 1 MONTH ";
-
-			try {
-				System.out.println("* * * existLikeInvoiceByNumAndSta * * *  " + sqlText);
-				count = (Integer) em.createNativeQuery(sqlText).getSingleResult();
-			} catch (NoResultException e) {
-			}
-			System.out.println("* * * existLikeInvoiceByNumAndSta * * *  count = " + count);
-			count = (count==null ? 0 : count);
-		}
-		System.out.println("* * * existLikeInvoiceByNumAndSta * * *  count = " + count);
-		*/
+        /*-->TDG-5086 Ввиду совершенствования логики определения дублированных из ПИ и IFTMIN, приостановить публикацию на промышленный сервер задачи 4763
+        NeInvoice invoicePI = getInvoice(invoiceId);
+        if (invoicePI!=null && invoicePI.getInvcNum()!=null && invoicePI.getReciveStationCode()!=null && invoicePI.getDestStationCode()!=null) {
+        	String sqlText = "";
+        
+        	sqlText = "SELECT count(*) AS cnt FROM KTZ.NE_INVOICE ni " +
+        			"INNER JOIN ktz.NE_INVOICE_INFO nii ON nii.INVOICE_UN = ni.INVC_UN " +
+        			"WHERE ni.INVC_NUM = '" + invoicePI.getInvcNum() + "' " +
+        			"AND ni.DEST_STATION_CODE = '" + invoicePI.getDestStationCode() + "' " +
+        			"AND ni.RECIVE_STATION_CODE = '" + invoicePI.getReciveStationCode() + "' " +
+        			"AND nii.INVOICE_CREATED_BY = 'IFTMIN' " +
+        			"AND ni.INVOICE_DATETIME > CURRENT_TIMESTAMP - 1 MONTH ";
+        
+        	try {
+        		System.out.println("* * * existLikeInvoiceByNumAndSta * * *  " + sqlText);
+        		count = (Integer) em.createNativeQuery(sqlText).getSingleResult();
+        	} catch (NoResultException e) {
+        	}
+        	System.out.println("* * * existLikeInvoiceByNumAndSta * * *  count = " + count);
+        	count = (count==null ? 0 : count);
+        }
+        System.out.println("* * * existLikeInvoiceByNumAndSta * * *  count = " + count);
+        */
 
         return count;
     }
@@ -163,17 +165,17 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public NeCustomsOrgs getCustomsOrgs(Long customOrgUn) {
+        log.debug("customOrgUn is: " + customOrgUn);
         List<NeCustomsOrgs> list = em.createQuery("select a from NeCustomsOrgs a where a.customsOrgUn = ?1")
-                .setParameter(1,customOrgUn)
-                .getResultList();
-        if(list != null && list.size() > 0) {
+                        .setParameter(1, customOrgUn).getResultList();
+        if (list != null && list.size() > 0) {
             return list.get(0);
         }
         return null;
     }
 
     public CurrencyCode getCurrencyCode(long curCodeUn) {
-        return em.find(CurrencyCode.class,curCodeUn);
+        return em.find(CurrencyCode.class, curCodeUn);
     }
 
     public List<CurrencyCode> getCurrencyCodeList(Date date) {
@@ -200,10 +202,8 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public List<NeCurrencyRates> getRates(Date date) {
         String sql = "select * from NSI.NE_CURRENCY_RATES where (? between RATE_BGN and RATE_END) and CURRENCU_CODE_UN IN (select b.CUR_CODE_UN from nsi.CURRENCY_CODE b where ? between b.CUR_CODE_BGN and b.CUR_CODE_END)";
-        List<NeCurrencyRates> list = em.createNativeQuery(sql, NeCurrencyRates.class)
-                .setParameter(1, date)
-                .setParameter(2, date)
-                .getResultList();
+        List<NeCurrencyRates> list = em.createNativeQuery(sql, NeCurrencyRates.class).setParameter(1, date)
+                        .setParameter(2, date).getResultList();
         return list;
     }
 
@@ -525,8 +525,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public List<NeUnitType> getUnitType() {
-        return em.createQuery("select a from NeUnitType a ")
-                .getResultList();
+        return em.createQuery("select a from NeUnitType a ").getResultList();
     }
 
     public Country getCountryBycode(String countryCode) {

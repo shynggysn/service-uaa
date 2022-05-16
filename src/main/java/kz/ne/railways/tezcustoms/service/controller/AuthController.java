@@ -53,9 +53,8 @@ public class AuthController {
     @Operation(summary = "Sign in")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully signed in",
-                    content = { @Content(mediaType = "application/json") }),
-            @ApiResponse(responseCode = "400", description = "Invalid credentials",
-                    content = @Content)})
+                            content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content)})
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -77,9 +76,8 @@ public class AuthController {
     }
 
     @Operation(summary = "Sign up")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully signed up",
-                    content = { @Content(mediaType = "application/json") })})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully signed up",
+                    content = {@Content(mediaType = "application/json")})})
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         try {

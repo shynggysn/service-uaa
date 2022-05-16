@@ -11,24 +11,27 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ExcelReader {
 
     private final ResourceLoader resourceLoader;
+    public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-    public InvoiceData getInvoiceFromFile() throws IOException {
+    public InvoiceData getInvoiceFromFile(InputStream file) throws IOException {
         InvoiceData invoiceData = new InvoiceData();
-        File file = new File(String.valueOf(resourceLoader.getResource("classpath:templateForInvoice.xlsx").getFile()));
+//        File file = new File(String.valueOf(resourceLoader.getResource("classpath:templateForInvoice.xlsx").getFile()));
         try {
-            FileInputStream inputStream = new FileInputStream(file);
+//            FileInputStream inputStream = new FileInputStream(file);
 
-            Workbook baeuldungWorkBook = new XSSFWorkbook(inputStream);
+            Workbook baeuldungWorkBook = new XSSFWorkbook(file);
             DataFormatter formatter = new DataFormatter();
             Sheet sheet = baeuldungWorkBook.getSheetAt(0);
             invoiceData.setInvoiceNumber(sheet.getRow(0).getCell(3).getStringCellValue());
@@ -51,16 +54,23 @@ public class ExcelReader {
                 invoiceRow.setQuantity(formatter.formatCellValue(row.getCell(4)));
                 invoiceRow.setNetto(formatter.formatCellValue(row.getCell(5)));
                 invoiceRow.setBrutto(formatter.formatCellValue(row.getCell(6)));
-                invoiceRow.setBrutto(formatter.formatCellValue(row.getCell(7)));
+                invoiceRow.setPrice(formatter.formatCellValue(row.getCell(7)));
 
                 invoiceData.addInvoiceItems(invoiceRow);
             }
 
-            inputStream.close();
+            file.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return invoiceData;
+    }
+
+    public static boolean hasExcelFormat(MultipartFile file) {
+        if (!TYPE.equals(file.getContentType())) {
+            return false;
+        }
+        return true;
     }
 }

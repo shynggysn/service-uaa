@@ -26,17 +26,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.customs.information.customsdocuments.esadout_cu._5_11.ESADoutCUType;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.multipart.MultipartFile;
+import javax.validation.Valid;
 import java.io.*;
-import java.util.Date;
-import java.util.UUID;
+import java.sql.SQLOutput;
 
 @Slf4j
 @RestController
@@ -73,9 +69,8 @@ public class ServletController {
                             content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
     @PostMapping("sign-ecp-data")
-    // @PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or
-    // hasRole('ADMIN')")
-    public ResponseEntity signEcpData(@RequestBody EcpSignRequest ecpSignRequest) {
+    //@PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity signEcpData(@Valid @RequestBody EcpSignRequest ecpSignRequest) {
         try {
             User user = userRepository.findByEmail(SecurityUtils.getCurrentUserLogin())
                             .orElseThrow(() -> new ResourceNotFoundException("User not found."));
@@ -93,11 +88,13 @@ public class ServletController {
     }
 
     @PostMapping("/sendToAstana1")
-    public void sendToAstana1(@RequestParam String invNum) throws IOException {
-        log.debug(invNum);
-        FormData formData = dataBean.getContractData(invNum);
+    public ResponseEntity<MessageResponse> sendToAstana1(@RequestParam("invNum")String invNum, @RequestParam("file") MultipartFile file) throws IOException {
+        if (ExcelReader.hasExcelFormat(file)){
+            FormData formData = dataBean.getContractData(invNum);
+            log.debug(formData.toString());
 
-        formData.setInvoiceData(excelReader.getInvoiceFromFile());
+            formData.setInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()));
+            log.debug(formData.getInvoiceData().toString());
 
         // String name = "Altair";
         // String surname = "Aimenov";
@@ -105,6 +102,8 @@ public class ServletController {
         SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
 
         log.debug(result.getValue());
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Successfully sent to Astana 1."));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
     }
-
 }

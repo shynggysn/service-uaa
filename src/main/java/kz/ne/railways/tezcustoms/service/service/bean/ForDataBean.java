@@ -95,12 +95,12 @@ public class ForDataBean implements ForDataBeanLocal {
             result.setDestStation(neInvoice.getDestStationCode());
             result.setDestStationName(dao.getStationName(neInvoice.getDestStationCode(), false));
         }
-//
-//        GngModel gngModel = getGngModel(Long.parseLong(invoiceId));
-//        if (gngModel != null) {
-//            result.setGngCode(gngModel.getCode());
-//            result.setGngName(gngModel.getShortName1());
-//        }
+
+        GngModel gngModel = getGngModel(Long.parseLong(invoiceId));
+        if (gngModel != null) {
+            result.setGngCode(gngModel.getCode());
+            result.setGngName(gngModel.getShortName1());
+        }
         NeInvoicePrevInfo neInvoicePrevInfo = dao.getInvoicePrevInfo(Long.parseLong(invoiceId));
         if (neInvoicePrevInfo != null) {
             Date date = new Date(neInvoicePrevInfo.getCreateDatetime().getTime());
@@ -1018,12 +1018,12 @@ public class ForDataBean implements ForDataBeanLocal {
     private GngModel getGngModel(Long invoiceUn) {
         List<GngModel> gngModelList = null;
         Query query = em.createNativeQuery(
-                        "select a.SMGS_CARGO_UN as id, a.INV_UN as invoiceUn,a.GNG_CODE as code, b.CARGO_SHORTNAME1 as shortName1 from KTZ.NE_SMGS_CARGO a "
-                                        + "left join NSI.CARGO_GNG b on a.GNG_CODE = b.CARGO_GROUP "
-                                        + "where a.INV_UN = ?1 and b.C_GN_END > current_timestamp "
-                                        + "and b.CARGO_SHORTNAME1 is not null "
-                                        + "fetch first 1 rows only",
-                        GngModel.class);
+                "select a.SMGS_CARGO_UN as id, a.INV_UN as invoiceUn,a.GNG_CODE as code, b.CARGO_SHORTNAME1 as shortName1 from KTZ.NE_SMGS_CARGO a "
+                        + "left join NSI.CARGO_GNG b on a.GNG_CODE = b.CARGO_GROUP "
+                        + "where a.INV_UN = ?1 and b.C_GN_END > current_timestamp "
+                        + "and b.CARGO_SHORTNAME1 is not null "
+                        + "fetch first 1 rows only",
+                GngModel.class);
         query.setParameter(1, invoiceUn);
         gngModelList = query.getResultList();
         if (gngModelList != null && gngModelList.size() > 0) {

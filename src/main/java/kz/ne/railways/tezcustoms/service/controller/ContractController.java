@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.io.IOException;
 
 
@@ -54,7 +56,7 @@ public class ContractController {
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")
-    public FormData loadContract(@RequestBody InvoiceRequestDto requestDto) throws IOException {
+    public FormData loadContract(@Valid @RequestBody InvoiceRequestDto requestDto) throws IOException {
         log.debug("In loadContract...");
         return contractsService.loadContract(requestDto.getStartSta(), requestDto.getDestSta(), requestDto.getExpCode(),
                         requestDto.getInvoiceNum());

@@ -33,7 +33,10 @@ public class ContractsServiceImpl implements ContractsService {
 
         dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
 
-        byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
+//        TODO: Activate when database is connected
+//        dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
+        if (formData != null){
+            byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
 
         String docname = "Invoice Document";
         String filename = UUID.randomUUID().toString();
@@ -58,7 +61,8 @@ public class ContractsServiceImpl implements ContractsService {
         // TODO: Activate when FileServer is connected
         // if (sFtpSend.send(new ByteArrayInputStream(arr), filename, contract.getInvoiceId()))
 
-        dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
+            dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
+        }
 
         return formData;
     }

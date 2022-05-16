@@ -2,6 +2,7 @@ package kz.ne.railways.tezcustoms.service.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class FormData {
 
     private String invoiceId;
@@ -172,13 +174,5 @@ public class FormData {
 
     public void addContainer(ContainerData container) {
         containers.add(container);
-    }
-
-    @Override
-    public String toString(){
-        return " invoice id: " + invoiceId +
-                "\n invoice number: " + invoiceNumber +
-                "\n start station:" + startStation +
-                "\n destination station:" + destStation;
     }
 }

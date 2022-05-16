@@ -2,9 +2,11 @@ package kz.ne.railways.tezcustoms.service.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class InvoiceRow {
     private String name;
     private String code;
@@ -15,18 +17,5 @@ public class InvoiceRow {
     private String price;
 
     public InvoiceRow() {
-    }
-
-    @Override
-    public String toString() {
-        return "InvoiceRow{" +
-                "name='" + name + '\'' +
-                ", code='" + code + '\'' +
-                ", unit='" + unit + '\'' +
-                ", quantity='" + quantity + '\'' +
-                ", netto='" + netto + '\'' +
-                ", brutto='" + brutto + '\'' +
-                ", price='" + price + '\'' +
-                '}';
     }
 }

@@ -6,8 +6,8 @@ import lombok.Data;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-@Entity
 @Data
+@Entity
 @Table(schema = "KTZ", name = "NE_SMGS_TN_VED")
 public class NeSmgsTnVed {
     @Id
@@ -28,40 +28,40 @@ public class NeSmgsTnVed {
     private String productDescriptionAdd;
 
     @Column(name = "COUNT_BY_UNIT")
-    private BigDecimal countByUnit;
+    private String countByUnit;
 
     @Column(name = "UNIT_TYPE_UN")
-    private Long unitTypeUn;
+    private String unitTypeUn;
 
     @Column(name = "PLACE_CARGO_COUNT")
-    private BigDecimal placeCargoCount;
+    private String placeCargoCount;
 
     @Column(name = "PACKING_COUNT")
-    private BigDecimal packingCount;
+    private String packingCount;
 
     @Column(name = "PAKAGE_PART_QUANTITY")
-    private BigDecimal packagePartQuantity;
+    private String packagePartQuantity;
 
     @Column(name = "PACKING_TYPE_UN")
-    private Long packingTypeUn;
+    private String packingTypeUn;
 
     @Column(name = "PLACE_CARGO_MARK", length = 512)
     private String placeCargoMark;
 
     @Column(name = "NETTO_WEIGHT")
-    private BigDecimal nettoWeight;
+    private String nettoWeight;
 
     @Column(name = "BRUTTO_WEIGHT")
-    private BigDecimal bruttoWeight;
+    private String bruttoWeight;
 
     @Column(name = "PRICE_BY_ONE")
-    private BigDecimal priceByOne;
+    private String priceByOne;
 
     @Column(name = "PRICE_BY_FULL")
-    private BigDecimal priceByFull;
+    private String priceByFull;
 
     @Column(name = "CURRENCY_CODE_UN")
-    private Long currencyCodeUn;
+    private String currencyCodeUn;
 
     @Column(name = "CONTAINER", length = 2048)
     private String container;
@@ -76,6 +76,6 @@ public class NeSmgsTnVed {
     private String tnVedCountry;
 
     @Column(name = "TN_VED_IS_ARMY")
-    private Short tnVedIsArmy;
+    private String tnVedIsArmy;
 
 }

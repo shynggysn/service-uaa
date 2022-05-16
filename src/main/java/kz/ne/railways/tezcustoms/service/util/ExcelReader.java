@@ -11,23 +11,27 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ExcelReader {
 
     private final ResourceLoader resourceLoader;
-    public InvoiceData getInvoiceFromFile() throws IOException {
-        InvoiceData invoiceData = new InvoiceData();
-        File file = new File(String.valueOf(resourceLoader.getResource("classpath:templateForInvoice.xlsx").getFile()));
-        try {
-            FileInputStream inputStream = new FileInputStream(file);
+    public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-            Workbook baeuldungWorkBook = new XSSFWorkbook(inputStream);
+    public InvoiceData getInvoiceFromFile(InputStream file) throws IOException {
+        InvoiceData invoiceData = new InvoiceData();
+//        File file = new File(String.valueOf(resourceLoader.getResource("classpath:templateForInvoice.xlsx").getFile()));
+        try {
+//            FileInputStream inputStream = new FileInputStream(file);
+
+            Workbook baeuldungWorkBook = new XSSFWorkbook(file);
             DataFormatter formatter = new DataFormatter();
             Sheet sheet = baeuldungWorkBook.getSheetAt(0);
             invoiceData.setInvoiceNumber(sheet.getRow(0).getCell(3).getStringCellValue());
@@ -55,11 +59,18 @@ public class ExcelReader {
                 invoiceData.addInvoiceItems(invoiceRow);
             }
 
-            inputStream.close();
+            file.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return invoiceData;
+    }
+
+    public static boolean hasExcelFormat(MultipartFile file) {
+        if (!TYPE.equals(file.getContentType())) {
+            return false;
+        }
+        return true;
     }
 }

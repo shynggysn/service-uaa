@@ -16,4 +16,17 @@ public class InvoiceRow {
 
     public InvoiceRow() {
     }
+
+    @Override
+    public String toString() {
+        return "InvoiceRow{" +
+                "name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", unit='" + unit + '\'' +
+                ", quantity='" + quantity + '\'' +
+                ", netto='" + netto + '\'' +
+                ", brutto='" + brutto + '\'' +
+                ", price='" + price + '\'' +
+                '}';
+    }
 }

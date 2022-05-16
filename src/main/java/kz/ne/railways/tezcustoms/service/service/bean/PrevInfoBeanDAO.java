@@ -410,7 +410,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public NeVagonGroup getVagonGroup(Long id) {
         List<NeVagonGroup> list = em.createNativeQuery(
-                        "SELECT a.* FROM KTZ.NE_VAGON_GROUP a join ktz.NE_VAGON_LISTS b on a.VAG_GROUP_UN = b.VAG_GROUP_UN where b.INVC_UN = ?1 fetch first row only OPTIMIZE FOR 1 ROWS ",
+                        "SELECT a.* FROM KTZ.NE_VAGON_GROUP a join ktz.NE_VAGON_LISTS b on a.VAG_GROUP_UN = b.VAG_GROUP_UN where b.INVC_UN = ?1 fetch first row only",
                         NeVagonGroup.class).setParameter(1, id).getResultList();
         if (list != null && !list.isEmpty()) {
             return list.get(0);

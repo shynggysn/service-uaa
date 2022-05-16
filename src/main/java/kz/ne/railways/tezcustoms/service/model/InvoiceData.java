@@ -20,4 +20,16 @@ public class InvoiceData {
     public void addInvoiceItems(InvoiceRow row) {
         invoiceItems.add(row);
     }
+
+    @Override
+    public String toString() {
+        return "InvoiceData{" +
+                "invoiceNumber='" + invoiceNumber + '\'' +
+                ", invoiceDate=" + invoiceDate +
+                ", shipper='" + shipper + '\'' +
+                ", consignee='" + consignee + '\'' +
+                ", total='" + total + '\'' +
+                ", invoiceItems=" + invoiceItems +
+                '}';
+    }
 }

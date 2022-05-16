@@ -992,7 +992,7 @@ public class ForDataBean implements ForDataBeanLocal {
     private Long getManagUnByInvoiceUn(Long invoiceUn) {
         Long answer = null;
         java.math.BigInteger s = null;
-        String sql = "select MANAGIN from nsi.MANAGEMENT where MANAG_NO in (select cast(OWNER_RAILWAYS as SMALLINT) from KTZ.NE_VAGON_LISTS where INVC_UN in(?1)) and MANAG_END>CURRENT_TIMESTAMP";
+        String sql = "select MANAG_UN from nsi.MANAGEMENT where MANAG_NO in (select cast(OWNER_RAILWAYS as SMALLINT) from KTZ.NE_VAGON_LISTS where INVC_UN in(?1)) and MANAG_END>CURRENT_TIMESTAMP";
         Query q = em.createNativeQuery(sql);
         q.setParameter(1, invoiceUn);
         try {
@@ -1017,11 +1017,11 @@ public class ForDataBean implements ForDataBeanLocal {
     private GngModel getGngModel(Long invoiceUn) {
         List<GngModel> gngModelList = null;
         Query query = em.createNativeQuery(
-                "select a.SMGS_CARGOIN as id, a.INVIN as invoiceUn,a.GNG_CODE as code, b.CARGO_SHORTNAME1 as shortName1 from KTZ.NE_SMGS_CARGO a "
+                "select a.SMGS_CARGO_UN as id, a.INV_UN as invoiceUn,a.GNG_CODE as code, b.CARGO_SHORTNAME1 as shortName1 from KTZ.NE_SMGS_CARGO a "
                         + "left join NSI.CARGO_GNG b on a.GNG_CODE = b.CARGO_GROUP "
-                        + "where a.INVIN = ?1 and b.C_GN_END > current_timestamp "
+                        + "where a.INV_UN = ?1 and b.C_GN_END > current_timestamp "
                         + "and b.CARGO_SHORTNAME1 is not null "
-                        + "fetch first 1 rows only OPTIMIZE FOR 1 ROWS ",
+                        + "fetch first 1 rows only",
                 GngModel.class);
         query.setParameter(1, invoiceUn);
         gngModelList = query.getResultList();

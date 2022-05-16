@@ -1,8 +1,6 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
 import com.google.gson.Gson;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,18 +23,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.customs.information.customsdocuments.esadout_cu._5_11.ESADoutCUType;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.*;
-import java.util.Date;
-import java.util.UUID;
+import java.sql.SQLOutput;
 
 @Slf4j
 @RestController
@@ -94,17 +87,23 @@ public class ServletController {
     }
 
     @PostMapping("/sendToAstana1")
-    public void sendToAstana1(@RequestBody String invNum) throws IOException {
-        FormData formData = dataBean.getContractData(invNum);
+    public ResponseEntity<MessageResponse> sendToAstana1(@RequestParam("invNum")String invNum, @RequestParam("file") MultipartFile file) throws IOException {
+        if (ExcelReader.hasExcelFormat(file)){
+            FormData formData = dataBean.getContractData(invNum);
+            log.debug(formData.toString());
 
-        formData.setInvoiceData(excelReader.getInvoiceFromFile());
+            formData.setInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()));
+            log.debug(formData.getInvoiceData().toString());
 
-        String name = "Altair";
-        String surname = "Aimenov";
+            String name = "Altair";
+            String surname = "Aimenov";
 
-        td.send(formData.getInvoiceId(), name, surname);
+            td.send(formData.getInvoiceId(), name, surname);
 
-        log.debug(formData.getRecieverIIN());
+            log.debug("form data receiver IIN: " + formData.getRecieverIIN());
+
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Successfully sent to Astana 1."));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
     }
-
 }

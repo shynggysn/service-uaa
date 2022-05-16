@@ -174,4 +174,11 @@ public class FormData {
         containers.add(container);
     }
 
+    @Override
+    public String toString(){
+        return " invoice id: " + invoiceId +
+                "\n invoice number: " + invoiceNumber +
+                "\n start station:" + startStation +
+                "\n destination station:" + destStation;
+    }
 }

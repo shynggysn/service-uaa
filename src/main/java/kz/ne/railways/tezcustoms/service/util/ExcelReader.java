@@ -42,7 +42,7 @@ public class ExcelReader {
             for (Row row : sheet) {
                 if (row.getRowNum() < 7)
                     continue;
-                if (row.getCell(0) == null || formatter.formatCellValue(row.getCell(0)).equals("")) {
+                if (row.getCell(2) == null || formatter.formatCellValue(row.getCell(2)).equals("")) {
                     invoiceData.setTotal(formatter.formatCellValue(row.getCell(8)));
                     break;
                 }

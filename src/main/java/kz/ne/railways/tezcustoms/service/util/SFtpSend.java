@@ -4,6 +4,7 @@ import com.jcraft.jsch.*;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
@@ -15,8 +16,17 @@ import java.util.Vector;
 @Component
 public class SFtpSend {
 
-    // public String host="10.96.3.73"; //test
-    public String host = "192.168.1.37"; // prod
+    @Value("${services.internal.fileServer.prod.host}")
+    private String host;
+
+    @Value("${services.internal.fileServer.prod.port}")
+    private Integer port;
+
+    @Value("${services.internal.fileServer.prod.user}")
+    private String user;
+
+    @Value("${services.internal.fileServer.prod.password}")
+    private String password;
 
     public boolean send(InputStream is, String path, String invoiceUn)
                     throws JSchException, SftpException, FileNotFoundException {
@@ -25,9 +35,9 @@ public class SFtpSend {
             JSch jsch = new JSch();
             Session session = null;
 
-            session = jsch.getSession("root", host, 22);
+            session = jsch.getSession(user, host, port);
             session.setConfig("StrictHostKeyChecking", "no");
-            session.setPassword("Z7zBkA7ZQnRZdagDYTT2");
+            session.setPassword(password);
             session.connect();
             // File file = new File(path);
             Channel channel = session.openChannel("sftp");
@@ -43,13 +53,13 @@ public class SFtpSend {
             try {
                 sftpChannel.mkdir("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath);
             }catch (SftpException ex) {
-                log.debug("in SFtp send", ex.getMessage());
+                log.debug("in SFtp send: folder already exists");
             }
 
             try{
                 sftpChannel.mkdir("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceUn);
             } catch (SftpException ex) {
-                log.debug("in SFtp send", ex.getMessage());
+                log.debug("in SFtp send: folder already exists");
             }
 
             sftpChannel.cd("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceUn);
@@ -58,7 +68,7 @@ public class SFtpSend {
             session.disconnect();
             result = true;
         } catch(Exception ex){
-            log.debug("in SFtp send", ex.getMessage());
+            log.debug("in SFtp send: ", ex.getMessage());
         }
 
         return result;
@@ -69,9 +79,9 @@ public class SFtpSend {
         JSch jsch = new JSch();
         Session session = null;
 
-        session = jsch.getSession("root", host, 22);
+        session = jsch.getSession(user, host, port);
         session.setConfig("StrictHostKeyChecking", "no");
-        session.setPassword("Ephesus");
+        session.setPassword(password);
         session.connect();
         // File file = new File(path);
         Channel channel = session.openChannel("sftp");
@@ -109,5 +119,4 @@ public class SFtpSend {
 
         // return is;
     }
-
 }

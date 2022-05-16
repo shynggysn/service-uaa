@@ -34,16 +34,16 @@ public class ExcelReader {
             Workbook baeuldungWorkBook = new XSSFWorkbook(file);
             DataFormatter formatter = new DataFormatter();
             Sheet sheet = baeuldungWorkBook.getSheetAt(0);
-            invoiceData.setInvoiceNumber(sheet.getRow(0).getCell(3).getStringCellValue());
-            invoiceData.setInvoiceDate(sheet.getRow(1).getCell(3).getDateCellValue());
-            invoiceData.setShipper(sheet.getRow(2).getCell(3).getStringCellValue());
-            invoiceData.setConsignee(sheet.getRow(3).getCell(3).getStringCellValue());
+            invoiceData.setInvoiceNumber(sheet.getRow(1).getCell(2).getStringCellValue());
+            invoiceData.setInvoiceDate(sheet.getRow(2).getCell(2).getDateCellValue());
+            invoiceData.setShipper(sheet.getRow(3).getCell(2).getStringCellValue());
+            invoiceData.setConsignee(sheet.getRow(4).getCell(2).getStringCellValue());
 
             for (Row row : sheet) {
                 if (row.getRowNum() < 7)
                     continue;
-                if (row.getCell(0) == null || formatter.formatCellValue(row.getCell(0)).equals("")) {
-                    invoiceData.setTotal(formatter.formatCellValue(row.getCell(7)));
+                if (row.getCell(2) == null || formatter.formatCellValue(row.getCell(2)).equals("")) {
+                    invoiceData.setTotal(formatter.formatCellValue(row.getCell(8)));
                     break;
                 }
 
@@ -55,6 +55,7 @@ public class ExcelReader {
                 invoiceRow.setNetto(formatter.formatCellValue(row.getCell(5)));
                 invoiceRow.setBrutto(formatter.formatCellValue(row.getCell(6)));
                 invoiceRow.setPrice(formatter.formatCellValue(row.getCell(7)));
+                invoiceRow.setTotalPrice(formatter.formatCellValue(row.getCell(8)));
 
                 invoiceData.addInvoiceItems(invoiceRow);
             }

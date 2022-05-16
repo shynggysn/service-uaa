@@ -1,12 +1,8 @@
 package kz.ne.railways.tezcustoms.service.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class InvoiceRow {
     private String name;
     private String code;
@@ -16,6 +12,5 @@ public class InvoiceRow {
     private String brutto;
     private String price;
 
-    public InvoiceRow() {
-    }
+    public InvoiceRow() {}
 }

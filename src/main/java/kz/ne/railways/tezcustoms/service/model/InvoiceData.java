@@ -1,16 +1,11 @@
 package kz.ne.railways.tezcustoms.service.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
+import lombok.Data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class InvoiceData {
     private String invoiceNumber;
     private Date invoiceDate;

@@ -1,16 +1,11 @@
 package kz.ne.railways.tezcustoms.service.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
+import lombok.Data;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class FormData {
 
     private String invoiceId;

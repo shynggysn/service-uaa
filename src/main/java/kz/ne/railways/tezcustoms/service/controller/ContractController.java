@@ -2,11 +2,10 @@ package kz.ne.railways.tezcustoms.service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.LocalDatabase;
-import kz.ne.railways.tezcustoms.service.dto.InvoiceRequestDto;
+import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.NeSmgsAdditionDocuments;
 import kz.ne.railways.tezcustoms.service.model.Contract;
 import kz.ne.railways.tezcustoms.service.model.FormData;
@@ -56,7 +55,7 @@ public class ContractController {
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")
-    public FormData loadContract(@Valid @RequestBody InvoiceRequestDto requestDto) throws IOException {
+    public FormData loadContract(@Valid @RequestBody InvoiceRequest requestDto) throws IOException {
         log.debug("In loadContract...");
         return contractsService.loadContract(requestDto.getStartSta(), requestDto.getDestSta(), requestDto.getExpCode(),
                         requestDto.getInvoiceNum());

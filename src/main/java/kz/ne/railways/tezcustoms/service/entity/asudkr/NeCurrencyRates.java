@@ -1,9 +1,12 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(name = "NE_CURRENCY_RATES", schema = "NSI")
 public class NeCurrencyRates {
 

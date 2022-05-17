@@ -1,9 +1,12 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(name = "NE_CURRENCY_RATES", schema = "NSI")
 public class NeCurrencyRates {
 
@@ -24,43 +27,4 @@ public class NeCurrencyRates {
     @Column(name = "RATE_END")
     private Timestamp rateEnd;
 
-    public Long getCurrencyRateUn() {
-        return currencyRateUn;
-    }
-
-    public void setCurrencyRateUn(Long currencyRateUn) {
-        this.currencyRateUn = currencyRateUn;
-    }
-
-    public Long getCurrencuCodeUn() {
-        return currencuCodeUn;
-    }
-
-    public void setCurrencuCodeUn(Long currencuCodeUn) {
-        this.currencuCodeUn = currencuCodeUn;
-    }
-
-    public Double getRate() {
-        return rate;
-    }
-
-    public void setRate(Double rate) {
-        this.rate = rate;
-    }
-
-    public Timestamp getRateBgn() {
-        return rateBgn;
-    }
-
-    public void setRateBgn(Timestamp rateBgn) {
-        this.rateBgn = rateBgn;
-    }
-
-    public Timestamp getRateEnd() {
-        return rateEnd;
-    }
-
-    public void setRateEnd(Timestamp rateEnd) {
-        this.rateEnd = rateEnd;
-    }
 }

@@ -31,7 +31,7 @@ public interface PrevInfoBeanDAOLocal {
 
     public Map<String, DataCaneVagInfo> getDatacaneVagInfo(List<String> dataCaneVagons);
 
-    public List<TnVedRow> getGridDatas(Long invoiceUn);
+    public List<NeSmgsTnVed> getGridDatas(Long invoiceUn);
 
     public List<NeVagonLists> getVagonList(Long invoiceUn);
 

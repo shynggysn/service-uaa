@@ -15,6 +15,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@Data
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iinBin"),
         @UniqueConstraint(columnNames = "email")})
 public class User implements Serializable {

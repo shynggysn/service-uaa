@@ -4,6 +4,7 @@ package kz.ne.railways.tezcustoms.service.entity.asudkr;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -29,20 +30,21 @@ public class NeSmgsTnVed {
     @Column(name = "COUNT_BY_UNIT")
     private String countByUnit;
 
-    @Column(name = "UNIT_TYPE_UN")
-    private String unitTypeUn;
+    @Column(name = "UNIT_NAME")
+    private String unitName;
 
     @Column(name = "PLACE_CARGO_COUNT")
     private String placeCargoCount;
 
+    //TODO: REMOVE
     @Column(name = "PACKING_COUNT")
     private String packingCount;
 
     @Column(name = "PAKAGE_PART_QUANTITY")
     private String packagePartQuantity;
 
-    @Column(name = "PACKING_TYPE_UN")
-    private String packingTypeUn;
+    @Column(name = "PACKING_NAME")
+    private Long packingName;
 
     @Column(name = "PLACE_CARGO_MARK", length = 512)
     private String placeCargoMark;

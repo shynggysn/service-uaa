@@ -1,5 +1,7 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,6 +10,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(name = "NE_VESSEL", schema = "NSI")
 public class NeVessel implements Serializable {
     /**
@@ -29,39 +32,5 @@ public class NeVessel implements Serializable {
 
     @Column(name = "VESSEL_END")
     private Timestamp vesselEnd;
-
-    public Long getNeVesselUn() {
-        return neVesselUn;
-    }
-
-    public void setNeVesselUn(Long neVesselUn) {
-        this.neVesselUn = neVesselUn;
-    }
-
-    public String getVesselName() {
-        return vesselName;
-    }
-
-    public void setVesselName(String vesselName) {
-        this.vesselName = vesselName;
-    }
-
-    public Timestamp getVesselBgn() {
-        return vesselBgn;
-    }
-
-    public void setVesselBgn(Timestamp vesselBgn) {
-        this.vesselBgn = vesselBgn;
-    }
-
-    public Timestamp getVesselEnd() {
-        return vesselEnd;
-    }
-
-    public void setVesselEnd(Timestamp vesselEnd) {
-        this.vesselEnd = vesselEnd;
-    }
-
-
 
 }

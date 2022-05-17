@@ -1,9 +1,12 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(schema = "NSI", name = "NE_CUSTOMS_ORGS")
 public class NeCustomsOrgs {
     @Id
@@ -21,51 +24,4 @@ public class NeCustomsOrgs {
     @Column(name = "COUNTRY_NO")
     private String countryNo;
 
-    public void setCustomsOrgUn(Long customsOrgUn) {
-        this.customsOrgUn = customsOrgUn;
-    }
-
-    public Long getCustomsOrgUn() {
-        return customsOrgUn;
-    }
-
-    public void setCustomCode(String customCode) {
-        this.customCode = customCode;
-    }
-
-    public String getCustomCode() {
-        return customCode;
-    }
-
-    public void setCustomName(String customName) {
-        this.customName = customName;
-    }
-
-    public String getCustomName() {
-        return customName;
-    }
-
-    public void setCustomOrgBgn(Timestamp customOrgBgn) {
-        this.customOrgBgn = customOrgBgn;
-    }
-
-    public Timestamp getCustomOrgBgn() {
-        return customOrgBgn;
-    }
-
-    public void setCustomOrgEnd(Timestamp customOrgEnd) {
-        this.customOrgEnd = customOrgEnd;
-    }
-
-    public Timestamp getCustomOrgEnd() {
-        return customOrgEnd;
-    }
-
-    public String getCountryNo() {
-        return countryNo;
-    }
-
-    public void setCountryNo(String countryNo) {
-        this.countryNo = countryNo;
-    }
 }

@@ -91,7 +91,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
     public NeInvoicePrevInfo invoicePrevInfo;
     public List<NeVagonLists> vagonLists;
     public List<NeContainerLists> containerList;
-    private List<TnVedRow> tnVedList;
+    private List<NeSmgsTnVed> tnVedList;
     private NeSmgsSenderInfo senderInfo;
     private NeSmgsRecieverInfo recieverInfo;
     private NeSmgsCargo neSmgsCargo = null;
@@ -449,9 +449,9 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         // Общая стоимость товаров. Гр 22 подраздел 2
         BigDecimal result = BigDecimal.ZERO;
         if (tnVedList != null)
-            for (TnVedRow row : tnVedList) {
-                if (row.getPriceByTotal() != null) {
-                    result = result.add(row.getPriceByTotal());
+            for (NeSmgsTnVed row : tnVedList) {
+                if (row.getPriceByFull() != null) {
+                    result = result.add(BigDecimal.valueOf(Double.parseDouble(row.getPriceByFull())));
                 }
             }
         return result.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -461,13 +461,13 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         // Трехзначный буквенный в графе 22 код валюты цены договора/ платежа (оценки). По классификатору
         // валют
         String result = "";
-        if (tnVedList != null)
-            for (TnVedRow row : tnVedList) {
-                if (row.getCurrencyCode() != null) {
-                    result = row.getCurrencyCode();
-                    break;
-                }
-            }
+//        if (tnVedList != null)
+//            for (NeSmgsTnVed row : tnVedList) {
+//                if (row.getCurrencyCode() != null) {
+//                    result = row.getCurrencyCode();
+//                    break;
+//                }
+//            }
         return result;
     }
 
@@ -499,14 +499,14 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
     private BigDecimal getTotalPackageNumber(ESADoutCUGoodsShipmentType goodsShipment) {
         // Общее количество грузовых мест
         BigDecimal result = BigDecimal.ZERO;
-        if (tnVedList != null && !tnVedList.isEmpty()) {
-            for (TnVedRow tnVedRow : tnVedList) {
-                result = result.add(tnVedRow.getPlaceCargoCount());
-            }
-        }
-        if (BigDecimal.ZERO.equals(result)) {
-            result = BigDecimal.ONE;
-        }
+//        if (tnVedList != null && !tnVedList.isEmpty()) {
+//            for (TnVedRow tnVedRow : tnVedList) {
+//                result = result.add(tnVedRow.getPlaceCargoCount());
+//            }
+//        }
+//        if (BigDecimal.ZERO.equals(result)) {
+//            result = BigDecimal.ONE;
+//        }
         return result.setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -532,18 +532,18 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         // / РАЗНЫЕ/ НЕИЗВЕСТНА/ ЕВРОСОЮЗ
         String result = null;
         String code = "";
-        if (tnVedList != null)
-            for (TnVedRow row : tnVedList) {
-                String countryCode = row.getTnVedCountry();
-                Country country = dao.getCountry(countryCode);
-                if (country != null && result == null) {
-                    result = country.getCountryFullName();
-                    code = countryCode;
-                } else if (countryCode != null && !code.equals(countryCode)) {
-                    result = "РАЗНЫЕ";
-                    code = "РАЗНЫЕ";
-                }
-            }
+//        if (tnVedList != null)
+//            for (TnVedRow row : tnVedList) {
+//                String countryCode = row.getTnVedCountry();
+//                Country country = dao.getCountry(countryCode);
+//                if (country != null && result == null) {
+//                    result = country.getCountryFullName();
+//                    code = countryCode;
+//                } else if (countryCode != null && !code.equals(countryCode)) {
+//                    result = "РАЗНЫЕ";
+//                    code = "РАЗНЫЕ";
+//                }
+//            }
         if (result == null) {
             result = "НЕИЗВЕСТНА";
         }
@@ -575,27 +575,18 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         if (tnVedList != null && !tnVedList.isEmpty()) {
             List<TnVedRow> tnVedSort = new ArrayList<TnVedRow>();
             Map<String, ESADoutCUGoodsType> goodsMap = new HashMap<String, ESADoutCUGoodsType>();
-            for (TnVedRow tnVedRow : tnVedList) {
-                ESADoutCUGoodsType goods = goodsMap.get(tnVedRow.getTnVedCode() + tnVedRow.getPackingCode());
-                // в ХМL для товаров с одинаковыми кода ТН ВЭД, но разными видами упаковки сведения передавать
-                // отдельными группами
-                if (goods == null
-                                || !tnVedRow.getPackingCode().equals(goods.getESADGoodsPackaging().getPackageCode())) {
-                    goods = buildGoods(tnVedRow);
-                    tnVedSort.add(tnVedRow);
-                } else {
-                    goods = addGoods(goods, tnVedRow);
-                }
+            for (NeSmgsTnVed tnVedRow : tnVedList) {
+                ESADoutCUGoodsType goods = buildGoods(tnVedRow);
                 // TDG-5514
-                goodsMap.put(tnVedRow.getTnVedCode() + tnVedRow.getPackingCode() + tnVedRow.getId(), goods);
+//                goodsMap.put(tnVedRow.getTnVedCode() + tnVedRow.getPackingCode() + tnVedRow.getId(), goods);
                 // --
                 goods.setAdditionalSheetCount(getAdditionalSheetCount(i++)); // Порядковый номер листа (первый подраздел
                                                                              // гр.3)
 
-                Integer containerCount = goods.getESADContainer().getContainerNumber().size();
-                goods.getESADContainer()
-                                .setContainerQuantity(containerCount > 0 ? BigInteger.valueOf(containerCount) : null);
-                goods.getESADContainer().setContainerKind(getContainerKind()); // Тип контейнера в соответствии с
+//                Integer containerCount = goods.getESADContainer().getContainerNumber().size();
+//                goods.getESADContainer()
+//                                .setContainerQuantity(containerCount > 0 ? BigInteger.valueOf(containerCount) : null);
+//                goods.getESADContainer().setContainerKind(getContainerKind()); // Тип контейнера в соответствии с
                                                                                // классификатором видов груза, упаковки
                                                                                // и упаковочных материалов
 
@@ -692,87 +683,76 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         return goods;
     }
 
-    private ESADoutCUGoodsType buildGoods(TnVedRow tnVedRow) {
+    private ESADoutCUGoodsType buildGoods(NeSmgsTnVed tnVedRow) {
+
+//        }
         ESADoutCUGoodsType result = new ESADoutCUGoodsType();
-        result.setCurrencyCode(tnVedRow.getCurrencyCode());
+//        result.setCurrencyCode(tnVedRow.getCurrencyCode());
+
         result.setGoodsNumeric(null);
-        result.setGoodsTNVEDCode(getTnVedCode(tnVedRow.getTnVedCode()));
-        result.setGrossWeightQuantity(
-                        tnVedRow.getBrutto() != null ? tnVedRow.getBrutto().setScale(3, BigDecimal.ROUND_HALF_UP)
-                                        : BigDecimal.ZERO.setScale(3, BigDecimal.ROUND_HALF_UP));
-        result.setInvoicedCost(tnVedRow.getPriceByTotal() != null
-                        ? tnVedRow.getPriceByTotal().setScale(2, BigDecimal.ROUND_HALF_UP)
-                        : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
+        result.setGoodsTNVEDCode(tnVedRow.getTnVedCode());
+        result.setGrossWeightQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getBruttoWeight())));
+        result.setInvoicedCost(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getPriceByFull())));
+        result.setNetWeightQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getNettoWeight())));
         result.setCustomsCost(null);
-        result.setNetWeightQuantity(
-                        tnVedRow.getNetto() != null ? tnVedRow.getNetto().setScale(3, BigDecimal.ROUND_HALF_UP)
-                                        : BigDecimal.ZERO.setScale(3, BigDecimal.ROUND_HALF_UP));
         result.setGoodFeatures(null);
-        String description = (tnVedRow.getDescription() != null ? tnVedRow.getDescription() : "");
+        String description = "";
         if (tnVedRow.getTnVedName() != null) {
             description += "(" + tnVedRow.getTnVedName() + ")";
         }
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(tnVedRow.getDescriptionAdditionaly())) {
-            description += ", " + tnVedRow.getDescriptionAdditionaly();
-        }
         result.getGoodsDescription().add(description);
-        if (tnVedRow.getUnitTypeUn() != null) {
-            SupplementaryQuantityType supplementaryQuantityType = new SupplementaryQuantityType();
-            NeUnitType unitType = unitTypeMap.get(tnVedRow.getUnitTypeUn());
-            supplementaryQuantityType.setGoodsQuantity(tnVedRow.getCountByUnit().setScale(2, BigDecimal.ROUND_HALF_UP));
-            supplementaryQuantityType.setMeasureUnitQualifierCode(unitType.getUnitCode());
-            supplementaryQuantityType.setMeasureUnitQualifierName(unitType.getUnitName());
-            // fix_xsd_5.11
-            // result.getSupplementaryGoodsQuantity().add(supplementaryQuantityType);
-            result.setSupplementaryGoodsQuantity(supplementaryQuantityType);
-            result.getSupplementaryGoodsQuantity1().add(supplementaryQuantityType);
-        }
-        ESADGoodsPackagingType packagingType = new ESADGoodsPackagingType();
-        packagingType.setPackageCode(tnVedRow.getPackingCode());
-        if (tnVedRow.getPakagePartQuantity() != null
-                        && tnVedRow.getPakagePartQuantity().toBigInteger() != BigInteger.ZERO) {
-            packagingType.setPakagePartQuantity(tnVedRow.getPakagePartQuantity() != null
-                            ? tnVedRow.getPakagePartQuantity().setScale(2, BigDecimal.ROUND_HALF_UP)
-                            : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
-        }
+
+        SupplementaryQuantityType supplementaryQuantityType = new SupplementaryQuantityType();
+        supplementaryQuantityType.setGoodsQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getCountByUnit())));
+        supplementaryQuantityType.setMeasureUnitQualifierName(tnVedRow.getUnitName());
+        result.getSupplementaryGoodsQuantity1().add(supplementaryQuantityType);
+
+//        ESADGoodsPackagingType packagingType = new ESADGoodsPackagingType();
+//        packagingType.setPackageCode(tnVedRow.getPackingCode());
+//        if (tnVedRow.getPakagePartQuantity() != null
+//                        && tnVedRow.getPakagePartQuantity().toBigInteger() != BigInteger.ZERO) {
+//            packagingType.setPakagePartQuantity(tnVedRow.getPakagePartQuantity() != null
+//                            ? tnVedRow.getPakagePartQuantity().setScale(2, BigDecimal.ROUND_HALF_UP)
+//                            : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
+//        }
         // TAV возможно фикс по количеству грузомест
         // packagingType.setPakageQuantity(tnVedRow.getPackingCount() != null ?
         // tnVedRow.getPackingCount().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO.setScale(2,
         // BigDecimal.ROUND_HALF_UP));
-        packagingType.setPakageQuantity(tnVedRow.getPlaceCargoCount() != null
-                        ? tnVedRow.getPlaceCargoCount().setScale(2, BigDecimal.ROUND_HALF_UP)
-                        : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
+//        packagingType.setPakageQuantity(tnVedRow.getPlaceCargoCount() != null
+//                        ? tnVedRow.getPlaceCargoCount().setScale(2, BigDecimal.ROUND_HALF_UP)
+//                        : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
 
         // Если вид упаковки: навалом(VS), насыпью(VO, VR, VY), наливом(VL, VQ), неупакован(NE, NF, NG) или
         // нет сведений (NA), то передавать PakageTypeCode=0.
-        String pkgCode = tnVedRow.getPackingCode();
-        if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
-                        || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
-                        || pkgCode.equals("NF") || pkgCode.equals("NG") || pkgCode.equals("NA")))
-            packagingType.setPakageTypeCode("0");
-        else
-            packagingType.setPakageTypeCode((pkgCode != null ? "1" : "2")); // Если есть код упаковки, то ставим "С
-                                                                            // упаковкой", иначе "Без упаковки в
-                                                                            // оборудованных емкостях транспортного
-                                                                            // средства"
+//        String pkgCode = tnVedRow.getPackingCode();
+//        if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
+//                        || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
+//                        || pkgCode.equals("NF") || pkgCode.equals("NG") || pkgCode.equals("NA")))
+//            packagingType.setPakageTypeCode("0");
+//        else
+//            packagingType.setPakageTypeCode((pkgCode != null ? "1" : "2")); // Если есть код упаковки, то ставим "С
+//                                                                            // упаковкой", иначе "Без упаковки в
+//                                                                            // оборудованных емкостях транспортного
+//                                                                            // средства"
 
-        PackingInformationType goodsPackingInformationType = new PackingInformationType();
-        goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
-        goodsPackingInformationType.setPakingQuantity(
-                        tnVedRow.getPackingCount() != null ? BigInteger.valueOf(tnVedRow.getPackingCount().longValue())
-                                        : null);
+//        PackingInformationType goodsPackingInformationType = new PackingInformationType();
+//        goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
+//        goodsPackingInformationType.setPakingQuantity(
+//                        tnVedRow.getPackingCount() != null ? BigInteger.valueOf(tnVedRow.getPackingCount().longValue())
+//                                        : null);
+//
+//        packagingType.getPackingInformation().add(goodsPackingInformationType);
 
-        packagingType.getPackingInformation().add(goodsPackingInformationType);
-
-        result.setESADContainer(new ESADContainerType());
-        addContainer(result, tnVedRow);
-        List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
-        if (docs != null) {
-            for (NeSmgsTnVedDocuments doc : docs) {
-                result.getESADoutCUPresentedDocument().add(buildPICUPresentedDoc(doc));
-            }
-        }
-        result.setESADGoodsPackaging(packagingType);
+//        result.setESADContainer(new ESADContainerType());
+//        addContainer(result, tnVedRow);
+//        List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
+//        if (docs != null) {
+//            for (NeSmgsTnVedDocuments doc : docs) {
+//                result.getESADoutCUPresentedDocument().add(buildPICUPresentedDoc(doc));
+//            }
+//        }
+//        result.setESADGoodsPackaging(packagingType);
         Country country = dao.getCountry(tnVedRow.getTnVedCountry());
         if (country != null) {
             result.setOriginCountryCode(country.getCountryId());
@@ -781,7 +761,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
             result.setOriginCountryCode("00");
             result.setOriginCountryName("НЕИЗВЕСТНА");
         }
-        result.setMilitaryProducts(tnVedRow.getTnVedIsArmy() != null && tnVedRow.getTnVedIsArmy() == 1 ? true : false);
+//        result.setMilitaryProducts(tnVedRow.getTnVedIsArmy() != null && tnVedRow.getTnVedIsArmy() == 1 ? true : false);
         result.setLanguageGoods(DOCUMENT_LANGUAGE);
         return result;
     }
@@ -1968,7 +1948,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         Map<String, Set<String>> containerMap = new HashMap<String, Set<String>>();
         if (invoice.getIsContainer() == 1 && !containerList.isEmpty()) { // Если у нас контейнерная отправка и есть
                                                                          // данные в NE_CONTAINERS_LIST
-            for (TnVedRow tnVedRow : tnVedList) {
+            for (NeSmgsTnVed tnVedRow : tnVedList) {
                 Set<String> containerTnVed = containerMap.get(tnVedRow.getTnVedCode());
                 if (containerTnVed == null) {
                     containerTnVed = new HashSet<String>();
@@ -1983,7 +1963,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
                 containerMap.put(tnVedRow.getTnVedCode(), containerTnVed);
             }
         } else {
-            for (TnVedRow tnVedRow : tnVedList) {
+            for (NeSmgsTnVed tnVedRow : tnVedList) {
                 Set<String> containerTnVed = containerMap.get(tnVedRow.getTnVedCode());
                 if (tnVedRow.getContainer() != null) {
                     if (containerTnVed == null) {

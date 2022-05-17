@@ -135,10 +135,10 @@ public class SendOnProxy {
 
         HttpClient httpClient = new DefaultHttpClient();
         // TODO: отключаем прокси для локальной проверки
-        if (proxyHost != null && !"".equals(proxyHost)) {
-            HttpHost proxy = new HttpHost(getProxyHost(), Integer.parseInt(getProxyPort()), "http");
-            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-        }
+//        if (proxyHost != null && !"".equals(proxyHost)) {
+//            HttpHost proxy = new HttpHost(getProxyHost(), Integer.parseInt(getProxyPort()), "http");
+//            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+//        }
 
         HttpResponse response = httpClient.execute(httpPost);
         System.out.println(response.toString());

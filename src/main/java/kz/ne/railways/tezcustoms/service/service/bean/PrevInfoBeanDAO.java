@@ -51,36 +51,9 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
         return count;
     }
 
-    public List<TnVedRow> getGridDatas(Long invoiceUn) {
-        List<TnVedRow> result = null;
-        String sql = "select \n" + " a.SMGS_TN_VED_UN as id, \n" + " a.INVOICE_UN as invoiceUn,\n"
-                        + " a.TN_VED_CODE as tnVedCode,\n" + " a.TN_VED_NAME as tnVedName,\n"
-                        + " a.PRODUCT_DESCRIPTION as description,\n"
-                        + " a.PRODUCT_DESCRIPTION_ADD as descriptionAdditionaly,\n"
-                        + " a.COUNT_BY_UNIT as countByUnit,\n" + " a.UNIT_TYPE_UN as unitTypeUn,\n"
-                        + " c.UNIT_NAME as unitTypeName,\n" + " a.PLACE_CARGO_COUNT as placeCargoCount,\n"
-                        + " a.PACKING_COUNT as packingCount,\n" + " a.PAKAGE_PART_QUANTITY as pakagePartQuantity,\n"
-                        + " a.PACKING_TYPE_UN as pakingTypeUn,\n" + " d.PACKING_NAME as packingTypeName,\n"
-                        + " d.PACKING_CODE as packingCode, \n" + " a.PLACE_CARGO_MARK as placeCargoMark,\n"
-                        + " a.NETTO_WEIGHT as netto,\n" + " a.BRUTTO_WEIGHT as brutto,\n"
-                        + " a.PRICE_BY_ONE as priceByOne,\n" + " a.PRICE_BY_FULL as priceByTotal,\n"
-                        + " a.CURRENCY_CODE_UN as currencyUn,\n" + " b.CUR_CODE as currencyName,\n"
-                        + " b.CUR_CODE_LET as currencyCode, \n" + " a.CONTAINER as container, \n"
-                        + " 'TEST!!!' as documents, \n" + " a.VAGON_ACCESSORY_COU_NO as vagonAccessoryCouNo, \n"
-                        + "a.TN_VED_COUNTRY as tnVedCountry, \n" + "a.TN_VED_IS_ARMY as tnVedIsArmy \n"
-                        + "from KTZ.NE_SMGS_TN_VED a\n"
-                        + "left join NSI.CURRENCY_CODE b on a.CURRENCY_CODE_UN = b.CUR_CODE_UN AND b.CUR_CODE_END > CURRENT_TIMESTAMP\n"
-                        + "left join NSI.NE_UNIT_TYPE c ON a.UNIT_TYPE_UN = c.UNIT_TYPE_UN AND c.UNIT_END > CURRENT_TIMESTAMP\n"
-                        + "left join NSI.NE_PACKING_TYPE d on a.PACKING_TYPE_UN = d.PACKING_TYPE_UN AND d.PACKING_END > CURRENT_TIMESTAMP\n"
-                        + "where a.INVOICE_UN = ?1 " + "order by a.SMGS_TN_VED_UN";
-        result = em.createNativeQuery(sql, TnVedRow.class).setParameter(1, invoiceUn).getResultList();
-
-        // System.out.println(sql + invoiceUn);
-
-        Map<Long, String> docs = getTnVedDocuments(invoiceUn);
-        for (int i = 0; i < result.size(); i++) {
-            result.get(i).setDocuments(docs.get(result.get(i).getId()));
-        }
+    public List<NeSmgsTnVed> getGridDatas(Long invoiceUn) {
+        List<NeSmgsTnVed> result = null;
+        result = em.createQuery("select a from NeSmgsTnVed a where a.invoiceUn = ?1", NeSmgsTnVed.class).setParameter(1, invoiceUn).getResultList();
         return result;
     }
 

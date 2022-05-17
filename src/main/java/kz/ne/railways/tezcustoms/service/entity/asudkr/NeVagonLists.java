@@ -1,9 +1,12 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Data
 @Table(schema = "KTZ", name = "NE_VAGON_LISTS")
 public class NeVagonLists implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -118,31 +121,6 @@ public class NeVagonLists implements Serializable {
      * public void setSpecNote3(Integer specNote3) { this.specNote3 = specNote3; }
      */
 
-
-    public Long getVagListsUn() {
-        return this.vagListsUn;
-    }
-
-    public void setVagListsUn(Long vagListsUn) {
-        this.vagListsUn = vagListsUn;
-    }
-
-    public String getVagNo() {
-        return this.vagNo;
-    }
-
-    public void setVagNo(String vagNo) {
-        this.vagNo = vagNo;
-    }
-
-    public Long getInvcUn() {
-        return this.invcUn;
-    }
-
-    public void setInvcUn(Long invcUn) {
-        this.invcUn = invcUn;
-    }
-
     /*
      * public Long getVPodachUn() { return this.vPodachUn; }
      * 
@@ -156,13 +134,6 @@ public class NeVagonLists implements Serializable {
      * 
      * public Double getGrpVagCen() { return grpVagCen; }
      */
-    public Long getVagGroupUn() {
-        return this.vagGroupUn;
-    }
-
-    public void setVagGroupUn(Long vagGroupUn) {
-        this.vagGroupUn = vagGroupUn;
-    }
 
     /*
      * public void setVagSign(Integer vagSign) { this.vagSign = vagSign; }
@@ -185,14 +156,6 @@ public class NeVagonLists implements Serializable {
      * 
      * public void setLockArmMarks(String lockArmMarks) { this.lockArmMarks = lockArmMarks; }
      */
-
-    public String getOwnerRailways() {
-        return ownerRailways;
-    }
-
-    public void setOwnerRailways(String ownerRailways) {
-        this.ownerRailways = ownerRailways;
-    }
 
     /*
      * public String getProvidedBy() { return providedBy; }

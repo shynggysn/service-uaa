@@ -37,7 +37,7 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
     private NeInvoicePrevInfo invoicePrevInfo;
     private List<NeVagonLists> vagonLists;
     private List<NeContainerLists> containerList;
-    private List<TnVedRow> tnVedList;
+    private List<NeSmgsTnVed> tnVedList;
     private NeSmgsSenderInfo senderInfo;
     private NeSmgsRecieverInfo recieverInfo;
 
@@ -103,11 +103,11 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
         this.vagonLists = vagonLists;
     }
 
-    public List<TnVedRow> getTnVedList() {
+    public List<NeSmgsTnVed> getTnVedList() {
         return tnVedList;
     }
 
-    public void setTnVedList(List<TnVedRow> tnVedList) {
+    public void setTnVedList(List<NeSmgsTnVed> tnVedList) {
         this.tnVedList = tnVedList;
     }
 
@@ -556,8 +556,8 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
         String currencyCode = null;
         if (tnVedList != null && !tnVedList.isEmpty()) {
             Map<String, PIRWGoodsType> goodsMap = new HashMap<String, PIRWGoodsType>();
-            List<TnVedRow> tnVedSort = new ArrayList<TnVedRow>();
-            for (TnVedRow tnVedRow : tnVedList) {
+            List<NeSmgsTnVed> tnVedSort = new ArrayList<NeSmgsTnVed>();
+            for (NeSmgsTnVed tnVedRow : tnVedList) {
                 /*
                  * PIRWGoodsType goods = buildGoods(tnVedRow); goods.setGoodsNumeric(BigInteger.valueOf(i++));
                  * result.getPIGoods().add(goods); if (currencyCode == null && goods != null &&
@@ -566,22 +566,14 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
                  */
 
                 // **************Формирование кодов ТНВЭД*****************
-                PIRWGoodsType goods = goodsMap.get(tnVedRow.getTnVedCode());
-                if (goods == null) {
-                    goods = buildGoods(tnVedRow);
-                    if (currencyCode == null && goods != null && goods.getCurrencyCode() != null) {
-                        currencyCode = goods.getCurrencyCode();
-                    }
-                    tnVedSort.add(tnVedRow);
-                } else {
-                    // Если код упаковки и код ТНВЭД имеют одинаковые значения, тогда объединяем их!
-                    goods = addGoods(goods, tnVedRow);
-                }
+
+                PIRWGoodsType goods = buildGoods(tnVedRow);
+                tnVedSort.add(tnVedRow);
                 goodsMap.put(tnVedRow.getTnVedCode(), goods);
             }
 
             // TODO: нужна сортировка!
-            for (TnVedRow tnVedRow : tnVedSort) {
+            for (NeSmgsTnVed tnVedRow : tnVedSort) {
                 // for(String key: goodsMap.keySet()) {
                 // System.out.println("TNVED key: " + tnVedRow.getTnVedCode());
                 PIRWGoodsType goods = goodsMap.get(tnVedRow.getTnVedCode());
@@ -847,70 +839,70 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
         return result;
     }
 
-    private PIRWGoodsType buildGoods(TnVedRow tnVedRow) {
+    private PIRWGoodsType buildGoods(NeSmgsTnVed tnVedRow) {
         PIRWGoodsType result = new PIRWGoodsType();
-        result.setCurrencyCode(tnVedRow.getCurrencyCode());
+//        result.setCurrencyCode(tnVedRow.getCurrencyCode());
         result.setGoodsNumeric(null);
         result.setGoodsTNVEDCode(tnVedRow.getTnVedCode());
-        result.setGrossWeightQuantity(tnVedRow.getBrutto());
-        result.setInvoiceValue(tnVedRow.getPriceByTotal());
-        result.setNetWeightQuantity(tnVedRow.getNetto());
-        String description = (tnVedRow.getDescription() != null ? tnVedRow.getDescription() : "");
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(tnVedRow.getDescriptionAdditionaly())) {
-            description += ", " + tnVedRow.getDescriptionAdditionaly();
-        }
+        result.setGrossWeightQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getBruttoWeight())));
+        result.setInvoiceValue(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getPriceByFull())));
+        result.setNetWeightQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getNettoWeight())));
+//        String description = (tnVedRow.getDescription() != null ? tnVedRow.getDescription() : "");
+//        if (org.apache.commons.lang3.StringUtils.isNotBlank(tnVedRow.getDescriptionAdditionaly())) {
+//            description += ", " + tnVedRow.getDescriptionAdditionaly();
+//        }
+        String description = "";
         if (tnVedRow.getTnVedName() != null) {
             description += "(" + tnVedRow.getTnVedName() + ")";
         }
         result.getGoodsDescription().add(description);
 
-        if (tnVedRow.getUnitTypeUn() != null) {
+//        if (tnVedRow.getUnitTypeUn() != null) {
             SupplementaryQuantityType supplementaryQuantityType = new SupplementaryQuantityType();
-            NeUnitType unitType = unitTypeMap.get(tnVedRow.getUnitTypeUn());
-            supplementaryQuantityType.setGoodsQuantity(tnVedRow.getCountByUnit());
-            supplementaryQuantityType.setMeasureUnitQualifierCode(unitType.getUnitCode());
-            supplementaryQuantityType.setMeasureUnitQualifierName(unitType.getUnitName());
+//            NeUnitType unitType = unitTypeMap.get(tnVedRow.getUnitTypeUn());
+            supplementaryQuantityType.setGoodsQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getCountByUnit())));
+            supplementaryQuantityType.setMeasureUnitQualifierName(tnVedRow.getUnitName());
             result.getSupplementaryQuantity().add(supplementaryQuantityType);
-        }
+//        }
 
-        PIGoodsPackagingType packagingType = new PIGoodsPackagingType();
-        packagingType.setPackageCode(tnVedRow.getPackingCode());
-        packagingType.setPakageQuantity(tnVedRow.getPackingCount());
-        packagingType.setPakagePartQuantity(tnVedRow.getPakagePartQuantity());
+//        PIGoodsPackagingType packagingType = new PIGoodsPackagingType();
+//        packagingType.setPackageCode(tnVedRow.getPackingCode());
+//        packagingType.setPakageQuantity(tnVedRow.getPackingCount());
+//        packagingType.setPakagePartQuantity(tnVedRow.getPakagePartQuantity());
 
         // Если вид упаковки: навалом(VS), насыпью(VO, VR, VY), наливом(VL, VQ), неупакован(NE, NF, NG) или
         // нет сведений (NA), то передавать PakageTypeCode=0.
-        String pkgCode = tnVedRow.getPackingCode();
-        if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
-                        || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
-                        || pkgCode.equals("NF") || pkgCode.equals("NG") || pkgCode.equals("NA")))
-            packagingType.setPakageTypeCode("0");
-        else
-            packagingType.setPakageTypeCode((pkgCode != null ? "1" : "2")); // Если есть код упаковки, то ставим "С
+//        String pkgCode = tnVedRow.getPackingCode();
+//        if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
+//                        || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
+//                        || pkgCode.equals("NF") || pkgCode.equals("NG") || pkgCode.equals("NA")))
+//            packagingType.setPakageTypeCode("0");
+//        else
+//            packagingType.setPakageTypeCode((pkgCode != null ? "1" : "2")); // Если есть код упаковки, то ставим "С
                                                                             // упаковкой", иначе "Без упаковки в
                                                                             // оборудованных емкостях транспортного
                                                                             // средства"
 
 
-        PIGoodsPackingInformationType goodsPackingInformationType = new PIGoodsPackingInformationType();
-        goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
-        goodsPackingInformationType.setPakingQuantity(
-                        tnVedRow.getPackingCount() != null ? BigInteger.valueOf(tnVedRow.getPackingCount().longValue())
-                                        : null);
-        goodsPackingInformationType.setPackageMark(tnVedRow.getPlaceCargoMark());
+//        PIGoodsPackingInformationType goodsPackingInformationType = new PIGoodsPackingInformationType();
+//        goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
+//        goodsPackingInformationType.setPakingQuantity(
+//                        tnVedRow.getPackingCount() != null ? BigInteger.valueOf(tnVedRow.getPackingCount().longValue())
+//                                        : null);
+//        goodsPackingInformationType.setPackageMark(tnVedRow.getPlaceCargoMark());
+//
+//        packagingType.getPackingInformation().add(goodsPackingInformationType);
 
-        packagingType.getPackingInformation().add(goodsPackingInformationType);
+//        addContainer(result, tnVedRow);
 
-        addContainer(result, tnVedRow);
-
-        List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
-        if (docs != null) {
-            for (NeSmgsTnVedDocuments doc : docs) {
-                result.getPresentedDocument().add(buildPICUPresentedDoc(doc));
-            }
-        }
-
-        result.setPIGoodsPackaging(packagingType);
+//        List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
+//        if (docs != null) {
+//            for (NeSmgsTnVedDocuments doc : docs) {
+//                result.getPresentedDocument().add(buildPICUPresentedDoc(doc));
+//            }
+//        }
+//
+//        result.setPIGoodsPackaging(packagingType);
 
         return result;
     }
@@ -995,7 +987,7 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
         Map<String, Set<String>> containerMap = new HashMap<String, Set<String>>();
         if (invoice.getIsContainer() == 1 && !containerList.isEmpty()) { // Если у нас контейнерная отправка и есть
                                                                          // данные в NE_CONTAINERS_LIST
-            for (TnVedRow tnVedRow : tnVedList) {
+            for (NeSmgsTnVed tnVedRow : tnVedList) {
                 Set<String> containerTnVed = containerMap.get(tnVedRow.getTnVedCode());
                 if (containerTnVed == null) {
                     containerTnVed = new HashSet<String>();
@@ -1010,7 +1002,7 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
                 containerMap.put(tnVedRow.getTnVedCode(), containerTnVed);
             }
         } else {
-            for (TnVedRow tnVedRow : tnVedList) {
+            for (NeSmgsTnVed tnVedRow : tnVedList) {
                 Set<String> containerTnVed = containerMap.get(tnVedRow.getTnVedCode());
                 if (tnVedRow.getContainer() != null) {
                     if (containerTnVed == null) {

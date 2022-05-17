@@ -94,7 +94,6 @@ public class ServletController {
             log.debug(formData.toString());
 
             dataBean.saveInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()), Long.parseLong(formData.getInvoiceId()));
-            log.debug(formData.getInvoiceData().toString());
 
             log.debug("invoiceId is: " + formData.getInvoiceId());
             SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));

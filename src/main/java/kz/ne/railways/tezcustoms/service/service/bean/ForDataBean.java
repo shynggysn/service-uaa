@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -298,9 +299,6 @@ public class ForDataBean implements ForDataBeanLocal {
     public void saveInvoiceData(InvoiceData invoiceData, Long invoiceUn) {
         for (InvoiceRow invoiceRow: invoiceData.getInvoiceItems()) {
             NeSmgsTnVed neTnved = new NeSmgsTnVed();
-            if (neTnved == null) {
-                neTnved = new NeSmgsTnVed();
-            }
             neTnved.setBruttoWeight(invoiceRow.getBrutto());
             neTnved.setNettoWeight(invoiceRow.getNetto());
             neTnved.setCountByUnit(invoiceRow.getQuantity());
@@ -323,8 +321,12 @@ public class ForDataBean implements ForDataBeanLocal {
             neTnved.setTnVedCode(invoiceRow.getCode());
 //            neTnved.setContainer(tnVedRow.getContainer());
             neTnved.setTnVedName(invoiceRow.getName());
+            BigInteger cnt = (BigInteger) em.createNativeQuery(
+                            "select count(*) from ktz.ne_smgs_tn_ved a WHERE a.invoice_un = (?1) and a.tn_ved_code = (?2)")
+                    .setParameter(1, neTnved.getInvoiceUn()).setParameter(2, neTnved.getTnVedCode()).getSingleResult();
 //            neTnved.setTnVedCountry(tnVedRow.getTnVedCountry());
-            em.persist(neTnved);
+            if (cnt.intValue() == 0)
+                em.persist(neTnved);
         }
     }
 

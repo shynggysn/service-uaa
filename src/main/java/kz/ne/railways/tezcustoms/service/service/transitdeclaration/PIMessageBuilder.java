@@ -844,9 +844,9 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
 //        result.setCurrencyCode(tnVedRow.getCurrencyCode());
         result.setGoodsNumeric(null);
         result.setGoodsTNVEDCode(tnVedRow.getTnVedCode());
-        result.setGrossWeightQuantity(tnVedRow.getBruttoWeight());
-        result.setInvoiceValue(tnVedRow.getTotalPrice());
-        result.setNetWeightQuantity(tnVedRow.getNettoWeight());
+        result.setGrossWeightQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getBruttoWeight())));
+        result.setInvoiceValue(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getPriceByFull())));
+        result.setNetWeightQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getNettoWeight())));
 //        String description = (tnVedRow.getDescription() != null ? tnVedRow.getDescription() : "");
 //        if (org.apache.commons.lang3.StringUtils.isNotBlank(tnVedRow.getDescriptionAdditionaly())) {
 //            description += ", " + tnVedRow.getDescriptionAdditionaly();
@@ -860,7 +860,7 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
 //        if (tnVedRow.getUnitTypeUn() != null) {
             SupplementaryQuantityType supplementaryQuantityType = new SupplementaryQuantityType();
 //            NeUnitType unitType = unitTypeMap.get(tnVedRow.getUnitTypeUn());
-            supplementaryQuantityType.setGoodsQuantity(tnVedRow.getCountByUnit());
+            supplementaryQuantityType.setGoodsQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getCountByUnit())));
             supplementaryQuantityType.setMeasureUnitQualifierName(tnVedRow.getUnitName());
             result.getSupplementaryQuantity().add(supplementaryQuantityType);
 //        }
@@ -987,7 +987,7 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
         Map<String, Set<String>> containerMap = new HashMap<String, Set<String>>();
         if (invoice.getIsContainer() == 1 && !containerList.isEmpty()) { // Если у нас контейнерная отправка и есть
                                                                          // данные в NE_CONTAINERS_LIST
-            for (TnVedRow tnVedRow : tnVedList) {
+            for (NeSmgsTnVed tnVedRow : tnVedList) {
                 Set<String> containerTnVed = containerMap.get(tnVedRow.getTnVedCode());
                 if (containerTnVed == null) {
                     containerTnVed = new HashSet<String>();
@@ -1002,7 +1002,7 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
                 containerMap.put(tnVedRow.getTnVedCode(), containerTnVed);
             }
         } else {
-            for (TnVedRow tnVedRow : tnVedList) {
+            for (NeSmgsTnVed tnVedRow : tnVedList) {
                 Set<String> containerTnVed = containerMap.get(tnVedRow.getTnVedCode());
                 if (tnVedRow.getContainer() != null) {
                     if (containerTnVed == null) {

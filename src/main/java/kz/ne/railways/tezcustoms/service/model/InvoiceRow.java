@@ -13,6 +13,5 @@ public class InvoiceRow {
     private String price;
     private String totalPrice;
 
-    public InvoiceRow() {
-    }
+    public InvoiceRow() {}
 }

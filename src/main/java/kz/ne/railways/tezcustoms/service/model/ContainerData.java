@@ -10,7 +10,6 @@ public class ContainerData {
 
     private String containerCodeName;
     private String vagonAccessoryName;
-
     public String getContainerCode() {
         return containerCode;
     }
@@ -74,6 +73,4 @@ public class ContainerData {
     public void setContainerListUn(Long containerListUn) {
         this.containerListUn = containerListUn;
     }
-
-
 }

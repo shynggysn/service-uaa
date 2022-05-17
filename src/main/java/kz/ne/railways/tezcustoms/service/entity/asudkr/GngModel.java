@@ -1,9 +1,12 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
+@Data
 public class GngModel {
     @Id
     private int id;
@@ -11,35 +14,4 @@ public class GngModel {
     private String code;
     private String shortName1;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setInvoiceUn(String invoiceUn) {
-        this.invoiceUn = invoiceUn;
-    }
-
-    public String getInvoiceUn() {
-        return invoiceUn;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setShortName1(String shortName1) {
-        this.shortName1 = shortName1;
-    }
-
-    public String getShortName1() {
-        return shortName1;
-    }
 }

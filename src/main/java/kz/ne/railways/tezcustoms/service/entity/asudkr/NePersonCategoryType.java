@@ -1,9 +1,12 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(schema = "NSI", name = "NE_PERSON_CATEGORY_TYPE")
 public class NePersonCategoryType {
     @Id
@@ -22,46 +25,5 @@ public class NePersonCategoryType {
 
     @Column(name = "CATEGORY_END")
     private Timestamp categoryEnd;
-
-    public void setCategoryTypeUn(Long categoryTypeUn) {
-        this.categoryTypeUn = categoryTypeUn;
-    }
-
-    public Long getCategoryTypeUn() {
-        return categoryTypeUn;
-    }
-
-    public void setCategoryCode(String categoryCode) {
-        this.categoryCode = categoryCode;
-    }
-
-    public String getCategoryCode() {
-        return categoryCode;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryBgn(Timestamp categoryBgn) {
-        this.categoryBgn = categoryBgn;
-    }
-
-    public Timestamp getCategoryBgn() {
-        return categoryBgn;
-    }
-
-    public void setCategoryEnd(Timestamp categoryEnd) {
-        this.categoryEnd = categoryEnd;
-    }
-
-    public Timestamp getCategoryEnd() {
-        return categoryEnd;
-    }
-
 
 }

@@ -1,11 +1,14 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(name = "NE_INVC_REF_PI", schema = "KTZ")
 public class NeInvcRefPi implements Serializable {
 
@@ -23,35 +26,4 @@ public class NeInvcRefPi implements Serializable {
     @Column(name = "ADDED_ON")
     private Timestamp addedOn;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getInvcUn() {
-        return invcUn;
-    }
-
-    public void setInvcUn(Long invcUn) {
-        this.invcUn = invcUn;
-    }
-
-    public Long getPrevInvcUn() {
-        return prevInvcUn;
-    }
-
-    public void setPrevInvcUn(Long prevInvcUn) {
-        this.prevInvcUn = prevInvcUn;
-    }
-
-    public Timestamp getAddedOn() {
-        return addedOn;
-    }
-
-    public void setAddedOn(Timestamp addedOn) {
-        this.addedOn = addedOn;
-    }
 }

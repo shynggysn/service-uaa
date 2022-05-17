@@ -1,10 +1,13 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
+@Data
 @Table(name = "NE_SMGS_TNVED_DOCUMENTS", schema = "KTZ")
 public class NeSmgsTnVedDocuments implements Serializable {
 
@@ -42,75 +45,4 @@ public class NeSmgsTnVedDocuments implements Serializable {
     @Column(name = "LIST_COUNT")
     private int listCount;
 
-    public Long getSmgsTnVedDocumentsUn() {
-        return smgsTnVedDocumentsUn;
-    }
-
-    public void setSmgsTnVedDocumentsUn(Long smgsTnVedDocumentsUn) {
-        this.smgsTnVedDocumentsUn = smgsTnVedDocumentsUn;
-    }
-
-    public long getSmgsTnVedUn() {
-        return smgsTnVedUn;
-    }
-
-    public void setSmgsTnVedUn(long smgsTnVedUn) {
-        this.smgsTnVedUn = smgsTnVedUn;
-    }
-
-    public String getDocumentCode() {
-        return documentCode;
-    }
-
-    public void setDocumentCode(String documentCode) {
-        this.documentCode = documentCode;
-    }
-
-    public String getDocumentName() {
-        return documentName;
-    }
-
-    public void setDocumentName(String documentName) {
-        this.documentName = documentName;
-    }
-
-    public String getDocumentNumber() {
-        return documentNumber;
-    }
-
-    public void setDocumentNumber(String documentNumber) {
-        this.documentNumber = documentNumber;
-    }
-
-    public Date getDocumentDate() {
-        return documentDate;
-    }
-
-    public void setDocumentDate(Date documentDate) {
-        this.documentDate = documentDate;
-    }
-
-    public void setDocumentDateTo(Date documentDateTo) {
-        this.documentDateTo = documentDateTo;
-    }
-
-    public Date getDocumentDateTo() {
-        return documentDateTo;
-    }
-
-    public int getCopyCount() {
-        return copyCount;
-    }
-
-    public void setCopyCount(int copyCount) {
-        this.copyCount = copyCount;
-    }
-
-    public int getListCount() {
-        return listCount;
-    }
-
-    public void setListCount(int listCount) {
-        this.listCount = listCount;
-    }
 }

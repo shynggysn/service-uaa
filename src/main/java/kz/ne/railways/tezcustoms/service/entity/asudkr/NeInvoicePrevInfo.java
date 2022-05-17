@@ -1,10 +1,13 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(name = "NE_INVOICE_PREV_INFO", schema = "KTZ")
 public class NeInvoicePrevInfo implements Serializable {
 
@@ -69,147 +72,4 @@ public class NeInvoicePrevInfo implements Serializable {
     @Column(name = "TRANZIT_SEND_DATETIME")
     private Timestamp tranzitSendDatetime;
 
-    public Timestamp getTranzitSendDatetime() {
-        return tranzitSendDatetime;
-    }
-
-    public void setTranzitSendDatetime(Timestamp tranzitSendDatetime) {
-        this.tranzitSendDatetime = tranzitSendDatetime;
-    }
-
-    public String getStartStaCouNo() {
-        return startStaCouNo;
-    }
-
-    public void setStartStaCouNo(String startStaCouNo) {
-        this.startStaCouNo = startStaCouNo;
-    }
-
-    public String getDestStationCouNo() {
-        return destStationCouNo;
-    }
-
-    public void setDestStationCouNo(String destStationCouNo) {
-        this.destStationCouNo = destStationCouNo;
-    }
-
-    public void setPrevInfoUn(Long prevInfoUn) {
-        this.prevInfoUn = prevInfoUn;
-    }
-
-    public Long getPrevInfoUn() {
-        return prevInfoUn;
-    }
-
-    public void setInvoiceUn(Long invoiceUn) {
-        this.invoiceUn = invoiceUn;
-    }
-
-    public Long getInvoiceUn() {
-        return invoiceUn;
-    }
-
-    public void setPrevInfoType(String prevInfoType) {
-        this.prevInfoType = prevInfoType;
-    }
-
-    public String getPrevInfoType() {
-        return prevInfoType;
-    }
-
-    public void setArriveStaNo(String arriveStaNo) {
-        this.arriveStaNo = arriveStaNo;
-    }
-
-    public String getArriveStaNo() {
-        return arriveStaNo;
-    }
-
-    public void setCustomOrgUn(Long customOrgUn) {
-        this.customOrgUn = customOrgUn;
-    }
-
-    public Long getCustomOrgUn() {
-        return customOrgUn;
-    }
-
-    public void setCustomCode(String customCode) {
-        this.customCode = customCode;
-    }
-
-    public String getCustomCode() {
-        return customCode;
-    }
-
-    public void setCustomName(String customName) {
-        this.customName = customName;
-    }
-
-    public String getCustomName() {
-        return customName;
-    }
-
-    public void setArriveTime(Timestamp arriveTime) {
-        this.arriveTime = arriveTime;
-    }
-
-    public Timestamp getArriveTime() {
-        return arriveTime;
-    }
-
-    public void setUserUn(Long userUn) {
-        this.userUn = userUn;
-    }
-
-    public Long getUserUn() {
-        return userUn;
-    }
-
-    public void setCreateDatetime(Timestamp createDatetime) {
-        this.createDatetime = createDatetime;
-    }
-
-    public Timestamp getCreateDatetime() {
-        return createDatetime;
-    }
-
-    public void setResponseDatetime(Timestamp responseDatetime) {
-        this.responseDatetime = responseDatetime;
-    }
-
-    public Timestamp getResponseDatetime() {
-        return responseDatetime;
-    }
-
-    public void setPrevInfoStatus(int prevInfoStatus) {
-        this.prevInfoStatus = prevInfoStatus;
-    }
-
-    public int getPrevInfoStatus() {
-        return prevInfoStatus;
-    }
-
-    public String getResponseText() {
-        return responseText;
-    }
-
-    public void setResponseText(String responseText) {
-        this.responseText = responseText;
-    }
-
-    public String getResponseUUID() {
-        return responseUUID;
-    }
-
-    public void setResponseUUID(String responseUUID) {
-        this.responseUUID = responseUUID;
-    }
-
-    public void setPrevInfoFeatures(Integer prevInfoFeatures) {
-        this.prevInfoFeatures = prevInfoFeatures;
-    }
-
-    public Integer getPrevInfoFeatures() {
-        return prevInfoFeatures;
-    }
 }

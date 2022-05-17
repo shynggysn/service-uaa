@@ -1,8 +1,11 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
+@Data
 @Table(schema = "KTZ", name = "NE_SMGS_DESTINATION_PLACE_INFO")
 public class NeSmgsDestinationPlaceInfo {
     @Id
@@ -45,109 +48,5 @@ public class NeSmgsDestinationPlaceInfo {
 
     @Column(name = "DEST_PLACE_CUSTOM_NAME", length = 250)
     private String destPlaceCustomName;
-
-    public void setDestPlaceInfoUn(Long destPlaceInfoUn) {
-        this.destPlaceInfoUn = destPlaceInfoUn;
-    }
-
-    public Long getDestPlaceInfoUn() {
-        return destPlaceInfoUn;
-    }
-
-    public void setInvoiceUn(Long invoiceUn) {
-        this.invoiceUn = invoiceUn;
-    }
-
-    public Long getInvoiceUn() {
-        return invoiceUn;
-    }
-
-    public void setDestPlace(String destPlace) {
-        this.destPlace = destPlace;
-    }
-
-    public String getDestPlace() {
-        return destPlace;
-    }
-
-    public void setDestPlaceSta(String destPlaceSta) {
-        this.destPlaceSta = destPlaceSta;
-    }
-
-    public String getDestPlaceSta() {
-        return destPlaceSta;
-    }
-
-    public void setDestPlaceCountryCode(String destPlaceCountryCode) {
-        this.destPlaceCountryCode = destPlaceCountryCode;
-    }
-
-    public String getDestPlaceCountryCode() {
-        return destPlaceCountryCode;
-    }
-
-    public void setDestPlaceIndex(String destPlaceIndex) {
-        this.destPlaceIndex = destPlaceIndex;
-    }
-
-    public String getDestPlaceIndex() {
-        return destPlaceIndex;
-    }
-
-    public void setDestPlaceCity(String destPlaceCity) {
-        this.destPlaceCity = destPlaceCity;
-    }
-
-    public String getDestPlaceCity() {
-        return destPlaceCity;
-    }
-
-    public void setDestPlaceRegion(String destPlaceRegion) {
-        this.destPlaceRegion = destPlaceRegion;
-    }
-
-    public String getDestPlaceRegion() {
-        return destPlaceRegion;
-    }
-
-    public void setDestPlaceStreet(String destPlaceStreet) {
-        this.destPlaceStreet = destPlaceStreet;
-    }
-
-    public String getDestPlaceStreet() {
-        return destPlaceStreet;
-    }
-
-    public void setDestPlaceBuilding(String destPlaceBuilding) {
-        this.destPlaceBuilding = destPlaceBuilding;
-    }
-
-    public String getDestPlaceBuilding() {
-        return destPlaceBuilding;
-    }
-
-    public void setDestPlaceCustomOrgUn(Long destPlaceCustomOrgUn) {
-        this.destPlaceCustomOrgUn = destPlaceCustomOrgUn;
-    }
-
-    public Long getDestPlaceCustomOrgUn() {
-        return destPlaceCustomOrgUn;
-    }
-
-    public void setDestPlaceCustomCode(String destPlaceCustomCode) {
-        this.destPlaceCustomCode = destPlaceCustomCode;
-    }
-
-    public String getDestPlaceCustomCode() {
-        return destPlaceCustomCode;
-    }
-
-    public void setDestPlaceCustomName(String destPlaceCustomName) {
-        this.destPlaceCustomName = destPlaceCustomName;
-    }
-
-    public String getDestPlaceCustomName() {
-        return destPlaceCustomName;
-    }
 
 }

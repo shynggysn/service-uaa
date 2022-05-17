@@ -1,10 +1,13 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 
 @Entity
+@Data
 @Table(schema = "KTZ", name = "NE_VAGON_GROUP")
 public class NeVagonGroup implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -45,77 +48,37 @@ public class NeVagonGroup implements Serializable {
      * @Column(name="TO_CHECK") private Long toCheck;
      */
 
-    public void setDatePodach(Date datePodach) {
-        this.datePodach = datePodach;
-    }
-
-    public Long getVagGroupStatusUn() {
-        return vagGroupStatusUn;
-    }
-
-    public void setVagGroupStatusUn(Long vagGroupStatusUn) {
-        this.vagGroupStatusUn = vagGroupStatusUn;
-    }
-
-    public NeVagonGroup() {
-        super();
-    }
-
-    public long getVagGroupUn() {
-        return this.vagGroupUn;
-    }
-
-    public void setVagGroupUn(long vagGroupUn) {
-        this.vagGroupUn = vagGroupUn;
-    }
-
-    public Long getSenderUn() {
-        return senderUn;
-    }
-
-    public void setSenderUn(Long senderUn) {
-        this.senderUn = senderUn;
-    }
-
-    public Long getStUn() {
-        return stUn;
-    }
-
-    public void setStUn(Long stUn) {
-        this.stUn = stUn;
-    }
-
     /*
      * public Long getConsignorUn() { return consignorUn; }
-     * 
+     *
      * public void setConsignorUn(Long consignorUn) { this.consignorUn = consignorUn; }
-     * 
+     *
      * public Long getDestStUn() { return destStUn; }
-     * 
+     *
      * public void setDestStUn(Long destStUn) { this.destStUn = destStUn; }
-     * 
+     *
      * public String getVagGroupNo() { return vagGroupNo; }
-     * 
+     *
      * public void setVagGroupNo(String vagGroupNo) { this.vagGroupNo = vagGroupNo; }
-     * 
+     *
      * public Long getAgrStatus() { return agrStatus; }
-     * 
+     *
      * public void setAgrStatus(Long agrStatus) { this.agrStatus = agrStatus; }
-     * 
+     *
      * public String getAgrComment() { return agrComment; }
-     * 
+     *
      * public void setAgrComment(String agrComment) { this.agrComment = agrComment; }
-     * 
+     *
      * public Timestamp getAgrTime() { return agrTime; }
-     * 
+     *
      * public void setAgrTime(Timestamp agrTime) { this.agrTime = agrTime; }
-     * 
+     *
      * public Timestamp getDateTimePodach() { return dateTimePodach; }
-     * 
+     *
      * public void setDateTimePodach(Timestamp dateTimePodach) { this.dateTimePodach = dateTimePodach; }
-     * 
+     *
      * public Long getToCheck() { return toCheck; }
-     * 
+     *
      * public void setToCheck(Long toCheck) { this.toCheck = toCheck; }
      */
 }

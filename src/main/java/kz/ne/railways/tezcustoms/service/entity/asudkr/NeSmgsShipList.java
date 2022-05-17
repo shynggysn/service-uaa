@@ -1,9 +1,12 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Data
 @Table(name = "NE_SMGS_SHIP_LIST", schema = "KTZ")
 public class NeSmgsShipList implements Serializable {
     @Id
@@ -24,31 +27,5 @@ public class NeSmgsShipList implements Serializable {
     public NeSmgsShipList() {
         super();
     }
-
-    public Long getNeSmgsShipListUn() {
-        return neSmgsShipListUn;
-    }
-
-    public void setNeSmgsShipListUn(Long neSmgsShipListUn) {
-        this.neSmgsShipListUn = neSmgsShipListUn;
-    }
-
-    public long getInvUn() {
-        return invUn;
-    }
-
-    public void setInvUn(long invUn) {
-        this.invUn = invUn;
-    }
-
-    public Long getNeVesselUn() {
-        return neVesselUn;
-    }
-
-    public void setNeVesselUn(Long neVesselUn) {
-        this.neVesselUn = neVesselUn;
-    }
-
-
 
 }

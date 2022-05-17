@@ -1,9 +1,12 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(schema = "NSI", name = "NE_UNIT_TYPE")
 public class NeUnitType {
     @Id
@@ -25,54 +28,5 @@ public class NeUnitType {
 
     @Column(name = "UNIT_END")
     private Timestamp unitEnd;
-
-    public void setUnitType(Long unitType) {
-        this.unitType = unitType;
-    }
-
-    public Long getUnitType() {
-        return unitType;
-    }
-
-    public void setUnitCode(String unitCode) {
-        this.unitCode = unitCode;
-    }
-
-    public String getUnitCode() {
-        return unitCode;
-    }
-
-    public void setUnitName(String unitName) {
-        this.unitName = unitName;
-    }
-
-    public String getUnitName() {
-        return unitName;
-    }
-
-    public void setUnitDescription(String unitDescription) {
-        this.unitDescription = unitDescription;
-    }
-
-    public String getUnitDescription() {
-        return unitDescription;
-    }
-
-    public void setUnitBgn(Timestamp unitBgn) {
-        this.unitBgn = unitBgn;
-    }
-
-    public Timestamp getUnitBgn() {
-        return unitBgn;
-    }
-
-    public void setUnitEnd(Timestamp unitEnd) {
-        this.unitEnd = unitEnd;
-    }
-
-    public Timestamp getUnitEnd() {
-        return unitEnd;
-    }
-
 
 }

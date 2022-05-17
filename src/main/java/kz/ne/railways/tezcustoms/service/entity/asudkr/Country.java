@@ -1,5 +1,7 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,6 +10,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
+@Data
 @Table(name = "COUNTRY", schema = "NSI")
 public class Country implements Serializable {
     /**
@@ -45,86 +48,5 @@ public class Country implements Serializable {
 
     @Column(name = "COU_END")
     private Timestamp couEnd;
-
-    public Long getCouUn() {
-        return couUn;
-    }
-
-    public void setCouUn(Long couUn) {
-        this.couUn = couUn;
-    }
-
-    public int getCouId() {
-        return couId;
-    }
-
-    public void setCouId(int couId) {
-        this.couId = couId;
-    }
-
-    public String getCountryNo() {
-        return countryNo;
-    }
-
-    public void setCountryNo(String countryNo) {
-        this.countryNo = countryNo;
-    }
-
-    public int getRegionUn() {
-        return regionUn;
-    }
-
-    public void setRegionUn(int regionUn) {
-        this.regionUn = regionUn;
-    }
-
-    public String getCountryId() {
-        return countryId;
-    }
-
-    public void setCountryId(String countryId) {
-        this.countryId = countryId;
-    }
-
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    public String getCountryFullName() {
-        return countryFullName;
-    }
-
-    public void setCountryFullName(String countryFullName) {
-        this.countryFullName = countryFullName;
-    }
-
-    public String getCountryId3() {
-        return countryId3;
-    }
-
-    public void setCountryId3(String countryId3) {
-        this.countryId3 = countryId3;
-    }
-
-    public Timestamp getCouBegin() {
-        return couBegin;
-    }
-
-    public void setCouBegin(Timestamp couBegin) {
-        this.couBegin = couBegin;
-    }
-
-    public Timestamp getCouEnd() {
-        return couEnd;
-    }
-
-    public void setCouEnd(Timestamp couEnd) {
-        this.couEnd = couEnd;
-    }
-
 
 }

@@ -31,6 +31,7 @@ public class User implements Serializable {
     @Size(max = 120)
     private String password;
 
+    @Column(name = "iin_bin")
     @NotBlank
     @Size(max = 12)
     private String iinBin;
@@ -42,36 +43,43 @@ public class User implements Serializable {
     @Size(max = 250)
     private String address;
 
+    @Column(name = "company_name")
     @Size(max = 120)
     private String companyName;
 
+    @Column(name = "company_director")
     @Size(max = 120)
     private String companyDirector;
 
+    @Column(name = "first_name")
     @Size(max = 50)
     private String firstName;
 
+    @Column(name = "last_name")
     @Size(max = 50)
     private String lastName;
 
+    @Column(name = "middle_name")
     @Size(max = 50)
     private String middleName;
 
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "boolean default false", name = "first_name")
     private boolean isCompany;
 
+    @Column(name = "created_date")
     @CreatedDate
     private LocalDate createdDate;
 
+    @Column(name = "last_modified_date")
     @LastModifiedDate
     private LocalDate lastModifiedDate;
 
     @Size(max = 10)
     private String kato;
 
-    @Column(name = "forwarder_code")
+    @Column(name = "expeditor_code")
     @Size(max = 10)
-    private String forwarderCode;
+    private String expeditorCode;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
@@ -83,7 +91,7 @@ public class User implements Serializable {
     public User(Long id, String email, String password, String iinBin, String phone,
                 String address, String companyName, String companyDirector, String firstName, String lastName,
                 String middleName, boolean isCompany, LocalDate createdDate, LocalDate lastModifiedDate,
-                String kato, String forwarderCode, Set<Role> roles) {
+                String kato, String expeditorCode, Set<Role> roles) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -99,7 +107,7 @@ public class User implements Serializable {
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
         this.kato = kato;
-        this.forwarderCode = forwarderCode;
+        this.expeditorCode = expeditorCode;
         this.roles = roles;
     }
 }

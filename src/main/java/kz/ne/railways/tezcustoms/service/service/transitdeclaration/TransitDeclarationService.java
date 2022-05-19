@@ -528,22 +528,21 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
 
     private String getOriginCountryName() {
         // TODO Auto-generated method stub
-        // Страна происхождения товара. Краткое название страны в соответствии с классификатором стран мира
-        // / РАЗНЫЕ/ НЕИЗВЕСТНА/ ЕВРОСОЮЗ
+        // Страна происхождения товара. Краткое название страны в соответствии с классификатором стран мира РАЗНЫЕ/ НЕИЗВЕСТНА/ ЕВРОСОЮЗ
         String result = null;
         String code = "";
-//        if (tnVedList != null)
-//            for (TnVedRow row : tnVedList) {
-//                String countryCode = row.getTnVedCountry();
-//                Country country = dao.getCountry(countryCode);
-//                if (country != null && result == null) {
-//                    result = country.getCountryFullName();
-//                    code = countryCode;
-//                } else if (countryCode != null && !code.equals(countryCode)) {
-//                    result = "РАЗНЫЕ";
-//                    code = "РАЗНЫЕ";
-//                }
-//            }
+        if (tnVedList != null)
+            for (NeSmgsTnVed row : tnVedList) {
+                String countryCode = row.getTnVedCountry();
+                Country country = dao.getCountry(countryCode);
+                if (country != null && result == null) {
+                    result = country.getCountryFullName();
+                    code = countryCode;
+                } else if (countryCode != null && !code.equals(countryCode)) {
+                    result = "РАЗНЫЕ";
+                    code = "РАЗНЫЕ";
+                }
+            }
         if (result == null) {
             result = "НЕИЗВЕСТНА";
         }
@@ -685,9 +684,8 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
 
     private ESADoutCUGoodsType buildGoods(NeSmgsTnVed tnVedRow) {
 
-//        }
         ESADoutCUGoodsType result = new ESADoutCUGoodsType();
-//        result.setCurrencyCode(tnVedRow.getCurrencyCode());
+        result.setCurrencyCode(tnVedRow.getCurrencyCodeUn());
 
         result.setGoodsNumeric(null);
         result.setGoodsTNVEDCode(tnVedRow.getTnVedCode());
@@ -715,16 +713,16 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
 //                            ? tnVedRow.getPakagePartQuantity().setScale(2, BigDecimal.ROUND_HALF_UP)
 //                            : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
 //        }
-        // TAV возможно фикс по количеству грузомест
-        // packagingType.setPakageQuantity(tnVedRow.getPackingCount() != null ?
-        // tnVedRow.getPackingCount().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO.setScale(2,
-        // BigDecimal.ROUND_HALF_UP));
+//         TAV возможно фикс по количеству грузомест
+//         packagingType.setPakageQuantity(tnVedRow.getPackingCount() != null ?
+//         tnVedRow.getPackingCount().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO.setScale(2,
+//         BigDecimal.ROUND_HALF_UP));
 //        packagingType.setPakageQuantity(tnVedRow.getPlaceCargoCount() != null
 //                        ? tnVedRow.getPlaceCargoCount().setScale(2, BigDecimal.ROUND_HALF_UP)
 //                        : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
-
-        // Если вид упаковки: навалом(VS), насыпью(VO, VR, VY), наливом(VL, VQ), неупакован(NE, NF, NG) или
-        // нет сведений (NA), то передавать PakageTypeCode=0.
+//
+//         Если вид упаковки: навалом(VS), насыпью(VO, VR, VY), наливом(VL, VQ), неупакован(NE, NF, NG) или
+//         нет сведений (NA), то передавать PakageTypeCode=0.
 //        String pkgCode = tnVedRow.getPackingCode();
 //        if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
 //                        || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
@@ -735,7 +733,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
 //                                                                            // упаковкой", иначе "Без упаковки в
 //                                                                            // оборудованных емкостях транспортного
 //                                                                            // средства"
-
+//
 //        PackingInformationType goodsPackingInformationType = new PackingInformationType();
 //        goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
 //        goodsPackingInformationType.setPakingQuantity(
@@ -743,7 +741,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
 //                                        : null);
 //
 //        packagingType.getPackingInformation().add(goodsPackingInformationType);
-
+//
 //        result.setESADContainer(new ESADContainerType());
 //        addContainer(result, tnVedRow);
 //        List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
@@ -2064,7 +2062,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
 
             ESADoutCUType tdDoc = build(invoiceUn);
             if(tdDoc != null) {
-                //	System.out.println( td.getXml(tdDoc) );
+//                System.out.println(getXml(tdDoc));
                 result = sendTD(invoiceUn);
             }
             if (result != null && result.getValue() != null) {

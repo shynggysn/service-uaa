@@ -1,7 +1,6 @@
 package kz.ne.railways.tezcustoms.service.service.bean;
 
 import com.google.gson.Gson;
-import kz.ne.railways.tezcustoms.service.LocalDatabase;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.*;
 import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
@@ -16,8 +15,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;

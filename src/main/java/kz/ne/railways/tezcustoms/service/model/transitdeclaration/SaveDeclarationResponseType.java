@@ -1,61 +1,21 @@
-/**
- * SaveDeclarationResponseType.java
- *
- * This file was auto-generated from WSDL by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT)
- * WSDL2Java emitter.
- */
-
 package kz.ne.railways.tezcustoms.service.model.transitdeclaration;
 
-public class SaveDeclarationResponseType implements java.io.Serializable {
-    private String code;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
+public class SaveDeclarationResponseType implements java.io.Serializable {
+
+    private String code;
     private String value;
 
     public SaveDeclarationResponseType() {}
 
     public SaveDeclarationResponseType(String code, String value) {
         this.code = code;
-        this.value = value;
-    }
-
-
-    /**
-     * Gets the code value for this SaveDeclarationResponseType.
-     * 
-     * @return code
-     */
-    public String getCode() {
-        return code;
-    }
-
-
-    /**
-     * Sets the code value for this SaveDeclarationResponseType.
-     * 
-     * @param code
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-
-    /**
-     * Gets the value value for this SaveDeclarationResponseType.
-     * 
-     * @return value
-     */
-    public String getValue() {
-        return value;
-    }
-
-
-    /**
-     * Sets the value value for this SaveDeclarationResponseType.
-     * 
-     * @param value
-     */
-    public void setValue(String value) {
         this.value = value;
     }
 

@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -68,12 +69,17 @@ public class AuthController {
             List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                             .collect(Collectors.toList());
 
-            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getEmail(),
-                            userDetails.getCompanyName(), roles));
+            return ResponseEntity.ok(new JwtResponse(
+                    jwt,
+                    userDetails.getId(),
+                    userDetails.getEmail(),
+                    userDetails.getCompanyName(),
+                    roles));
         } catch (Exception exception) {
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
     }
+
 
     @Operation(summary = "Sign up")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully signed up",

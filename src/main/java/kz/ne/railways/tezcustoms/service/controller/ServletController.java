@@ -1,8 +1,6 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
 import com.google.gson.Gson;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,14 +23,12 @@ import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.*;
-import java.sql.SQLOutput;
 
 @Slf4j
 @RestController
@@ -98,7 +94,7 @@ public class ServletController {
             log.debug("invoiceId is: " + formData.getInvoiceId());
             SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
 
-            log.debug(result.getValue());
+            log.debug("declaration response result: " + result.toString());
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));

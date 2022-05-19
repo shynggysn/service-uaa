@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import kz.ne.railways.tezcustoms.service.LocalDatabase;
 import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
-import kz.ne.railways.tezcustoms.service.entity.asudkr.NeSmgsAdditionDocuments;
-import kz.ne.railways.tezcustoms.service.model.Contract;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
@@ -48,6 +45,7 @@ public class ContractController {
         return dataBean.getContracts();
     }
 
+
     @Operation(summary = "Load a contract from ASU DKR")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Contract successfully loaded",
@@ -61,16 +59,5 @@ public class ContractController {
                         requestDto.getInvoiceNum());
     }
 
-    @Operation(summary = "Check logs in console")
-    @GetMapping("check")
-    private void check() {
-        log.debug("Contracts:");
-        for (Contract contract : localDatabase.contractList)
-            log.debug(contract.getInvoiceId());
-
-        log.debug("\nDocuments:");
-        for (NeSmgsAdditionDocuments document : localDatabase.documents)
-            log.debug(document.getInvUn() + "");
-    }
 
 }

@@ -97,10 +97,10 @@ public class AuthController {
             }
 
             // Create new user's account
-            User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
-                            signUpRequest.getIinBin(), signUpRequest.isCompany(), signUpRequest.getFirstName(),
-                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.getCompanyName(),
-                            signUpRequest.getCompanyDirector(), signUpRequest.getAddress(), signUpRequest.getPhone());
+            //User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
+            //                signUpRequest.getIinBin(), signUpRequest.isCompany(), signUpRequest.getFirstName(),
+//                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.getCompanyName(),
+//                            signUpRequest.getCompanyDirector(), signUpRequest.getAddress(), signUpRequest.getPhone());
 
             Set<String> strRoles = signUpRequest.getRole();
             Set<Role> roles = new HashSet<>();
@@ -138,8 +138,8 @@ public class AuthController {
                 });
             }
 
-            user.setRoles(roles);
-            userRepository.save(user);
+            //user.setRoles(roles);
+            //userRepository.save(user);
 
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         } catch (Exception exception) {

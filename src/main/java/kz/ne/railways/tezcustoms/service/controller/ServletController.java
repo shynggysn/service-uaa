@@ -27,12 +27,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.*;
 import java.sql.SQLOutput;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -102,5 +106,16 @@ public class ServletController {
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
+    }
+
+    @GetMapping("/checkBin/{bin}")
+    public String checkBin(@PathVariable String bin) {
+        String url = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
+        RestTemplate restTemplate = new RestTemplate();
+        //Object[] responce = restTemplate.getForObject(url, Object[].class);
+
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        String objects = responseEntity.getBody();
+        return objects;
     }
 }

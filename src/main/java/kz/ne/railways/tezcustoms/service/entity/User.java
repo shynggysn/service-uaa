@@ -15,7 +15,6 @@ import java.util.Set;
 
 @Data
 @Entity
-@Data
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iinBin"),
         @UniqueConstraint(columnNames = "email")})
 public class User implements Serializable {
@@ -67,8 +66,12 @@ public class User implements Serializable {
     @LastModifiedDate
     private LocalDate lastModifiedDate;
 
-    @Column(name = "chat_id")
-    private Long chatId;
+    @Size(max = 10)
+    private String kato;
+
+    @Column(name = "forwarder_code")
+    @Size(max = 10)
+    private String forwarderCode;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
@@ -77,19 +80,27 @@ public class User implements Serializable {
 
     public User() {}
 
-    public User(String email, String password, String iinBin, boolean isCompany, String firstName, String lastName,
-                    String middleName, String companyName, String companyDirector, String address, String phone) {
+    public User(Long id, String email, String password, String iinBin, String phone,
+                String address, String companyName, String companyDirector, String firstName, String lastName,
+                String middleName, boolean isCompany, LocalDate createdDate, LocalDate lastModifiedDate,
+                String kato, String forwarderCode, Set<Role> roles) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.iinBin = iinBin;
-        this.isCompany = isCompany;
+        this.phone = phone;
+        this.address = address;
+        this.companyName = companyName;
+        this.companyDirector = companyDirector;
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
-        this.companyName = companyName;
-        this.companyDirector = companyDirector;
-        this.address = address;
-        this.phone = phone;
+        this.isCompany = isCompany;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+        this.kato = kato;
+        this.forwarderCode = forwarderCode;
+        this.roles = roles;
     }
 }
 

@@ -20,7 +20,9 @@ import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,11 +33,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -146,27 +152,22 @@ public class AuthController {
     }
 
     @GetMapping("/checkBin/{bin}")
-    public String checkBin(@PathVariable String bin) {
-        String url = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
-        RestTemplate restTemplate = new RestTemplate();
-        //Object[] responce = restTemplate.getForObject(url, Object[].class);
+    public ResponseEntity<?> checkBin(@PathVariable String bin) throws MalformedURLException {
+        String formatUrl = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
+        URL url = new URL(formatUrl);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            //BinResponse binResponse = objectMapper.readValue(url, BinResponse.class);
-            System.out.println("Bin response: \n");
-            Map<String, String> map
-                    = objectMapper.readValue(url, new TypeReference<Map<String,String>>(){});
+            log.info("Bin response: \n");
+            Map<String, Object> map
+                    = objectMapper.readValue(url, new TypeReference<HashMap<String,Object>>(){});
 
-            System.out.println("map: " + map);
-            BinResponse binResponse = new BinResponse(map);
-            System.out.println(binResponse);
-        } catch (JsonProcessingException e) {
+            log.info("map: " + map);
+            BinResponse binResponse = new BinResponse((HashMap<String, String>)map.get("obj"));
+            log.info(String.valueOf(binResponse));
+            return ResponseEntity.ok(binResponse);
+        } catch (IOException e) {
             e.printStackTrace();
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
-
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-        String objects = responseEntity.getBody();
-        System.out.println(objects);
-        return objects;
     }
 }

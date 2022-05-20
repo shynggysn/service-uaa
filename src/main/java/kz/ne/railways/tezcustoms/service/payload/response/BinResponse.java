@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -11,9 +12,7 @@ import java.util.Map;
 @ToString
 public class BinResponse {
 
-    private String firstName;
-    private String surName;
-    private String middleName;
+    private String bin;
 
     //TODO parse into separate fields;
     private String fio;
@@ -24,20 +23,18 @@ public class BinResponse {
 
     public BinResponse(){}
 
-    public BinResponse(String firstName, String surName, String middleName, String organizationName, String kato, String address) {
-        this.firstName = firstName;
-        this.surName = surName;
-        this.middleName = middleName;
+    public BinResponse(String organizationName, String kato, String address) {
         this.organizationName = organizationName;
         this.kato = kato;
         this.address = address;
     }
 
-    public BinResponse(Map map){
-        this.fio = map.get("fio").toString();
-        this.organizationName = map.get("name").toString();
-        this.kato = map.get("katoId").toString();
-        this.address = map.get("katoAddress").toString();
+    public BinResponse(HashMap<String, String> map){
+        this.bin = map.get("bin");
+        this.fio = map.get("fio");
+        this.organizationName = map.get("name");
+        this.kato = map.get("katoCode");
+        this.address = map.get("katoAddress");
     }
 
 

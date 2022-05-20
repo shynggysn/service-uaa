@@ -145,28 +145,4 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/checkBin/{bin}")
-    public String checkBin(@PathVariable String bin) {
-        String url = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
-        RestTemplate restTemplate = new RestTemplate();
-        //Object[] responce = restTemplate.getForObject(url, Object[].class);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            //BinResponse binResponse = objectMapper.readValue(url, BinResponse.class);
-            System.out.println("Bin response: \n");
-            Map<String, String> map
-                    = objectMapper.readValue(url, new TypeReference<Map<String,String>>(){});
-
-            System.out.println("map: " + map);
-            BinResponse binResponse = new BinResponse(map);
-            System.out.println(binResponse);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-        String objects = responseEntity.getBody();
-        System.out.println(objects);
-        return objects;
-    }
 }

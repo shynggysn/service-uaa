@@ -291,7 +291,7 @@ public class ForDataBean implements ForDataBeanLocal {
             neTnved.setBruttoWeight(invoiceRow.getBrutto());
             neTnved.setNettoWeight(invoiceRow.getNetto());
             neTnved.setCountByUnit(invoiceRow.getQuantity());
-//            neTnved.setCurrencyCodeUn(invoiceRow.getCurrencyUn());
+ //           neTnved.setCurrencyCodeUn(invoiceRow.getCurrencyUn());
             neTnved.setInvoiceUn(invoiceUn);
             neTnved.setUnitName(invoiceRow.getUnit());
             neTnved.setPriceByOne(invoiceRow.getPrice());

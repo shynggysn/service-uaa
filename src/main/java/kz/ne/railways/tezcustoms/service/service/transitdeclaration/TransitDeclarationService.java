@@ -460,7 +460,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
     private String getCurrencyCode() {
         // Трехзначный буквенный в графе 22 код валюты цены договора/ платежа (оценки). По классификатору
         // валют
-        String result = "";
+        String result = "USD";
 //        if (tnVedList != null)
 //            for (NeSmgsTnVed row : tnVedList) {
 //                if (row.getCurrencyCode() != null) {
@@ -500,7 +500,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         // Общее количество грузовых мест
         BigDecimal result = BigDecimal.ZERO;
 //        if (tnVedList != null && !tnVedList.isEmpty()) {
-//            for (TnVedRow tnVedRow : tnVedList) {
+//            for (NeSmgsTnVed tnVedRow : tnVedList) {
 //                result = result.add(tnVedRow.getPlaceCargoCount());
 //            }
 //        }
@@ -1449,6 +1449,9 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         // LegalPerson ktzh = dao.getLegalPerson(KTZH_LEL_PERS_UN);
         result.setOrganizationName(replaceSpacSymbol(customsPersName));
         result.setShortName(replaceSpacSymbol(customsPersSName));
+
+        log.debug("org name: " + result.getOrganizationName());
+        log.debug("short name: " + result.getShortName());
         addressType.setStreetHouse(customsPersAddress);
         addressType.setCity(customsPersCity);
         featuresType.setBIN(customsPersBIN);

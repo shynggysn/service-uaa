@@ -17,4 +17,6 @@ public interface ForDataBeanLocal {
     public void saveCustomsResponse(Long invoiceId, SaveDeclarationResponseType result, String uuid);
 
     public void saveDocInfo(String invoiceId, String filename, Date date, String uuid);
+
+    public boolean checkExpeditorCode(Long code);
 }

@@ -31,19 +31,7 @@ public class ContractController {
     private static final long serialVersionUID = 1L;
 
     private final ForDataBeanLocal dataBean;
-    private final LocalDatabase localDatabase;
     private final ContractsService contractsService;
-
-    @Operation(summary = "Get a contracts list")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found the contracts list",
-                            content = {@Content(mediaType = "application/json")}),
-            @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Contracts not found", content = @Content)})
-    @GetMapping("")
-    public String getContracts() {
-        return dataBean.getContracts();
-    }
 
 
     @Operation(summary = "Load a contract from ASU DKR")

@@ -101,14 +101,4 @@ public class ServletController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
     }
 
-    @GetMapping("/checkBin/{bin}")
-    public String checkBin(@PathVariable String bin) {
-        String url = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
-        RestTemplate restTemplate = new RestTemplate();
-        //Object[] responce = restTemplate.getForObject(url, Object[].class);
-
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-        String objects = responseEntity.getBody();
-        return objects;
-    }
 }

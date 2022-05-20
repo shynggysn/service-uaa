@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iinBin"),
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iin_bin"),
         @UniqueConstraint(columnNames = "email")})
 public class User implements Serializable {
     @Id
@@ -31,8 +31,8 @@ public class User implements Serializable {
     @Size(max = 120)
     private String password;
 
-    @Column(name = "iin_bin")
     @NotBlank
+    @Column(name = "iin_bin")
     @Size(max = 12)
     private String iinBin;
 
@@ -63,7 +63,7 @@ public class User implements Serializable {
     @Size(max = 50)
     private String middleName;
 
-    @Column(columnDefinition = "boolean default false", name = "first_name")
+    @Column(columnDefinition = "boolean default false", name = "is_company")
     private boolean isCompany;
 
     @Column(name = "created_date")
@@ -88,9 +88,9 @@ public class User implements Serializable {
 
     public User() {}
 
-    public User(Long id, String email, String password, String iinBin, String phone,
+    public User(String email, String password, String iinBin, String phone,
                 String address, String companyName, String companyDirector, String firstName, String lastName,
-                String middleName, boolean isCompany, LocalDate createdDate, LocalDate lastModifiedDate,
+                String middleName, boolean isCompany, /*LocalDate createdDate, LocalDate lastModifiedDate,*/
                 String kato, String expeditorCode, Set<Role> roles) {
         this.id = id;
         this.email = email;
@@ -104,8 +104,8 @@ public class User implements Serializable {
         this.lastName = lastName;
         this.middleName = middleName;
         this.isCompany = isCompany;
-        this.createdDate = createdDate;
-        this.lastModifiedDate = lastModifiedDate;
+//        this.createdDate = createdDate;
+//        this.lastModifiedDate = lastModifiedDate;
         this.kato = kato;
         this.expeditorCode = expeditorCode;
         this.roles = roles;

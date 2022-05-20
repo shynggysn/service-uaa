@@ -25,9 +25,6 @@ import java.util.*;
 public class ForDataBean implements ForDataBeanLocal {
 
     @Autowired
-    private LocalDatabase localDatabase;
-
-    @Autowired
     private PrevInfoBeanDAOLocal dao;
 
     private Gson gson = new Gson();
@@ -48,11 +45,6 @@ public class ForDataBean implements ForDataBeanLocal {
 
     // Станции где должно указываться транспорт - судно
     List<String> vesselStaUns = Arrays.asList("691607", "693807", "663804", "689202");
-
-    @Override
-    public String getContracts() {
-        return gson.toJson(localDatabase.contractList);
-    }
 
     @Override
     public FormData getContractData(String invNum) {

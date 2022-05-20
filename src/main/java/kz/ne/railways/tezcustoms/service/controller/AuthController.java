@@ -1,5 +1,8 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,6 +13,7 @@ import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.model.ERole;
 import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
+import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.JwtResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
@@ -24,11 +28,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -96,54 +100,73 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: email is already in use!"));
             }
 
-            // Create new user's account
-            //User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
-            //                signUpRequest.getIinBin(), signUpRequest.isCompany(), signUpRequest.getFirstName(),
-//                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.getCompanyName(),
-//                            signUpRequest.getCompanyDirector(), signUpRequest.getAddress(), signUpRequest.getPhone());
+//          Create new user's account
+//            User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
+//                            signUpRequest.getIinBin(), signUpRequest.getPhone(), signUpRequest.getAddress(), signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(), signUpRequest.getFirstName(),
+//                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.isCompany(), signUpRequest.getKato(), signUpRequest.getExpeditorCode(), signUpRequest.getRoles());
 
-            Set<String> strRoles = signUpRequest.getRole();
+            Set<String> strRoles = signUpRequest.getRoles();
             Set<Role> roles = new HashSet<>();
 
             if (strRoles == null) {
-                Role userRole = roleRepository.findByName(ERole.ROLE_CLIENT)
+                Role userRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                 roles.add(userRole);
             } else {
                 strRoles.forEach(role -> {
                     switch (role) {
-                        case "client":
-                            Role clientRole = roleRepository.findByName(ERole.ROLE_CLIENT)
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(clientRole);
-
-                            break;
-                        case "operator":
-                            Role operatorRole = roleRepository.findByName(ERole.ROLE_OPERATOR)
+                        case "CONSIGNEE":
+                            Role operatorRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
                                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                             roles.add(operatorRole);
 
                             break;
-                        case "admin":
-                            Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                        case "EXPEDITOR":
+                            Role adminRole = roleRepository.findByName(ERole.ROLE_EXPEDITOR)
                                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                             roles.add(adminRole);
 
                             break;
-                        default:
-                            Role userRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+                        case "BROKER":
+                            Role userRole = roleRepository.findByName(ERole.ROLE_BROKER)
                                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                             roles.add(userRole);
+                            break;
                     }
                 });
             }
 
-            //user.setRoles(roles);
-            //userRepository.save(user);
+//            user.setRoles(roles);
+//            userRepository.save(user);
 
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         } catch (Exception exception) {
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
+    }
+
+    @GetMapping("/checkBin/{bin}")
+    public String checkBin(@PathVariable String bin) {
+        String url = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
+        RestTemplate restTemplate = new RestTemplate();
+        //Object[] responce = restTemplate.getForObject(url, Object[].class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            //BinResponse binResponse = objectMapper.readValue(url, BinResponse.class);
+            System.out.println("Bin response: \n");
+            Map<String, String> map
+                    = objectMapper.readValue(url, new TypeReference<Map<String,String>>(){});
+
+            System.out.println("map: " + map);
+            BinResponse binResponse = new BinResponse(map);
+            System.out.println(binResponse);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        String objects = responseEntity.getBody();
+        System.out.println(objects);
+        return objects;
     }
 }

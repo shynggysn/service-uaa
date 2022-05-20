@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface ForDataBeanLocal {
 
-    public String getContracts();
-
     public FormData getContractData(String invNum);
 
     public void saveContractData(Long id, FormData formData, List<VagonItem> vagonList, ContainerDatas containerDatas);

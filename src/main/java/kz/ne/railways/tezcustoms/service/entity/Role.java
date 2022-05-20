@@ -14,14 +14,14 @@ public class Role {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ERole role;
+    @Column(name = "name", length = 20)
+    private ERole name;
 
     public Role() {
 
     }
 
-    public Role(ERole role) {
-        this.role = role;
+    public Role(ERole name) {
+        this.name = name;
     }
 }

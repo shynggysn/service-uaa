@@ -1071,4 +1071,11 @@ public class ForDataBean implements ForDataBeanLocal {
         document.setFileUuid(uuid);
         em.persist(document);
     }
+
+    @Override
+    public boolean checkExpeditorCode(Long code) {
+        Query query = em.createNativeQuery("SELECT count(*) FROM nsi.forwarder WHERE forwarder_exp_no=?1");
+        query.setParameter(1, code);
+        return Long.parseLong("" + query.getResultList().get(0)) > 0;
+    }
 }

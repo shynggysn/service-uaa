@@ -15,11 +15,15 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iin_bin"),
-        @UniqueConstraint(columnNames = "email")})
+@Table( name = "users",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = "iin_bin"),
+            @UniqueConstraint(columnNames = "email")
+        },
+        schema = "TEZ")
 public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
@@ -82,8 +86,9 @@ public class User implements Serializable {
     private String expeditorCode;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
-                    inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable( name = "user_roles", schema = "TEZ",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     public User() {}

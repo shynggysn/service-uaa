@@ -72,6 +72,8 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content)})
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        log.info("request password: " + loginRequest.getPassword());
+        log.info("encoded password: " + encoder.encode(loginRequest.getPassword()));
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                             loginRequest.getEmail(), loginRequest.getPassword()));

@@ -21,6 +21,7 @@ import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
+import kz.ne.railways.tezcustoms.service.service.EcpService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBean;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,9 @@ public class AuthController {
 
     @Autowired
     ForDataBeanLocal dataBean;
+
+    @Autowired
+    private EcpService ecpService;
 
     @Operation(summary = "Sign in")
     @ApiResponses(value = {
@@ -180,5 +184,21 @@ public class AuthController {
     @GetMapping("/checkExpeditor/{code}")
     public ResponseEntity<?> checkExpeditor(@PathVariable String code) {
         return ResponseEntity.ok(new ExpeditorValidation(dataBean.checkExpeditorCode(Long.parseLong(code))));
+    }
+
+    @PostMapping("/checkEcp")
+    public ResponseEntity<?> checkEcp (@RequestParam("ecp") String ecp, @RequestParam("bin") String bin) {
+        try {
+            boolean isValid = ecpService.isValidSigner(ecp, bin);
+            if (isValid) {
+                return ResponseEntity.ok(new MessageResponse("Document successfully signed"));
+            } else {
+                String errorCode = "NOT_VALID_SIGNER";
+                String message = "IIN/BIN is not allowed to sign this document";
+                return ResponseEntity.badRequest().body(new MessageResponse(message, errorCode));
+            }
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+        }
     }
 }

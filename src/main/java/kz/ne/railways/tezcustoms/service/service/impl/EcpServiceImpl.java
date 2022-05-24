@@ -60,8 +60,7 @@ public class EcpServiceImpl implements EcpService {
     @Override
     public boolean isValidSigner(String signedData, String bin) {
         try {
-            String signerIIN = null, signerBIN = null;
-            String[] validIdentifications = {"1.2.398.3.3.4.1.2.1", "1.2.398.3.3.4.1.2.2"};
+            String signerBIN = null;;
             byte[] decodedBytes = Base64.getDecoder().decode(signedData);
             CMSSignedData signData = new CMSSignedData(decodedBytes);
             Store<X509CertificateHolder> certStore = signData.getCertificates();
@@ -69,26 +68,18 @@ public class EcpServiceImpl implements EcpService {
             X509CertificateHolder certHolder = allStore.stream().findFirst().get();
 
             X509Certificate x509Certificate = new JcaX509CertificateConverter().getCertificate(certHolder);
-            List<String> identifications = x509Certificate.getExtendedKeyUsage();
 
             X500Name x500Name = new X500Name(x509Certificate.getSubjectX500Principal().getName());
             RDN[] iinRDNs = x500Name.getRDNs(BCStyle.SERIALNUMBER); // IIN
             RDN[] binRDNs = x500Name.getRDNs(BCStyle.OU); // BIN
-            if (iinRDNs.length > 0) {
-                RDN iinRDN = iinRDNs[0];
-                if (iinRDN != null && iinRDN.getFirst() != null) {
-                    signerIIN = iinRDN.getFirst().getValue().toString().substring(3, 15);
-                }
-            }
-            System.out.println(signerIIN);
+
             if (binRDNs.length > 0) {
                 RDN binRDN = binRDNs[0];
                 if (binRDN != null && binRDN.getFirst() != null) {
                     signerBIN = binRDN.getFirst().getValue().toString().substring(3, 15);
                 }
             }
-            System.out.println(signerBIN);
-            return signerIIN != null && signerIIN.equals(bin);
+            return signerBIN != null && signerBIN.equals(bin);
 
         } catch (Exception exception) {
             log.error("Error while verifying ecp signer " + exception.getMessage());

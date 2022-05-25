@@ -126,30 +126,32 @@ public class AuthController {
             Set<String> strRoles = signUpRequest.getRoles();
             Set<Role> roles = new HashSet<>();
 
-            if (strRoles == null) {
-                Role userRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                roles.add(userRole);
+            if (strRoles == null || strRoles.isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Role can not be empty"));
             } else {
                 strRoles.forEach(role -> {
                     switch (role) {
                         case "CONSIGNEE":
-                            Role operatorRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
+                            Role userRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
+                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(userRole);
+
+                            break;
+                        case "EXPEDITOR":
+                            Role expeditorRole = roleRepository.findByName(ERole.ROLE_EXPEDITOR)
+                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(expeditorRole);
+
+                            break;
+                        case "BROKER":
+                            Role operatorRole = roleRepository.findByName(ERole.ROLE_BROKER)
                                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                             roles.add(operatorRole);
 
                             break;
-                        case "EXPEDITOR":
-                            Role adminRole = roleRepository.findByName(ERole.ROLE_EXPEDITOR)
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(adminRole);
 
-                            break;
-                        case "BROKER":
-                            Role userRole = roleRepository.findByName(ERole.ROLE_BROKER)
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(userRole);
-                            break;
+                        default:
+                            throw new RuntimeException("Error: Role is invalid");
                     }
                 });
             }

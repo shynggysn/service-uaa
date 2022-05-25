@@ -3,19 +3,20 @@ package kz.ne.railways.tezcustoms.service.entity;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table( name = "users",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "iin_bin"),
@@ -73,7 +74,7 @@ public class User implements Serializable {
 
     @Column(name = "created_date")
     @CreatedDate
-    private Date createdDate = new Date();
+    private Date createdDate;
 
     @Column(name = "last_modified_date")
     @LastModifiedDate

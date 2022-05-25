@@ -4,6 +4,7 @@ import kz.ne.railways.tezcustoms.service.model.ERole;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -18,6 +19,9 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @Column(name = "name", length = 20)
     private ERole name;
+
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    private List<User> users;
 
     public Role() {
 

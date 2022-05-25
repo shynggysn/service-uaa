@@ -117,9 +117,11 @@ public class AuthController {
             }
 
 //          Create new user's account
-//            User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
-//                            signUpRequest.getIinBin(), signUpRequest.getPhone(), signUpRequest.getAddress(), signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(), signUpRequest.getFirstName(),
-//                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.isCompany(), signUpRequest.getKato(), signUpRequest.getExpeditorCode(), signUpRequest.getRoles());
+            User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
+                            signUpRequest.getIinBin(), signUpRequest.getPhone(), signUpRequest.getAddress(),
+                            signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(), signUpRequest.getFirstName(),
+                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.isCompany(),
+                            signUpRequest.getKato(), signUpRequest.getExpeditorCode());
 
             Set<String> strRoles = signUpRequest.getRoles();
             Set<Role> roles = new HashSet<>();
@@ -152,8 +154,8 @@ public class AuthController {
                 });
             }
 
-//            user.setRoles(roles);
-//            userRepository.save(user);
+            user.setRoles(roles);
+            userRepository.save(user);
 
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         } catch (Exception exception) {
@@ -191,10 +193,10 @@ public class AuthController {
         try {
             boolean isValid = ecpService.isValidSigner(ecp, bin);
             if (isValid) {
-                return ResponseEntity.ok(new MessageResponse("Document successfully signed"));
+                return ResponseEntity.ok(new MessageResponse("IIN/BIN verified"));
             } else {
-                String errorCode = "NOT_VALID_SIGNER";
-                String message = "IIN/BIN is not allowed to sign this document";
+                String errorCode = "NOT_VALID_USER";
+                String message = "IIN/BIN is not match";
                 return ResponseEntity.badRequest().body(new MessageResponse(message, errorCode));
             }
         } catch (Exception exception) {

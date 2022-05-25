@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ import java.util.Set;
         schema = "TEZ")
 public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
@@ -72,11 +73,11 @@ public class User implements Serializable {
 
     @Column(name = "created_date")
     @CreatedDate
-    private LocalDate createdDate;
+    private Date createdDate = new Date();
 
     @Column(name = "last_modified_date")
     @LastModifiedDate
-    private LocalDate lastModifiedDate;
+    private Date lastModifiedDate;
 
     @Size(max = 10)
     private String kato;
@@ -87,8 +88,8 @@ public class User implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable( name = "user_roles", schema = "TEZ",
-                joinColumns = @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "role_id"))
+                joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+                inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
     public User() {}
@@ -96,8 +97,7 @@ public class User implements Serializable {
     public User(String email, String password, String iinBin, String phone,
                 String address, String companyName, String companyDirector, String firstName, String lastName,
                 String middleName, boolean isCompany, /*LocalDate createdDate, LocalDate lastModifiedDate,*/
-                String kato, String expeditorCode, Set<Role> roles) {
-        this.id = id;
+                String kato, String expeditorCode) {
         this.email = email;
         this.password = password;
         this.iinBin = iinBin;
@@ -113,7 +113,6 @@ public class User implements Serializable {
 //        this.lastModifiedDate = lastModifiedDate;
         this.kato = kato;
         this.expeditorCode = expeditorCode;
-        this.roles = roles;
     }
 }
 

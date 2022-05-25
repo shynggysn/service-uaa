@@ -64,7 +64,6 @@ public class ExcelReader {
                 invoiceRow.setDescription(getDescriptionTNVED(tnvedSheet, invoiceRow.getCode()));
                 invoiceData.addInvoiceItems(invoiceRow);
 
-                System.out.println(invoiceRow.getDescription());
             }
             inputStream.close();
             file.close();

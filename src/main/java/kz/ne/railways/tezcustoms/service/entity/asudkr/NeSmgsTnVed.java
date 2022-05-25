@@ -79,7 +79,7 @@ public class NeSmgsTnVed {
     @Column(name = "TN_VED_IS_ARMY")
     private String tnVedIsArmy;
 
-    @Column(name = "TN_VED_DESCRIPTION")
+    @Column(name = "TN_VED_DESCRIPTION", length = 500)
     private String tnVedDescription;
 
 }

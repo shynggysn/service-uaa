@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -56,4 +57,33 @@ public class EcpServiceImpl implements EcpService {
 
     }
 
+    @Override
+    public boolean isValidSigner(String signedData, String bin) {
+        try {
+            String signerBIN = null;;
+            byte[] decodedBytes = Base64.getDecoder().decode(signedData);
+            CMSSignedData signData = new CMSSignedData(decodedBytes);
+            Store<X509CertificateHolder> certStore = signData.getCertificates();
+            Collection<X509CertificateHolder> allStore = certStore.getMatches(null);
+            X509CertificateHolder certHolder = allStore.stream().findFirst().get();
+
+            X509Certificate x509Certificate = new JcaX509CertificateConverter().getCertificate(certHolder);
+
+            X500Name x500Name = new X500Name(x509Certificate.getSubjectX500Principal().getName());
+            RDN[] iinRDNs = x500Name.getRDNs(BCStyle.SERIALNUMBER); // IIN
+            RDN[] binRDNs = x500Name.getRDNs(BCStyle.OU); // BIN
+
+            if (binRDNs.length > 0) {
+                RDN binRDN = binRDNs[0];
+                if (binRDN != null && binRDN.getFirst() != null) {
+                    signerBIN = binRDN.getFirst().getValue().toString().substring(3, 15);
+                }
+            }
+            return signerBIN != null && signerBIN.equals(bin);
+
+        } catch (Exception exception) {
+            log.error("Error while verifying ecp signer " + exception.getMessage());
+            return false;
+        }
+    }
 }

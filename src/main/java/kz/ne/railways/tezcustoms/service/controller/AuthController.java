@@ -21,6 +21,7 @@ import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
+import kz.ne.railways.tezcustoms.service.service.EcpService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBean;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,9 @@ public class AuthController {
 
     @Autowired
     ForDataBeanLocal dataBean;
+
+    @Autowired
+    private EcpService ecpService;
 
     @Operation(summary = "Sign in")
     @ApiResponses(value = {
@@ -113,43 +117,47 @@ public class AuthController {
             }
 
 //          Create new user's account
-//            User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
-//                            signUpRequest.getIinBin(), signUpRequest.getPhone(), signUpRequest.getAddress(), signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(), signUpRequest.getFirstName(),
-//                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.isCompany(), signUpRequest.getKato(), signUpRequest.getExpeditorCode(), signUpRequest.getRoles());
+            User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
+                            signUpRequest.getIinBin(), signUpRequest.getPhone(), signUpRequest.getAddress(),
+                            signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(), signUpRequest.getFirstName(),
+                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.isCompany(),
+                            signUpRequest.getKato(), signUpRequest.getExpeditorCode());
 
             Set<String> strRoles = signUpRequest.getRoles();
             Set<Role> roles = new HashSet<>();
 
-            if (strRoles == null) {
-                Role userRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                roles.add(userRole);
+            if (strRoles == null || strRoles.isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Role can not be empty"));
             } else {
                 strRoles.forEach(role -> {
                     switch (role) {
                         case "CONSIGNEE":
-                            Role operatorRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
+                            Role userRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
+                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(userRole);
+
+                            break;
+                        case "EXPEDITOR":
+                            Role expeditorRole = roleRepository.findByName(ERole.ROLE_EXPEDITOR)
+                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(expeditorRole);
+
+                            break;
+                        case "BROKER":
+                            Role operatorRole = roleRepository.findByName(ERole.ROLE_BROKER)
                                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                             roles.add(operatorRole);
 
                             break;
-                        case "EXPEDITOR":
-                            Role adminRole = roleRepository.findByName(ERole.ROLE_EXPEDITOR)
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(adminRole);
 
-                            break;
-                        case "BROKER":
-                            Role userRole = roleRepository.findByName(ERole.ROLE_BROKER)
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                            roles.add(userRole);
-                            break;
+                        default:
+                            throw new RuntimeException("Error: Role is invalid");
                     }
                 });
             }
 
-//            user.setRoles(roles);
-//            userRepository.save(user);
+            user.setRoles(roles);
+            userRepository.save(user);
 
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         } catch (Exception exception) {
@@ -180,5 +188,21 @@ public class AuthController {
     @GetMapping("/checkExpeditor/{code}")
     public ResponseEntity<?> checkExpeditor(@PathVariable String code) {
         return ResponseEntity.ok(new ExpeditorValidation(dataBean.checkExpeditorCode(Long.parseLong(code))));
+    }
+
+    @PostMapping("/checkEcp")
+    public ResponseEntity<?> checkEcp (@RequestParam("ecp") String ecp, @RequestParam("bin") String bin) {
+        try {
+            boolean isValid = ecpService.isValidSigner(ecp, bin);
+            if (isValid) {
+                return ResponseEntity.ok(new MessageResponse("IIN/BIN verified"));
+            } else {
+                String errorCode = "NOT_VALID_USER";
+                String message = "IIN/BIN is not match";
+                return ResponseEntity.badRequest().body(new MessageResponse(message, errorCode));
+            }
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+        }
     }
 }

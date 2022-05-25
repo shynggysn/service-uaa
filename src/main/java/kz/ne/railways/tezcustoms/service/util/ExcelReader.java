@@ -102,6 +102,6 @@ public class ExcelReader {
                 break;
             }
         }
-        return result.toString();
+        return result != null ? result.toString() : null;
     }
 }

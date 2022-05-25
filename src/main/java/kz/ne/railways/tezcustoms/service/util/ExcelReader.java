@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -30,6 +31,10 @@ public class ExcelReader {
 //        File file = new File(String.valueOf(resourceLoader.getResource("classpath:templateForInvoice.xlsx").getFile()));
         try {
 //            FileInputStream inputStream = new FileInputStream(file);
+            File tnved = new File(String.valueOf(resourceLoader.getResource("classpath:TNVED.xlsx").getFile()));
+            FileInputStream inputStream = new FileInputStream(tnved);
+            Workbook tnvedWorkBook = new XSSFWorkbook(inputStream);
+            Sheet tnvedSheet = tnvedWorkBook.getSheetAt(0);
 
             Workbook baeuldungWorkBook = new XSSFWorkbook(file);
             DataFormatter formatter = new DataFormatter();
@@ -56,10 +61,12 @@ public class ExcelReader {
                 invoiceRow.setBrutto(formatter.formatCellValue(row.getCell(6)));
                 invoiceRow.setPrice(formatter.formatCellValue(row.getCell(7)));
                 invoiceRow.setTotalPrice(formatter.formatCellValue(row.getCell(8)));
-
+                invoiceRow.setDescription(getDescriptionTNVED(tnvedSheet, invoiceRow.getCode()));
                 invoiceData.addInvoiceItems(invoiceRow);
-            }
 
+                System.out.println(invoiceRow.getDescription());
+            }
+            inputStream.close();
             file.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,5 +80,29 @@ public class ExcelReader {
             return false;
         }
         return true;
+    }
+
+    private String getDescriptionTNVED(Sheet sheet, String code) throws IOException {
+        StringBuilder result = null;
+        for (int i = 0; i < 21146; i++) {
+            String cell = sheet.getRow(i).getCell(0).getStringCellValue();
+            if (cell.equals(code)) {
+                String value = sheet.getRow(i).getCell(1).getStringCellValue();
+                int counter = StringUtils.countOccurrencesOf(value, "—");
+                result = new StringBuilder(value.substring(counter * 2));
+                while (counter > 0) {
+                    for (int j = i; j > 0; j--) {
+                        String parent = sheet.getRow(j).getCell(1).getStringCellValue();
+                        int count = StringUtils.countOccurrencesOf(parent, "—");
+                        if (count<counter) {
+                            result.insert(0, parent.substring(count * 2) + " ");
+                            counter --;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        return result.toString();
     }
 }

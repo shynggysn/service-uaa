@@ -310,6 +310,7 @@ public class ForDataBean implements ForDataBeanLocal {
             neTnved.setTnVedCode(invoiceRow.getCode());
 //            neTnved.setContainer(tnVedRow.getContainer());
             neTnved.setTnVedName(invoiceRow.getName());
+            neTnved.setTnVedDescription(invoiceRow.getDescription());
             BigInteger cnt = (BigInteger) em.createNativeQuery(
                             "select count(*) from ktz.ne_smgs_tn_ved a WHERE a.invoice_un = (?1) and a.tn_ved_code = (?2)")
                     .setParameter(1, neTnved.getInvoiceUn()).setParameter(2, neTnved.getTnVedCode()).getSingleResult();

@@ -84,6 +84,12 @@ public class ServletController {
         }
     }
 
+
+    @Operation(summary = "sends transit declaration to Astana1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
+                    content = {@Content(mediaType = "application/json")})
+            })
     @PostMapping("/sendToAstana1")
     public ResponseEntity<MessageResponse> sendToAstana1(@RequestParam("invNum")String invNum, @RequestParam("file") MultipartFile file) throws IOException {
         if (ExcelReader.hasExcelFormat(file)){

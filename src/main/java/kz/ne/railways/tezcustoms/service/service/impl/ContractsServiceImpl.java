@@ -36,6 +36,7 @@ public class ContractsServiceImpl implements ContractsService {
                     throws IOException {
         log.debug(" starSta: {}\n destSta: {}\n expCode: {}\n invoiceNum: {}", startSta, destSta, expCode, invoiceNum);
         FormData formData = httpUtil.getContractData(startSta, destSta, expCode, invoiceNum);
+        if (formData == null) return null;
 
         dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
 

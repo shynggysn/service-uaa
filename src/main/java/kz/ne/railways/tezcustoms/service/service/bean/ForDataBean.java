@@ -4,17 +4,16 @@ import com.google.gson.Gson;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.*;
 import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.repository.asudkr.NeInvoiceRepository;
 import kz.ne.railways.tezcustoms.service.util.PIHelper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -22,10 +21,12 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ForDataBean implements ForDataBeanLocal {
 
-    @Autowired
-    private PrevInfoBeanDAOLocal dao;
+    private final PrevInfoBeanDAOLocal dao;
+
+    private final NeInvoiceRepository neInvoiceRepository;
 
     private Gson gson = new Gson();
 
@@ -42,6 +43,7 @@ public class ForDataBean implements ForDataBeanLocal {
     public static int PI_STATUS_RETURN = 4; // Возврат на оформление
     public static int PI_STATUS_EDIT = 5; // Изменение ТД
     public static int PI_STATUS_EXPORT_TD = 6; // Сформировать ТД
+
 
     // Станции где должно указываться транспорт - судно
     List<String> vesselStaUns = Arrays.asList("691607", "693807", "663804", "689202");
@@ -1079,4 +1081,5 @@ public class ForDataBean implements ForDataBeanLocal {
         query.setParameter(1, code);
         return Long.parseLong("" + query.getResultList().get(0)) > 0;
     }
+
 }

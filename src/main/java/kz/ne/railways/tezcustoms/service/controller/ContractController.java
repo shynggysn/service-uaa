@@ -4,10 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import kz.ne.railways.tezcustoms.service.model.UserInvoices;
 import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
+import kz.ne.railways.tezcustoms.service.service.UserInvoiceService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
@@ -40,6 +43,7 @@ public class ContractController {
     private final ForDataBeanLocal dataBean;
     private final ContractsService contractsService;
     private final ResourceLoader resourceLoader;
+    private final UserInvoiceService userInvoiceService;
 
 
     @Operation(summary = "Load a contract from ASU DKR")
@@ -77,6 +81,11 @@ public class ContractController {
         catch (Exception exception) {
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
+    }
+
+    @GetMapping("/getInvoices/{userId}")
+    public ResponseEntity<List<UserInvoices>> getInvoices(@PathVariable Long userId) {
+        return ResponseEntity.ok(userInvoiceService.getUserInvoices(userId));
     }
 
 }

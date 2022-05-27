@@ -135,6 +135,12 @@ public class NeInvoice implements Serializable {
     @Column(name = "DOC_TYPE")
     private int docType;
 
+    @Column(name = "USER_ID")
+    private Long userId;
+
+    @Column(name = "UINP_CODE", length = 20)
+    private String uinpCode;
+
     private static final Long serialVersionUID = 1L;
 
     public NeInvoice() {

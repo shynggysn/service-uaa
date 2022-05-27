@@ -27,7 +27,6 @@ import java.util.UUID;
 public class ContractsServiceImpl implements ContractsService {
 
     private final HttpUtil httpUtil;
-    // private final ResourceLoader resourceLoader;
     private final ForDataBeanLocal dataBean;
     private final SFtpSend fileServer;
 
@@ -36,42 +35,18 @@ public class ContractsServiceImpl implements ContractsService {
                     throws IOException {
         log.debug(" starSta: {}\n destSta: {}\n expCode: {}\n invoiceNum: {}", startSta, destSta, expCode, invoiceNum);
         FormData formData = httpUtil.getContractData(startSta, destSta, expCode, invoiceNum);
-        if (formData == null) return null;
 
-        dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
-
-//        TODO: Activate when database is connected
-//        dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
         if (formData != null){
+            dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
             byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
-
             String docname = "Invoice Document";
             String filename = UUID.randomUUID().toString();
-
-//             File f = new File(resourceLoader.getResource("classpath:").getFile() + "/files");
-//             if (f.mkdir())
-//             log.debug("directory created");
-//             f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" +
-//             formData.getInvoiceId());
-//             if (f.mkdir())
-//             log.debug("directory created");
-//
-//             f = new File(resourceLoader.getResource("classpath:").getFile() + "/files/" +
-//             formData.getInvoiceId() + "/" + filename);
-//             f.createNewFile();
-//
-//             FileOutputStream res = new FileOutputStream(f);
-//             res.write(arr);
-//
-//             res.close();
 
             try {
                 if (fileServer.send(new ByteArrayInputStream(arr), filename, formData.getInvoiceId()))
                     dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
-            } catch (JSchException e) {
-                log.debug("in loadContract", e.getMessage());
-            } catch (SftpException e) {
-                log.debug("in loadContract", e.getMessage());
+            } catch (JSchException | SftpException e) {
+                log.debug("in loadContract" + e.getMessage());
             }
         }
 

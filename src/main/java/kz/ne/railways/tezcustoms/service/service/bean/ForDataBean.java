@@ -285,39 +285,33 @@ public class ForDataBean implements ForDataBeanLocal {
 
     @Override
     @Transactional
-    public void saveInvoiceData(InvoiceData invoiceData, Long invoiceUn) {
-        for (InvoiceRow invoiceRow: invoiceData.getInvoiceItems()) {
+    public void saveInvoiceData(FormData formData) {
+        /*TODO:
+           set Currency Code (Un?)
+           total goods number
+           total package number
+        */
+        for (InvoiceRow invoiceRow: formData.getInvoiceData().getInvoiceItems()) {
             NeSmgsTnVed neTnved = new NeSmgsTnVed();
             neTnved.setBruttoWeight(invoiceRow.getBrutto());
             neTnved.setNettoWeight(invoiceRow.getNetto());
             neTnved.setCountByUnit(invoiceRow.getQuantity());
- //           neTnved.setCurrencyCodeUn(invoiceRow.getCurrencyUn());
-            neTnved.setInvoiceUn(invoiceUn);
+            neTnved.setInvoiceUn((long) Integer.parseInt(formData.getInvoiceId()));
             neTnved.setUnitName(invoiceRow.getUnit());
             neTnved.setPriceByOne(invoiceRow.getPrice());
             neTnved.setPriceByFull(invoiceRow.getTotalPrice());
-//            neTnved.setPackingName(invoiceRow.getPackingName());
-//            neTnved.setPlaceCargoCount(tnVedRow.getPlaceCargoCount());
-//            neTnved.setPlaceCargoMark(tnVedRow.getPlaceCargoMark());
-//            String val = tnVedRow.getDescription();
-//            if (val != null && val.length() > 200)
-//                val = val.substring(0, 200);
-//            neTnved.setProductDescription(val);
-//            String val2 = tnVedRow.getDescriptionAdditionaly();
-//            if (val2 != null && val2.length() > 200)
-//                val2 = val2.substring(0, 200);
-//            neTnved.setProductDescriptionAdd(val2);
             neTnved.setTnVedCode(invoiceRow.getCode());
-//            neTnved.setContainer(tnVedRow.getContainer());
             neTnved.setTnVedName(invoiceRow.getName());
+            neTnved.setCurrencyCodeUn(invoiceRow.getCurrencyCode());
             neTnved.setTnVedDescription(invoiceRow.getDescription());
+
             BigInteger cnt = (BigInteger) em.createNativeQuery(
                             "select count(*) from ktz.ne_smgs_tn_ved a WHERE a.invoice_un = (?1) and a.tn_ved_code = (?2)")
                     .setParameter(1, neTnved.getInvoiceUn()).setParameter(2, neTnved.getTnVedCode()).getSingleResult();
-//            neTnved.setTnVedCountry(tnVedRow.getTnVedCountry());
             if (cnt.intValue() == 0)
                 em.persist(neTnved);
         }
+
     }
 
     @Override

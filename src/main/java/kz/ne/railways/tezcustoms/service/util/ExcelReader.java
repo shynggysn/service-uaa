@@ -3,6 +3,7 @@ package kz.ne.railways.tezcustoms.service.util;
 import kz.ne.railways.tezcustoms.service.model.InvoiceData;
 import kz.ne.railways.tezcustoms.service.model.InvoiceRow;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -20,21 +21,22 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ExcelReader {
 
     private final ResourceLoader resourceLoader;
     public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-    public InvoiceData getInvoiceFromFile(InputStream file) throws IOException {
+    public InvoiceData getInvoiceFromFile(InputStream file) {
         InvoiceData invoiceData = new InvoiceData();
-//        File file = new File(String.valueOf(resourceLoader.getResource("classpath:templateForInvoice.xlsx").getFile()));
         try {
-//            FileInputStream inputStream = new FileInputStream(file);
             File tnved = new File(String.valueOf(resourceLoader.getResource("classpath:TNVED.xlsx").getFile()));
             FileInputStream inputStream = new FileInputStream(tnved);
             Workbook tnvedWorkBook = new XSSFWorkbook(inputStream);
             Sheet tnvedSheet = tnvedWorkBook.getSheetAt(0);
+
+            log.debug("file exists: " + tnved.exists());
 
             Workbook baeuldungWorkBook = new XSSFWorkbook(file);
             DataFormatter formatter = new DataFormatter();
@@ -43,28 +45,32 @@ public class ExcelReader {
             invoiceData.setInvoiceDate(sheet.getRow(2).getCell(2).getDateCellValue());
             invoiceData.setShipper(sheet.getRow(3).getCell(2).getStringCellValue());
             invoiceData.setConsignee(sheet.getRow(4).getCell(2).getStringCellValue());
+            invoiceData.setTotalPackageNumber((int) sheet.getRow(5).getCell(2).getNumericCellValue());
 
+            int totalGoodsNumber = 0;
             for (Row row : sheet) {
-                if (row.getRowNum() < 7)
+                if (row.getRowNum() < 8)
                     continue;
-                if (row.getCell(2) == null || formatter.formatCellValue(row.getCell(2)).equals("")) {
-                    invoiceData.setTotal(formatter.formatCellValue(row.getCell(8)));
+                if (row.getCell(0).getStringCellValue().equals("Итого/Total:")) {
+                    invoiceData.setTotal(formatter.formatCellValue(row.getCell(9)));
                     break;
                 }
 
                 InvoiceRow invoiceRow = new InvoiceRow();
-                invoiceRow.setName(formatter.formatCellValue(row.getCell(1)));
-                invoiceRow.setCode(formatter.formatCellValue(row.getCell(2)));
+                invoiceRow.setCode(formatter.formatCellValue(row.getCell(1)));
+                invoiceRow.setName(formatter.formatCellValue(row.getCell(2)));
                 invoiceRow.setUnit(formatter.formatCellValue(row.getCell(3)));
                 invoiceRow.setQuantity(formatter.formatCellValue(row.getCell(4)));
                 invoiceRow.setNetto(formatter.formatCellValue(row.getCell(5)));
                 invoiceRow.setBrutto(formatter.formatCellValue(row.getCell(6)));
                 invoiceRow.setPrice(formatter.formatCellValue(row.getCell(7)));
-                invoiceRow.setTotalPrice(formatter.formatCellValue(row.getCell(8)));
+                invoiceRow.setCurrencyCode(formatter.formatCellValue(row.getCell(8)));
+                invoiceRow.setTotalPrice(formatter.formatCellValue(row.getCell(9)));
                 invoiceRow.setDescription(getDescriptionTNVED(tnvedSheet, invoiceRow.getCode()));
                 invoiceData.addInvoiceItems(invoiceRow);
-
+                totalGoodsNumber++;
             }
+            invoiceData.setTotalGoodsNumber(totalGoodsNumber);
             inputStream.close();
             file.close();
         } catch (IOException e) {

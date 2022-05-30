@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
+import kz.ne.railways.tezcustoms.service.model.InvoiceData;
 import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
@@ -43,19 +44,9 @@ public class ServletController {
      */
 
     private static final long serialVersionUID = 1L;
-    private static final String METHOD = "method";
-
-    private final ForDataBeanLocal dataBean;
-    private final HttpUtil httpUtil;
-    private final SFtpSend sFtpSend;
-
-    private Gson gson = new Gson();
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final EcpService ecpService;
-    private final ExcelReader excelReader;
-    private final TransitDeclarationService td;
 
     @Operation(summary = "Sign ecp")
     @ApiResponses(value = {
@@ -82,29 +73,6 @@ public class ServletController {
         } catch (Exception exception) {
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
-    }
-
-
-    @Operation(summary = "sends transit declaration to Astana1")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
-                    content = {@Content(mediaType = "application/json")})
-            })
-    @PostMapping("/sendToAstana1")
-    public ResponseEntity<MessageResponse> sendToAstana1(@RequestParam("invNum")String invNum, @RequestParam("file") MultipartFile file) throws IOException {
-        if (ExcelReader.hasExcelFormat(file)){
-            FormData formData = dataBean.getContractData(invNum);
-            log.debug(formData.toString());
-
-            dataBean.saveInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()), Long.parseLong(formData.getInvoiceId()));
-
-            log.debug("invoiceId is: " + formData.getInvoiceId());
-            SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
-
-            log.debug("declaration response result: " + result.toString());
-            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
     }
 
 }

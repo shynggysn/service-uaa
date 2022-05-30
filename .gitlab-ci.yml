@@ -10,6 +10,7 @@ building-tez-service:
     - dev
   script:
     - mvn clean package
+    - /root/TezCustoms/scripts/deploy_service.sh
     
 error-test:
   stage: error

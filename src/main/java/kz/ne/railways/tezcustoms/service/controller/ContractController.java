@@ -11,6 +11,7 @@ import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.UserInvoiceService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -73,7 +77,7 @@ public class ContractController {
         String contentType = "application/octet-stream";
         String headerValue = "attachment; filename=template.xlsx";
         try {
-            FileSystemResource file = new FileSystemResource(new File(String.valueOf(resourceLoader.getResource("classpath:Template.xlsx").getFile())));
+            FileSystemResource file = new FileSystemResource(new File(String.valueOf(resourceLoader.getResource("classpath:Template.xlsx").getInputStream())));
             return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
                     .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
                     .body(file);
@@ -83,9 +87,9 @@ public class ContractController {
         }
     }
 
-    @GetMapping("/getInvoices/{userId}")
-    public ResponseEntity<List<UserInvoices>> getInvoices(@PathVariable Long userId) {
-        return ResponseEntity.ok(userInvoiceService.getUserInvoices(userId));
+    @GetMapping("/getInvoices")
+    public ResponseEntity<List<UserInvoices>> getInvoices() {
+        return ResponseEntity.ok(userInvoiceService.getUserInvoices(SecurityUtils.getCurrentUserId()));
     }
 
 }

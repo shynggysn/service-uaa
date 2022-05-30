@@ -9,8 +9,12 @@ import java.util.List;
 
 public interface NeInvoiceRepository extends JpaRepository<NeInvoice, Long> {
 
-    @Query("select ni.invcNum as invoiceNum, ni.reciveStationCode, ni.destStationCode, ni.invcStatus, ni.uinpCode " +
-            " from NeInvoice ni WHERE ni.userId = ?1")
+    @Query("select ni.invcNum as invoiceNum, CONCAT(ni.reciveStationCode, ' ', sr.staName) as reciveStationCode, " +
+            "CONCAT(ni.destStationCode, ' ', sd.staName) as destStationCode, ni.invcDt as invoiceDate, " +
+            "ni.invoiceStatus as invoiceStatus, ni.uinpCode as uinpCode from NeInvoice ni " +
+            "left join Sta sd ON ni.destStationCode = sd.staNo  and sd.stEnd > CURRENT_TIMESTAMP " +
+            "left join Sta sr ON ni.reciveStationCode = sr.staNo and sr.stEnd > CURRENT_TIMESTAMP " +
+            "WHERE ni.userId = ?1")
     List<UserInvoices> getInvoicesByUser(Long userId);
 
 }

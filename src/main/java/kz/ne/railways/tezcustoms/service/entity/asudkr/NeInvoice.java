@@ -141,6 +141,9 @@ public class NeInvoice implements Serializable {
     @Column(name = "UINP_CODE", length = 20)
     private String uinpCode;
 
+    @Column(name = "INVOICE_STATUS")
+    private int invoiceStatus;
+
     private static final Long serialVersionUID = 1L;
 
     public NeInvoice() {

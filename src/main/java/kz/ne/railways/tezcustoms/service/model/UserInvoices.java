@@ -4,6 +4,7 @@ public interface UserInvoices {
     String getInvoiceNum();
     String getReciveStationCode();
     String getDestStationCode();
-    Integer getInvcStatus();
+    Integer getInvoiceStatus();
     String getUinpCode();
+    String getInvoiceDate();
 }

@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.*;
 import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
-import kz.ne.railways.tezcustoms.service.repository.asudkr.NeInvoiceRepository;
 import kz.ne.railways.tezcustoms.service.util.PIHelper;
+import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +25,6 @@ import java.util.*;
 public class ForDataBean implements ForDataBeanLocal {
 
     private final PrevInfoBeanDAOLocal dao;
-
-    private final NeInvoiceRepository neInvoiceRepository;
 
     private Gson gson = new Gson();
 
@@ -610,6 +608,8 @@ public class ForDataBean implements ForDataBeanLocal {
         }
         invoice.setReciveStationCode(formData.getStartStation());
         invoice.setDestStationCode(formData.getDestStation());
+        invoice.setUserId(SecurityUtils.getCurrentUserId());
+        invoice.setInvcDt(Timestamp.valueOf(formData.getCreateDate()));
         return invoice;
     }
 

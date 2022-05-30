@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString
 public class StationResponse {
 
+    private String stationId;
     private String stationNumber;
     private String stationName;
 

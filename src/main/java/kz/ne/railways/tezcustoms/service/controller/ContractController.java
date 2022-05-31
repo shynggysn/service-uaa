@@ -2,6 +2,7 @@ package kz.ne.railways.tezcustoms.service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
@@ -49,7 +50,9 @@ public class ContractController {
     @Operation(summary = "Load a contract from ASU DKR")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Contract successfully loaded",
-                            content = {@Content(mediaType = "application/json")}),
+                            content = {@Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = FormData.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")

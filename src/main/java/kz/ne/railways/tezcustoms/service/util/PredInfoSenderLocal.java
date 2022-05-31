@@ -1,6 +1,6 @@
 package kz.ne.railways.tezcustoms.service.util;
 
-import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import ru.customs.information.customsdocuments.pirwinformationcu._5_11.PIRWInformationCUType;
 
 public interface PredInfoSenderLocal {

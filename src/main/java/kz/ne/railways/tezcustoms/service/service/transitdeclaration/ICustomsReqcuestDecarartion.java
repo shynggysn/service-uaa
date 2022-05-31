@@ -1,6 +1,6 @@
 package kz.ne.railways.tezcustoms.service.service.transitdeclaration;
 
-import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import ru.customs.information.customsdocuments.esadout_cu._5_11.ESADoutCUType;
 import ru.customs.information.customsdocuments.pirwinformationcu._5_11.PIRWInformationCUType;
 

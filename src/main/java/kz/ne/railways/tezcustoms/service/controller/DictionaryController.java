@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.StationResponse;
 import kz.ne.railways.tezcustoms.service.service.bean.DictionaryBeanLocal;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

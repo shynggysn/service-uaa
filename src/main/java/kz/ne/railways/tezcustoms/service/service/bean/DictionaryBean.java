@@ -12,16 +12,19 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
 public class DictionaryBean implements DictionaryBeanLocal{
 
     List<String> defaultStations = Arrays.asList("Достык (эксп.)", "Алтынколь", "Хоргос");
+
+    final Map<String, String> transitDirectionCode = Map.of(
+            "1", "«ТР» - при перевозке иностранных товаров от таможенного органа в месте прибытия до таможенного органа в месте убытия",
+            "2","«ИМ» - при перевозке иностранных товаров от таможенного органа в месте прибытия до внутреннего таможенного органа",
+            "3", "«ТС» - при перевозке товаров таможенного союза от таможенного органа места убытия до таможенного органа места прибытия через территорию государства, не являющегося членом таможенного союза"
+    );
 
     @PersistenceContext
     EntityManager em;
@@ -162,5 +165,7 @@ public class DictionaryBean implements DictionaryBeanLocal{
         }
         return sql;
     }
+    @Override
+    public Map<String, String> getTransitDirectionCode(){ return transitDirectionCode;}
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/dictionary")
@@ -48,4 +49,14 @@ public class DictionaryController {
             return ResponseEntity.ok(customList);
         return ResponseEntity.badRequest().body(new MessageResponse("could not find any custom organ"));
     }
+
+    @Operation(summary = "Get transit direction code")
+    @GetMapping("/transitCode")
+    public ResponseEntity<?> getTransitCode () {
+        Map<String, String> customList = dictionaryBean.getTransitDirectionCode();
+        if (customList != null)
+            return ResponseEntity.ok(customList);
+        return ResponseEntity.badRequest().body(new MessageResponse("could not find any custom organ"));
+    }
+
 }

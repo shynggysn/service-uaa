@@ -31,12 +31,9 @@ public class ExcelReader {
     public InvoiceData getInvoiceFromFile(InputStream file) {
         InvoiceData invoiceData = new InvoiceData();
         try {
-            File tnved = new File(String.valueOf(resourceLoader.getResource("classpath:TNVED.xlsx").getFile()));
-            FileInputStream inputStream = new FileInputStream(tnved);
+            InputStream inputStream = resourceLoader.getResource("classpath:TNVED.xlsx").getInputStream();
             Workbook tnvedWorkBook = new XSSFWorkbook(inputStream);
             Sheet tnvedSheet = tnvedWorkBook.getSheetAt(0);
-
-            log.debug("file exists: " + tnved.exists());
 
             Workbook baeuldungWorkBook = new XSSFWorkbook(file);
             DataFormatter formatter = new DataFormatter();

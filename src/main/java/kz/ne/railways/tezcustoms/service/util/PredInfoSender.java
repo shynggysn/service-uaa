@@ -1,10 +1,9 @@
 package kz.ne.railways.tezcustoms.service.util;
 
-import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.service.transitdeclaration.CustomsRequestDeclaration;
 import kz.ne.railways.tezcustoms.service.service.transitdeclaration.ICustomsReqcuestDecarartion;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.customs.information.customsdocuments.esadout_cu._5_11.ESADoutCUType;

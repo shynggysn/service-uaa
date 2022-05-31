@@ -7,8 +7,8 @@
 
 package kz.ne.railways.tezcustoms.service.service.transitdeclaration;
 
-import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationRequestType;
-import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationRequestType;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 
 public interface PIServicePortType extends java.rmi.Remote {
     public SaveDeclarationResponseType saveDeclaration(SaveDeclarationRequestType parameter)

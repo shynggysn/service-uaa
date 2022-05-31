@@ -11,8 +11,8 @@ public class InvoiceData {
     private Date invoiceDate;
     private String shipper;
     private String consignee;
-    private int totalGoodsNumber;
-    private int totalPackageNumber;
+    private Integer totalGoodsNumber;
+    private Integer totalPackageNumber;
     private String total;
     private List<InvoiceRow> invoiceItems = new ArrayList<InvoiceRow>();
 

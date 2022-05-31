@@ -53,7 +53,7 @@ public class ContractController {
     private final ResourceLoader resourceLoader;
     private final UserInvoiceService userInvoiceService;
     private final ExcelReader excelReader;
-    private final TransitDeclarationService td;
+    private final TransitDeclarationService transitDeclarationService;
     private final ForDataBeanLocal dataBean;
 
 
@@ -77,7 +77,7 @@ public class ContractController {
         return ResponseEntity.ok(formData);
 
         } catch (Exception exception) {
-            exception.printStackTrace();
+            log.error(exception.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
     }

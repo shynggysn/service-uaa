@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dictionaries")
+@RequestMapping("/dictionary")
 public class DictionaryController {
 
     @Autowired
     DictionaryBeanLocal dictionaryBean;
 
     @Operation(summary = "Get stations list")
-    @GetMapping("/stations")
+    @GetMapping("/station")
     public ResponseEntity<?> getStationList(@RequestParam("query") String query) {
         List<StationResponse> stationList = dictionaryBean.getStationList(query);
         if (stationList != null)

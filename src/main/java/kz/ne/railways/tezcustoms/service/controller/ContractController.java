@@ -77,11 +77,12 @@ public class ContractController {
         return ResponseEntity.ok(formData);
 
         } catch (Exception exception) {
+            exception.printStackTrace();
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
     }
 
-    @GetMapping("/getXlsxTemplate")
+    @GetMapping("/xlsxTemplate")
     public ResponseEntity<?> downloadExcelTemplate () {
         String contentType = "application/octet-stream";
         String headerValue = "attachment; filename=template.xlsx";
@@ -96,7 +97,7 @@ public class ContractController {
         }
     }
 
-    @GetMapping("/getInvoices")
+    @GetMapping("/invoices")
     public ResponseEntity<List<UserInvoices>> getInvoices() {
         return ResponseEntity.ok(userInvoiceService.getUserInvoices(SecurityUtils.getCurrentUserId()));
     }
@@ -106,7 +107,7 @@ public class ContractController {
             @ApiResponse(responseCode = "200", description = "Goods successfully loaded",
                     content = {@Content(mediaType = "application/json")})
     })
-    @PostMapping("/loadFromExcel")
+    @PostMapping("/xlsxTemplate")
     public ResponseEntity<?> sendToAstana1(@RequestParam("file") MultipartFile file) throws IOException {
         if (ExcelReader.hasExcelFormat(file)){
             InvoiceData invoiceData = excelReader.getInvoiceFromFile(file.getInputStream());
@@ -117,23 +118,23 @@ public class ContractController {
     }
 
 
-    //TODO: change method to save Invoice Goods in db
-    @Operation(summary = "sends transit declaration to Astana1")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
-                    content = {@Content(mediaType = "application/json")})
-    })
-    @PostMapping("/sendtoCustoms")
-    public ResponseEntity<?> sendToCustoms(@RequestBody FormData formData) throws IOException {
-        log.debug(formData.toString());
-
-        dataBean.saveInvoiceData(formData);
-
-        log.debug("invoiceId is: " + formData.getInvoiceId());
-
-        SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
-        log.debug("declaration response result: " + result.toString());
-
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
-    }
+//    //TODO: change method to save Invoice Goods in db
+//    @Operation(summary = "sends transit declaration to Astana1")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
+//                    content = {@Content(mediaType = "application/json")})
+//    })
+//    @PostMapping("/sendtoCustoms")
+//    public ResponseEntity<?> sendToCustoms(@RequestBody FormData formData) throws IOException {
+//        log.debug(formData.toString());
+//
+//        dataBean.saveInvoiceData(formData);
+//
+//        log.debug("invoiceId is: " + formData.getInvoiceId());
+//
+//        SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
+//        log.debug("declaration response result: " + result.toString());
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
+//    }
 }

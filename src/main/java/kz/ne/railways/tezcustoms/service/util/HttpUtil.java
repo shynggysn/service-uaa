@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 @Slf4j
 @Component
 public class HttpUtil {
-g
+
     @Value("${services.external.gateway.contractData.url}")
     private String gatewayContractDataUrl;
     @Value("${services.external.gateway.contractDoc.url}")

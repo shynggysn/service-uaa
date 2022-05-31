@@ -57,7 +57,7 @@ public class DictionaryBean implements DictionaryBeanLocal{
         result = (List<Object>) sql.getResultList();
         List<StationResponse> stationList = null;
         
-        if(result != null & !result.isEmpty()){
+        if(result != null && !result.isEmpty()){
             stationList = new ArrayList<>();
             Iterator it = result.iterator();
 
@@ -133,7 +133,7 @@ public class DictionaryBean implements DictionaryBeanLocal{
         result = (List<Object>) sql.getResultList();
         List<CustomResponse> customList = null;
 
-        if(result != null & !result.isEmpty()){
+        if(result != null && !result.isEmpty()){
             customList = new ArrayList<>();
             Iterator it = result.iterator();
 

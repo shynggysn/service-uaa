@@ -12,7 +12,7 @@ public interface ForDataBeanLocal {
 
     void saveContractData(Long id, FormData formData, List<VagonItem> vagonList, ContainerDatas containerDatas);
 
-    void saveInvoiceData(InvoiceData invoiceData, Long invoiceUn);
+    void saveInvoiceData(FormData formData);
 
     void saveCustomsResponse(Long invoiceId, SaveDeclarationResponseType result, String uuid);
 

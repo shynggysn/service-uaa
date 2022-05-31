@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
+import kz.ne.railways.tezcustoms.service.model.InvoiceData;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
@@ -13,6 +15,8 @@ import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.UserInvoiceService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
+import kz.ne.railways.tezcustoms.service.service.transitdeclaration.TransitDeclarationService;
+import kz.ne.railways.tezcustoms.service.util.ExcelReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +25,14 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -41,10 +49,12 @@ public class ContractController {
 
     private static final long serialVersionUID = 1L;
 
-    private final ForDataBeanLocal dataBean;
     private final ContractsService contractsService;
     private final ResourceLoader resourceLoader;
     private final UserInvoiceService userInvoiceService;
+    private final ExcelReader excelReader;
+    private final TransitDeclarationService transitDeclarationService;
+    private final ForDataBeanLocal dataBean;
 
 
     @Operation(summary = "Load a contract from ASU DKR")
@@ -67,11 +77,12 @@ public class ContractController {
         return ResponseEntity.ok(formData);
 
         } catch (Exception exception) {
+            log.error(exception.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
     }
 
-    @GetMapping("/getXlsxTemplate")
+    @GetMapping("/xlsxTemplate")
     public ResponseEntity<?> downloadExcelTemplate () {
         String contentType = "application/octet-stream";
         String headerValue = "attachment; filename=template.xlsx";
@@ -86,9 +97,44 @@ public class ContractController {
         }
     }
 
-    @GetMapping("/getInvoices")
+    @GetMapping("/invoices")
     public ResponseEntity<List<UserInvoices>> getInvoices() {
         return ResponseEntity.ok(userInvoiceService.getUserInvoices(SecurityUtils.getCurrentUserId()));
     }
 
+    @Operation(summary = "Load Goods from Excel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Goods successfully loaded",
+                    content = {@Content(mediaType = "application/json")})
+    })
+    @PostMapping("/xlsxTemplate")
+    public ResponseEntity<?> sendToAstana1(@RequestParam("file") MultipartFile file) throws IOException {
+        if (ExcelReader.hasExcelFormat(file)){
+            InvoiceData invoiceData = excelReader.getInvoiceFromFile(file.getInputStream());
+            log.debug("Invoice data: \n" + invoiceData);
+            return ResponseEntity.ok(invoiceData);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
+    }
+
+
+//    //TODO: change method to save Invoice Goods in db
+//    @Operation(summary = "sends transit declaration to Astana1")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
+//                    content = {@Content(mediaType = "application/json")})
+//    })
+//    @PostMapping("/sendtoCustoms")
+//    public ResponseEntity<?> sendToCustoms(@RequestBody FormData formData) throws IOException {
+//        log.debug(formData.toString());
+//
+//        dataBean.saveInvoiceData(formData);
+//
+//        log.debug("invoiceId is: " + formData.getInvoiceId());
+//
+//        SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
+//        log.debug("declaration response result: " + result.toString());
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
+//    }
 }

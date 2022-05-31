@@ -11,6 +11,7 @@ public class InvoiceRow {
     private String netto;
     private String brutto;
     private String price;
+    private String currencyCode;
     private String totalPrice;
     private String description;
 

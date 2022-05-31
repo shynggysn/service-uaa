@@ -101,7 +101,7 @@ public class ContractController {
     }
 
     @GetMapping("/invoices/{id}")
-    public ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
+    public ResponseEntity<FormData> getInvoiceById(@PathVariable Long id) {
         return ResponseEntity.ok(userInvoiceService.getInvoice(id));
     }
 

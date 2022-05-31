@@ -68,6 +68,7 @@ public class ForDataBean implements ForDataBeanLocal {
 
         return getFormData(invoiceId);
     }
+
     @Override
     public FormData getFormData(String invoiceId) {
         FormData result = new FormData();

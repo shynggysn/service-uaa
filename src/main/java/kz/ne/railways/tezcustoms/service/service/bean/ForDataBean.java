@@ -295,39 +295,33 @@ public class ForDataBean implements ForDataBeanLocal {
 
     @Override
     @Transactional
-    public void saveInvoiceData(InvoiceData invoiceData, Long invoiceUn) {
-        for (InvoiceRow invoiceRow: invoiceData.getInvoiceItems()) {
+    public void saveInvoiceData(FormData formData) {
+        /*TODO:
+           set Currency Code (Un?)
+           total goods number
+           total package number
+        */
+        for (InvoiceRow invoiceRow: formData.getInvoiceData().getInvoiceItems()) {
             NeSmgsTnVed neTnved = new NeSmgsTnVed();
             neTnved.setBruttoWeight(invoiceRow.getBrutto());
             neTnved.setNettoWeight(invoiceRow.getNetto());
             neTnved.setCountByUnit(invoiceRow.getQuantity());
- //           neTnved.setCurrencyCodeUn(invoiceRow.getCurrencyUn());
-            neTnved.setInvoiceUn(invoiceUn);
+            neTnved.setInvoiceUn((long) Integer.parseInt(formData.getInvoiceId()));
             neTnved.setUnitName(invoiceRow.getUnit());
             neTnved.setPriceByOne(invoiceRow.getPrice());
             neTnved.setPriceByFull(invoiceRow.getTotalPrice());
-//            neTnved.setPackingName(invoiceRow.getPackingName());
-//            neTnved.setPlaceCargoCount(tnVedRow.getPlaceCargoCount());
-//            neTnved.setPlaceCargoMark(tnVedRow.getPlaceCargoMark());
-//            String val = tnVedRow.getDescription();
-//            if (val != null && val.length() > 200)
-//                val = val.substring(0, 200);
-//            neTnved.setProductDescription(val);
-//            String val2 = tnVedRow.getDescriptionAdditionaly();
-//            if (val2 != null && val2.length() > 200)
-//                val2 = val2.substring(0, 200);
-//            neTnved.setProductDescriptionAdd(val2);
             neTnved.setTnVedCode(invoiceRow.getCode());
-//            neTnved.setContainer(tnVedRow.getContainer());
             neTnved.setTnVedName(invoiceRow.getName());
+            neTnved.setCurrencyCodeUn(invoiceRow.getCurrencyCode());
             neTnved.setTnVedDescription(invoiceRow.getDescription());
+
             BigInteger cnt = (BigInteger) em.createNativeQuery(
                             "select count(*) from ktz.ne_smgs_tn_ved a WHERE a.invoice_un = (?1) and a.tn_ved_code = (?2)")
                     .setParameter(1, neTnved.getInvoiceUn()).setParameter(2, neTnved.getTnVedCode()).getSingleResult();
-//            neTnved.setTnVedCountry(tnVedRow.getTnVedCountry());
             if (cnt.intValue() == 0)
                 em.persist(neTnved);
         }
+
     }
 
     @Override
@@ -722,30 +716,35 @@ public class ForDataBean implements ForDataBeanLocal {
     }
 
     private boolean declarantInfoFieldsAreNotNull(FormData formData) {
-        return StringUtils.isNotBlank(formData.getDeclarant().getAddress().getAddress())
+        if (formData.getDeclarant() == null)
+            return false;
+        return
+                StringUtils.isNotBlank(formData.getDeclarant().getAddress().getAddress())
 //                        || StringUtils.isNotBlank(formData.getDeclarantAMNZOU())
 //                        || StringUtils.isNotBlank(formData.getDeclarantAMUNN())
 //                        || StringUtils.isNotBlank(formData.getDeclarantBYIN())
 //                        || StringUtils.isNotBlank(formData.getDeclarantBYUNP())
 //                        || StringUtils.isNotBlank(formData.getDeclarantKGINN())
 //                        || StringUtils.isNotBlank(formData.getDeclarantKGOKPO())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getAddress().getCity())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getСountryCode())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getIndex())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getBin())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getIin())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getItn())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getKato())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getPersonsCategory())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getName())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getAddress().getRegion())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getAddress().getCity())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getСountryCode())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getIndex())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getBin())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getIin())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getItn())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getKato())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getPersonal().getPersonsCategory())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getName())
+                    || StringUtils.isNotBlank(formData.getDeclarant().getAddress().getRegion())
 //                        || StringUtils.isNotBlank(formData.getDeclarantRUINN())
 //                        || StringUtils.isNotBlank(formData.getDeclarantRUKPP())
 //                        || StringUtils.isNotBlank(formData.getDeclarantRUOGRN())
-                        || StringUtils.isNotBlank(formData.getDeclarant().getShortName());
+                    || StringUtils.isNotBlank(formData.getDeclarant().getShortName());
     }
 
     private boolean expeditorInfoFieldsAreNotNull(FormData formData) {
+        if (formData.getExpeditor() == null)
+            return false;
         return StringUtils.isNotBlank(formData.getExpeditor().getAddress().getAddress())
 //                        || StringUtils.isNotBlank(formData.getExpeditorAMNZOU())
 //                        || StringUtils.isNotBlank(formData.getExpeditorAMUNN())
@@ -811,20 +810,25 @@ public class ForDataBean implements ForDataBeanLocal {
         if (declarantInfo == null) {
             declarantInfo = new NeSmgsDeclarantInfo();
         }
-
         declarantInfo.setInvUn(invoiceUn);
-        declarantInfo.setDeclarantAddress(formData.getDeclarant().getAddress().getAddress());
-        declarantInfo.setDeclarantCity(formData.getDeclarant().getAddress().getCity());
-        declarantInfo.setDeclarantCountry(formData.getDeclarant().getСountryCode());
-        declarantInfo.setDeclarantIndex(formData.getDeclarant().getIndex());
-        declarantInfo.setDeclarantKZBin(formData.getDeclarant().getPersonal().getBin());
-        declarantInfo.setDeclarantKZIin(formData.getDeclarant().getPersonal().getIin());
-        declarantInfo.setDeclarantKZITN(formData.getDeclarant().getPersonal().getItn());
-        declarantInfo.setDeclarantKZKATO(formData.getDeclarant().getPersonal().getKato());
-        declarantInfo.setDeclarantKZPersonsCategory(formData.getDeclarant().getPersonal().getPersonsCategory());
-        declarantInfo.setDeclarantName(formData.getDeclarant().getName());
-        declarantInfo.setDeclarantRegion(formData.getDeclarant().getAddress().getRegion());
-        declarantInfo.setDeclarantShortName(formData.getDeclarant().getShortName());
+        if (formData.getDeclarant() != null){
+            if (formData.getDeclarant().getAddress() != null){
+                declarantInfo.setDeclarantAddress(formData.getDeclarant().getAddress().getAddress());
+                declarantInfo.setDeclarantCity(formData.getDeclarant().getAddress().getCity());
+                declarantInfo.setDeclarantRegion(formData.getDeclarant().getAddress().getRegion());
+            }
+            if (formData.getDeclarant().getPersonal() != null){
+                declarantInfo.setDeclarantKZBin(formData.getDeclarant().getPersonal().getBin());
+                declarantInfo.setDeclarantKZIin(formData.getDeclarant().getPersonal().getIin());
+                declarantInfo.setDeclarantKZITN(formData.getDeclarant().getPersonal().getItn());
+                declarantInfo.setDeclarantKZKATO(formData.getDeclarant().getPersonal().getKato());
+                declarantInfo.setDeclarantKZPersonsCategory(formData.getDeclarant().getPersonal().getPersonsCategory());
+            }
+            declarantInfo.setDeclarantCountry(formData.getDeclarant().getСountryCode());
+            declarantInfo.setDeclarantIndex(formData.getDeclarant().getIndex());
+            declarantInfo.setDeclarantName(formData.getDeclarant().getName());
+            declarantInfo.setDeclarantShortName(formData.getDeclarant().getShortName());
+        }
 
 //        declarantInfo.setDeclarantRUINN(formData.getDeclarantRUINN());
 //        declarantInfo.setDeclarantRUKPP(formData.getDeclarantRUKPP());
@@ -846,27 +850,37 @@ public class ForDataBean implements ForDataBeanLocal {
         }
 
         expeditorInfo.setInvUn(invoiceUn);
-        expeditorInfo.setExpeditorAddress(formData.getExpeditor().getAddress().getAddress());
+        if(formData.getExpeditor() != null){
+            if(formData.getExpeditor().getAddress() != null){
+                expeditorInfo.setExpeditorAddress(formData.getExpeditor().getAddress().getAddress());
+                expeditorInfo.setExpeditorRegion(formData.getExpeditor().getAddress().getRegion());
+                expeditorInfo.setExpeditorCity(formData.getExpeditor().getAddress().getCity());
+            }
+
+            if(formData.getExpeditor().getPersonal() != null){
+                expeditorInfo.setExpeditorKZBin(formData.getExpeditor().getPersonal().getBin());
+                expeditorInfo.setExpeditorKZIin(formData.getExpeditor().getPersonal().getIin());
+                expeditorInfo.setExpeditorKZITN(formData.getExpeditor().getPersonal().getItn());
+                expeditorInfo.setExpeditorKZKATO(formData.getExpeditor().getPersonal().getKato());
+                expeditorInfo.setExpeditorKZPersonsCategory(formData.getExpeditor().getPersonal().getPersonsCategory());
+            }
+
+            expeditorInfo.setExpeditorCountry(formData.getExpeditor().getСountryCode());
+            expeditorInfo.setExpeditorIndex(formData.getExpeditor().getIndex());
+            expeditorInfo.setExpeditorName(formData.getExpeditor().getName());
+            expeditorInfo.setExpeditorShortName(formData.getExpeditor().getShortName());
+
+//        expeditorInfo.setExpeditorRUINN(formData.getExpeditorRUINN());
+//        expeditorInfo.setExpeditorRUKPP(formData.getExpeditorRUKPP());
+//        expeditorInfo.setExpeditorRUOGRN(formData.getExpeditorRUOGRN());
 //        expeditorInfo.setExpeditorAMNZOU(formData.getExpeditorAMNZOU());
 //        expeditorInfo.setExpeditorAMUNN(formData.getExpeditorAMUNN());
 //        expeditorInfo.setExpeditorBYIN(formData.getExpeditorBYIN());
 //        expeditorInfo.setExpeditorBYUNP(formData.getExpeditorBYUNP());
-        expeditorInfo.setExpeditorCity(formData.getExpeditor().getAddress().getCity());
-        expeditorInfo.setExpeditorCountry(formData.getExpeditor().getСountryCode());
-        expeditorInfo.setExpeditorIndex(formData.getExpeditor().getIndex());
 //        expeditorInfo.setExpeditorKGINN(formData.getExpeditorKGINN());
 //        expeditorInfo.setExpeditorKGOKPO(formData.getExpeditorKGOKPO());
-        expeditorInfo.setExpeditorKZBin(formData.getExpeditor().getPersonal().getBin());
-        expeditorInfo.setExpeditorKZIin(formData.getExpeditor().getPersonal().getIin());
-        expeditorInfo.setExpeditorKZITN(formData.getExpeditor().getPersonal().getItn());
-        expeditorInfo.setExpeditorKZKATO(formData.getExpeditor().getPersonal().getKato());
-        expeditorInfo.setExpeditorKZPersonsCategory(formData.getExpeditor().getPersonal().getPersonsCategory());
-        expeditorInfo.setExpeditorName(formData.getExpeditor().getName());
-        expeditorInfo.setExpeditorRegion(formData.getExpeditor().getAddress().getRegion());
-//        expeditorInfo.setExpeditorRUINN(formData.getExpeditorRUINN());
-//        expeditorInfo.setExpeditorRUKPP(formData.getExpeditorRUKPP());
-//        expeditorInfo.setExpeditorRUOGRN(formData.getExpeditorRUOGRN());
-        expeditorInfo.setExpeditorShortName(formData.getExpeditor().getShortName());
+
+        }
 
         return expeditorInfo;
     }

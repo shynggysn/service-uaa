@@ -1,11 +1,9 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.Role;
@@ -22,7 +20,6 @@ import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
 import kz.ne.railways.tezcustoms.service.service.EcpService;
-import kz.ne.railways.tezcustoms.service.service.bean.ForDataBean;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +35,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,7 +68,7 @@ public class AuthController {
     @Operation(summary = "Sign in")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully signed in",
-                            content = {@Content(mediaType = "application/json")}),
+                    content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content)})
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {

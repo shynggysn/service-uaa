@@ -10,6 +10,7 @@ import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.model.InvoiceData;
 import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
@@ -27,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.*;
@@ -73,6 +73,29 @@ public class ServletController {
         } catch (Exception exception) {
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
+    }
+
+
+    @Operation(summary = "sends transit declaration to Astana1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
+                    content = {@Content(mediaType = "application/json")})
+            })
+    @PostMapping("/sendToAstana1")
+    public ResponseEntity<MessageResponse> sendToAstana1(@RequestParam("invNum")String invNum, @RequestParam("file") MultipartFile file) throws IOException {
+        if (ExcelReader.hasExcelFormat(file)){
+            FormData formData = dataBean.getContractData(invNum);
+            log.debug(formData.toString());
+
+            dataBean.saveInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()), Long.parseLong(formData.getInvoiceId()));
+
+            log.debug("invoiceId is: " + formData.getInvoiceId());
+            SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
+
+            log.debug("declaration response result: " + result.toString());
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
     }
 
 }

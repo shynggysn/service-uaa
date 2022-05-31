@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.model.transitdeclaration;
+package kz.ne.railways.tezcustoms.service.model.transit_declaration;
 
 import lombok.Getter;
 import lombok.Setter;

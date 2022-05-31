@@ -1,0 +1,23 @@
+stages:
+  - build
+  - error
+
+building-tez-service:
+  stage: build
+  tags:
+    - dev36
+  only:
+    - dev
+  script:
+    - mvn clean package
+    - sudo /root/TezCustoms/scripts/deploy_service.sh
+    
+error-test:
+  stage: error
+  only:
+    - dev
+  tags:
+    - dev36
+  script:
+    - echo "error"
+  when: on_failure

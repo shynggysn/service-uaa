@@ -30,4 +30,17 @@ public class SecurityUtils {
         return userName;
     }
 
+    public static Long getCurrentUserId() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        Long userId = null;
+        if (authentication != null) {
+            if (authentication.getPrincipal() instanceof UserDetails) {
+                UserDetailsImpl springSecurityUser = (UserDetailsImpl) authentication.getPrincipal();
+                userId = springSecurityUser.getId();
+            }
+        }
+        return userId;
+    }
+
 }

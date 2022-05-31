@@ -1,7 +1,7 @@
 package kz.ne.railways.tezcustoms.service.service.bean;
 
 import kz.ne.railways.tezcustoms.service.model.*;
-import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 
 import java.util.Date;
 import java.util.List;

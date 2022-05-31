@@ -9,73 +9,73 @@ import java.util.Map;
 
 public interface PrevInfoBeanDAOLocal {
 
-    public Integer existLikeInvoiceByNumAndSta(Long invoiceId);
+    Integer existLikeInvoiceByNumAndSta(Long invoiceId);
 
-    public Country getCountry(String countryCode);
+    Country getCountry(String countryCode);
 
-    public Country getCountry(Long countryUn);
+    Country getCountry(Long countryUn);
 
-    public NeCustomsOrgs getCustomsOrgs(Long customOrgUn);
+    NeCustomsOrgs getCustomsOrgs(Long customOrgUn);
 
-    public CurrencyCode getCurrencyCode(long curCodeUn);
+    CurrencyCode getCurrencyCode(long curCodeUn);
 
-    public List<CurrencyCode> getCurrencyCodeList(Date date);
+    List<CurrencyCode> getCurrencyCodeList(Date date);
 
-    public Country getCountryByManagNo(int managNo);
+    Country getCountryByManagNo(int managNo);
 
-    public Country getCountryByManagUn(Long managUn);
+    Country getCountryByManagUn(Long managUn);
 
-    public Country getCountryBycode(String countryCode);
+    Country getCountryBycode(String countryCode);
 
-    public Management getManagement(Long managUn);
+    Management getManagement(Long managUn);
 
-    public Map<String, DataCaneVagInfo> getDatacaneVagInfo(List<String> dataCaneVagons);
+    Map<String, DataCaneVagInfo> getDatacaneVagInfo(List<String> dataCaneVagons);
 
-    public List<NeSmgsTnVed> getGridDatas(Long invoiceUn);
+    List<NeSmgsTnVed> getGridDatas(Long invoiceUn);
 
-    public List<NeVagonLists> getVagonList(Long invoiceUn);
+    List<NeVagonLists> getVagonList(Long invoiceUn);
 
-    public NeInvoice getInvoice(Long invoiceUn);
+    NeInvoice getInvoice(Long invoiceUn);
 
     NeInvcRefPi getNeInvcRefPi(final Long invoiceId);
 
-    public NeSmgsCargo getNeSmgsCargo(Long invoiceUn);
+    NeSmgsCargo getNeSmgsCargo(Long invoiceUn);
 
-    public NeInvoicePrevInfo getInvoicePrevInfo(Long invoiceUn);
+    NeInvoicePrevInfo getInvoicePrevInfo(Long invoiceUn);
 
-    public NeSmgsSenderInfo getSenderInfo(Long invoiceUn);
+    NeSmgsSenderInfo getSenderInfo(Long invoiceUn);
 
-    public Sta getStation(String stationCode);
+    Sta getStation(String stationCode);
 
-    public String getStationName(String stationCode, boolean onlyName);
+    String getStationName(String stationCode, boolean onlyName);
 
-    public List<NeSmgsTnVedDocuments> getSmgsTnVedDocuments(Long tnVedId);
+    List<NeSmgsTnVedDocuments> getSmgsTnVedDocuments(Long tnVedId);
 
-    public List<NeCurrencyRates> getRates(Date date);
+    List<NeCurrencyRates> getRates(Date date);
 
-    public NeSmgsRecieverInfo getRecieverInfo(Long invoiceUn);
+    NeSmgsRecieverInfo getRecieverInfo(Long invoiceUn);
 
-    public NeSmgsDestinationPlaceInfo getNeSmgsDestinationPlaceInfo(Long invoiceUn);
+    NeSmgsDestinationPlaceInfo getNeSmgsDestinationPlaceInfo(Long invoiceUn);
 
-    public List<NeSmgsTnVed> getTnVedList(Long invoiceUn);
+    List<NeSmgsTnVed> getTnVedList(Long invoiceUn);
 
-    public NeVagonGroup getVagonGroup(Long id);
+    NeVagonGroup getVagonGroup(Long id);
 
-    public NeSmgsTnVedDocuments getSmgsTnVedDocumentsById(Long id);
+    NeSmgsTnVedDocuments getSmgsTnVedDocumentsById(Long id);
 
-    public NeSmgsDeclarantInfo getDeclarantInfo(Long invoiceUn);
+    NeSmgsDeclarantInfo getDeclarantInfo(Long invoiceUn);
 
-    public NeSmgsExpeditorInfo getExpeditorInfo(Long invoiceUn);
+    NeSmgsExpeditorInfo getExpeditorInfo(Long invoiceUn);
 
-    public List<NeContainerLists> getContinerList(Long id);
+    List<NeContainerLists> getContinerList(Long id);
 
-    public NeSmgsShipList getNeSmgsShipList(Long invoiceUn);
+    NeSmgsShipList getNeSmgsShipList(Long invoiceUn);
 
-    public List<NeUnitType> getUnitType();
+    List<NeUnitType> getUnitType();
 
-    public NePersonCategoryType getPersonCategoryType(Long categoryType);
+    NePersonCategoryType getPersonCategoryType(Long categoryType);
 
-    public NeVessel getVessel(Long un);
+    NeVessel getVessel(Long un);
 
     void updatePrevInfoStatus(NeInvoicePrevInfo invoicePrevInfo);
 

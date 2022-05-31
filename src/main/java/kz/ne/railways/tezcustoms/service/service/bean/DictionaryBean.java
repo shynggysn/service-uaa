@@ -2,6 +2,7 @@ package kz.ne.railways.tezcustoms.service.service.bean;
 
 import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.CountryResponse;
+import kz.ne.railways.tezcustoms.service.payload.response.CustomResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.StationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,15 +51,7 @@ public class DictionaryBean implements DictionaryBeanLocal{
             builder.append(")");
         }
 
-        Query sql = em.createNativeQuery(builder.toString());
-
-        if (existQuery) {
-            if (NumberUtils.isNumber(query)) {
-                sql.setParameter("v", query+ "%");
-            } else {
-                sql.setParameter("v", "%" + query.toUpperCase() + "%");
-            }
-        }
+        Query sql = getQuery(query, builder, existQuery);
 
         sql.setMaxResults(15);
         result = (List<Object>) sql.getResultList();
@@ -82,7 +75,7 @@ public class DictionaryBean implements DictionaryBeanLocal{
     }
 
     @Override
-    public List getCountryList(String query) {
+    public List<CountryResponse> getCountryList(String query) {
         query = query.toUpperCase();
         List<Object> result;
         StringBuilder builder = new StringBuilder(
@@ -98,15 +91,7 @@ public class DictionaryBean implements DictionaryBeanLocal{
             }
         }
 
-        Query sql = em.createNativeQuery(builder.toString());
-
-        if (existQuery) {
-            if (NumberUtils.isNumber(query)) {
-                sql.setParameter("v", query+ "%");
-            } else {
-                sql.setParameter("v", "%" + query.toUpperCase() + "%");
-            }
-        }
+        Query sql = getQuery(query, builder, existQuery);
 
         result = (List<Object>) sql.getResultList();
         List<CountryResponse> countryList = null;
@@ -126,4 +111,57 @@ public class DictionaryBean implements DictionaryBeanLocal{
 
         return countryList;
     }
+
+    @Override
+    public List<CustomResponse> getCustomList(String query) {
+        query = query.toUpperCase();
+        List<Object> result;
+        StringBuilder builder = new StringBuilder(
+                " select custom_code, custom_name, customs_org_un from NSI.ne_customs_orgs ");
+        builder.append(" where custom_org_end > CURRENT_TIMESTAMP ");
+
+        boolean existQuery = !StringUtils.isEmpty(query);
+        if (existQuery) {
+            if (NumberUtils.isNumber(query)) {
+                builder.append(" and custom_code like :v  ");
+            } else {
+                builder.append(" and upper(custom_name) like :v");
+            }
+        }
+
+        Query sql = getQuery(query, builder, existQuery);
+
+        result = (List<Object>) sql.getResultList();
+        List<CustomResponse> customList = null;
+
+        if(result != null & !result.isEmpty()){
+            customList = new ArrayList<>();
+            Iterator it = result.iterator();
+
+            while (it.hasNext()) {
+                Object[] row = (Object[]) it.next();
+                CustomResponse custom = new CustomResponse();
+                custom.setCustomCode(String.valueOf(row[0]));
+                custom.setCustomName(String.valueOf(row[1]));
+                custom.setCustomId(String.valueOf(row[2]));
+                customList.add(custom);
+            }
+        }
+
+        return customList;
+    }
+
+    private Query getQuery(String query, StringBuilder builder, boolean existQuery) {
+        Query sql = em.createNativeQuery(builder.toString());
+
+        if (existQuery) {
+            if (NumberUtils.isNumber(query)) {
+                sql.setParameter("v", query + "%");
+            } else {
+                sql.setParameter("v", "%" + query.toUpperCase() + "%");
+            }
+        }
+        return sql;
+    }
+
 }

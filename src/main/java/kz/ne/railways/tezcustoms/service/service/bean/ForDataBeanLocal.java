@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface ForDataBeanLocal {
 
-    public FormData getContractData(String invNum);
+    FormData getContractData(String invNum);
 
-    public void saveContractData(Long id, FormData formData, List<VagonItem> vagonList, ContainerDatas containerDatas);
+    void saveContractData(Long id, FormData formData, List<VagonItem> vagonList, ContainerDatas containerDatas);
 
-    public void saveInvoiceData(FormData formData);
+    void saveInvoiceData(FormData formData);
 
-    public void saveCustomsResponse(Long invoiceId, SaveDeclarationResponseType result, String uuid);
+    void saveCustomsResponse(Long invoiceId, SaveDeclarationResponseType result, String uuid);
 
-    public void saveDocInfo(String invoiceId, String filename, Date date, String uuid);
+    void saveDocInfo(String invoiceId, String filename, Date date, String uuid);
 
-    public boolean checkExpeditorCode(Long code);
+    boolean checkExpeditorCode(Long code);
 }

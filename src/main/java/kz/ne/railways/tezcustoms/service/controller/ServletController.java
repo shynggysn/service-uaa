@@ -1,6 +1,5 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
-import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -8,19 +7,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
-import kz.ne.railways.tezcustoms.service.model.InvoiceData;
-import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
-import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.service.EcpService;
-import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.service.bean.ForDataBean;
 import kz.ne.railways.tezcustoms.service.service.transitdeclaration.TransitDeclarationService;
+import kz.ne.railways.tezcustoms.service.service.transitdeclaration.TransitDeclarationServiceLocal;
 import kz.ne.railways.tezcustoms.service.util.ExcelReader;
-import kz.ne.railways.tezcustoms.service.util.HttpUtil;
-import kz.ne.railways.tezcustoms.service.util.SFtpSend;
 import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +42,9 @@ public class ServletController {
 
     private final UserRepository userRepository;
     private final EcpService ecpService;
+    private final ForDataBean dataBean;
+    private final ExcelReader excelReader;
+    private final TransitDeclarationServiceLocal td;
 
     @Operation(summary = "Sign ecp")
     @ApiResponses(value = {
@@ -87,7 +85,7 @@ public class ServletController {
             FormData formData = dataBean.getContractData(invNum);
             log.debug(formData.toString());
 
-            dataBean.saveInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()), Long.parseLong(formData.getInvoiceId()));
+            //dataBean.saveInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()), Long.parseLong(formData.getInvoiceId()));
 
             log.debug("invoiceId is: " + formData.getInvoiceId());
             SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));

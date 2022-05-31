@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
 import kz.ne.railways.tezcustoms.service.model.InvoiceData;
-import kz.ne.railways.tezcustoms.service.model.transitdeclaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 

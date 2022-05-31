@@ -29,4 +29,12 @@ public class DictionaryController {
         return ResponseEntity.badRequest().body(new MessageResponse("could not find any station"));
     }
 
+    @Operation(summary = "Get countries list")
+    @GetMapping("/country")
+    public ResponseEntity<?> getCountryList(@RequestParam("query") String query) {
+        List<StationResponse> countryList = dictionaryBean.getCountryList(query);
+        if (countryList != null)
+            return ResponseEntity.ok(countryList);
+        return ResponseEntity.badRequest().body(new MessageResponse("could not find any country"));
+    }
 }

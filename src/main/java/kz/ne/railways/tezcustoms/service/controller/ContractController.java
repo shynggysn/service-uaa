@@ -5,33 +5,30 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import kz.ne.railways.tezcustoms.service.model.UserInvoices;
-import kz.ne.railways.tezcustoms.service.model.InvoiceData;
-import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
-import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
 import kz.ne.railways.tezcustoms.service.model.FormData;
+import kz.ne.railways.tezcustoms.service.model.InvoiceData;
+import kz.ne.railways.tezcustoms.service.model.UserInvoices;
+import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.UserInvoiceService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
-import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import kz.ne.railways.tezcustoms.service.service.transitdeclaration.TransitDeclarationService;
 import kz.ne.railways.tezcustoms.service.util.ExcelReader;
+import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -84,16 +81,17 @@ public class ContractController {
 
     @GetMapping("/xlsxTemplate")
     public ResponseEntity<?> downloadExcelTemplate () {
-        String contentType = "application/octet-stream";
         String headerValue = "attachment; filename=template.xlsx";
         try {
-            FileSystemResource file = new FileSystemResource(new File(String.valueOf(resourceLoader.getResource("classpath:Template.xlsx").getInputStream())));
-            return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+            Resource resource = resourceLoader.getResource("classpath:Template.xlsx");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-                    .body(file);
+                    .body(resource);
         }
         catch (Exception exception) {
-            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse(exception.getMessage()));
         }
     }
 

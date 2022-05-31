@@ -96,8 +96,13 @@ public class ContractController {
     }
 
     @GetMapping("/invoices")
-    public ResponseEntity<List<UserInvoices>> getInvoices() {
+    public ResponseEntity<List<UserInvoices>> getInvoicesByUser() {
         return ResponseEntity.ok(userInvoiceService.getUserInvoices(SecurityUtils.getCurrentUserId()));
+    }
+
+    @GetMapping("/invoices/{id}")
+    public ResponseEntity<FormData> getInvoiceById(@PathVariable Long id) {
+        return ResponseEntity.ok(userInvoiceService.getInvoice(id));
     }
 
     @Operation(summary = "Load Goods from Excel")

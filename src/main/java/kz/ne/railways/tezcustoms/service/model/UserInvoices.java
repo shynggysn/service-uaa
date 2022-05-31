@@ -7,4 +7,7 @@ public interface UserInvoices {
     Integer getInvoiceStatus();
     String getUinpCode();
     String getInvoiceDate();
+    Integer getInvoiceUn();
+    String getDeclarantName();
+    String getArriveStation();
 }

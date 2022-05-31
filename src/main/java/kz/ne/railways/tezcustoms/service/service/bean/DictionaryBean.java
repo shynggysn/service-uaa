@@ -1,6 +1,7 @@
 package kz.ne.railways.tezcustoms.service.service.bean;
 
 import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
+import kz.ne.railways.tezcustoms.service.payload.response.CountryResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.StationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -82,6 +83,47 @@ public class DictionaryBean implements DictionaryBeanLocal{
 
     @Override
     public List getCountryList(String query) {
-        return null;
+        query = query.toUpperCase();
+        List<Object> result;
+        StringBuilder builder = new StringBuilder(
+                " select country_no, country_name from NSI.COUNTRY ");
+        builder.append(" where COU_END > CURRENT_TIMESTAMP ");
+
+        boolean existQuery = !StringUtils.isEmpty(query);
+        if (existQuery) {
+            if (NumberUtils.isNumber(query)) {
+                builder.append(" and COUNTRY_NO like :v  ");
+            } else {
+                builder.append(" and upper(COUNTRY_NAME) like :v");
+            }
+        }
+
+        Query sql = em.createNativeQuery(builder.toString());
+
+        if (existQuery) {
+            if (NumberUtils.isNumber(query)) {
+                sql.setParameter("v", query+ "%");
+            } else {
+                sql.setParameter("v", "%" + query.toUpperCase() + "%");
+            }
+        }
+
+        result = (List<Object>) sql.getResultList();
+        List<CountryResponse> countryList = null;
+
+        if(result != null & !result.isEmpty()){
+            countryList = new ArrayList<>();
+            Iterator it = result.iterator();
+
+            while (it.hasNext()) {
+                Object[] row = (Object[]) it.next();
+                CountryResponse station = new CountryResponse();
+                station.setCountryCode(String.valueOf(row[0]));
+                station.setCountryName(String.valueOf(row[1]));
+                countryList.add(station);
+            }
+        }
+
+        return countryList;
     }
 }

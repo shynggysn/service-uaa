@@ -82,7 +82,7 @@ public class DictionaryBean implements DictionaryBeanLocal{
     }
 
     @Override
-    public List getCountryList(String query) {
+    public List<CountryResponse> getCountryList(String query) {
         query = query.toUpperCase();
         List<Object> result;
         StringBuilder builder = new StringBuilder(
@@ -91,7 +91,7 @@ public class DictionaryBean implements DictionaryBeanLocal{
 
         boolean existQuery = !StringUtils.isEmpty(query);
         if (existQuery) {
-            if (NumberUtils.isNumber(query)) {
+            if (NumberUtils.isCreatable(query)) {
                 builder.append(" and COUNTRY_NO like :v  ");
             } else {
                 builder.append(" and upper(COUNTRY_NAME) like :v");
@@ -111,12 +111,11 @@ public class DictionaryBean implements DictionaryBeanLocal{
         result = (List<Object>) sql.getResultList();
         List<CountryResponse> countryList = null;
 
-        if(result != null & !result.isEmpty()){
+        if (result != null && !result.isEmpty()) {
             countryList = new ArrayList<>();
-            Iterator it = result.iterator();
 
-            while (it.hasNext()) {
-                Object[] row = (Object[]) it.next();
+            for (Object o : result) {
+                Object[] row = (Object[]) o;
                 CountryResponse station = new CountryResponse();
                 station.setCountryCode(String.valueOf(row[0]));
                 station.setCountryName(String.valueOf(row[1]));

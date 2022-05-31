@@ -1,6 +1,7 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import kz.ne.railways.tezcustoms.service.payload.response.CountryResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.StationResponse;
 import kz.ne.railways.tezcustoms.service.service.bean.DictionaryBeanLocal;
@@ -32,7 +33,7 @@ public class DictionaryController {
     @Operation(summary = "Get countries list")
     @GetMapping("/country")
     public ResponseEntity<?> getCountryList(@RequestParam("query") String query) {
-        List<StationResponse> countryList = dictionaryBean.getCountryList(query);
+        List<CountryResponse> countryList = dictionaryBean.getCountryList(query);
         if (countryList != null)
             return ResponseEntity.ok(countryList);
         return ResponseEntity.badRequest().body(new MessageResponse("could not find any country"));

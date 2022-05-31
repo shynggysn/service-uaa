@@ -66,6 +66,10 @@ public class ForDataBean implements ForDataBeanLocal {
         List<Long> qResult = searchPIQuery.getResultList();
         String invoiceId = String.valueOf(qResult.get(0));
 
+        return getFormData(invoiceId);
+    }
+    @Override
+    public FormData getFormData(String invoiceId) {
         FormData result = new FormData();
         result.setInvoiceId(invoiceId);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -181,57 +185,62 @@ public class ForDataBean implements ForDataBeanLocal {
             result.setDestPlaceCustomOrgUn(neSmgsDestinationPlaceInfo.getDestPlaceCustomOrgUn());
         }
 
-        NeSmgsDeclarantInfo declarant = dao.getDeclarantInfo(Long.parseLong(invoiceId));
-        if (declarant != null) {
-            result.getDeclarant().getAddress().setAddress(declarant.getDeclarantAddress());
-//            result.setDeclarantAMNZOU(declarant.getDeclarantAMNZOU());
-//            result.setDeclarantAMUNN(declarant.getDeclarantAMUNN());
-//            result.setDeclarantBYIN(declarant.getDeclarantBYIN());
-//            result.setDeclarantBYUNP(declarant.getDeclarantBYUNP());
-            result.getDeclarant().getAddress().setCity(declarant.getDeclarantCity());
-            result.getDeclarant().setСountryCode(declarant.getDeclarantCountry());
-            result.getDeclarant().setCountryName(getCountryNameByCode(declarant.getDeclarantCountry()));
-            result.getDeclarant().setIndex(declarant.getDeclarantIndex());
-//            result.setDeclarantKGINN(declarant.getDeclarantKGINN());
-//            result.setDeclarantKGOKPO(declarant.getDeclarantKGOKPO());
-            result.getDeclarant().getPersonal().setBin(declarant.getDeclarantKZBin());
-            result.getDeclarant().getPersonal().setIin(declarant.getDeclarantKZIin());
-            result.getDeclarant().getPersonal().setItn(declarant.getDeclarantKZITN());
-            result.getDeclarant().getPersonal().setKato(declarant.getDeclarantKZKATO());
-            result.getDeclarant().getPersonal().setPersonsCategory(declarant.getDeclarantKZPersonsCategory());
-            result.getDeclarant().setName(declarant.getDeclarantName());
-            result.getDeclarant().getAddress().setRegion(declarant.getDeclarantRegion());
-//            result.setDeclarantRUINN(declarant.getDeclarantRUINN());
-//            result.setDeclarantRUKPP(declarant.getDeclarantRUKPP());
-//            result.setDeclarantRUOGRN(declarant.getDeclarantRUOGRN());
-            result.getDeclarant().setShortName(declarant.getDeclarantShortName());
-        }
-
-        NeSmgsExpeditorInfo expeditor = dao.getExpeditorInfo(Long.parseLong(invoiceId));
-        if (expeditor != null) {
-            result.getExpeditor().getAddress().setAddress(expeditor.getExpeditorAddress());
-//            result.setExpeditorAMNZOU(expeditor.getExpeditorAMNZOU());
-//            result.setExpeditorAMUNN(expeditor.getExpeditorAMUNN());
-//            result.setExpeditorBYIN(expeditor.getExpeditorBYIN());
-//            result.setExpeditorBYUNP(expeditor.getExpeditorBYUNP());
-            result.getExpeditor().getAddress().setCity(expeditor.getExpeditorCity());
-            result.getExpeditor().setСountryCode(expeditor.getExpeditorCountry());
-            result.getExpeditor().setCountryName(getCountryNameByCode(expeditor.getExpeditorCountry()));
-            result.getExpeditor().setIndex(expeditor.getExpeditorIndex());
-//            result.setExpeditorKGINN(expeditor.getExpeditorKGINN());
-//            result.setExpeditorKGOKPO(expeditor.getExpeditorKGOKPO());
-            result.getExpeditor().getPersonal().setBin(expeditor.getExpeditorKZBin());
-            result.getExpeditor().getPersonal().setIin(expeditor.getExpeditorKZIin());
-            result.getExpeditor().getPersonal().setItn(expeditor.getExpeditorKZITN());
-            result.getExpeditor().getPersonal().setKato(expeditor.getExpeditorKZKATO());
-            result.getExpeditor().getPersonal().setPersonsCategory(expeditor.getExpeditorKZPersonsCategory());
-            result.getExpeditor().setName(expeditor.getExpeditorName());
-            result.getExpeditor().getAddress().setRegion(expeditor.getExpeditorRegion());
-//            result.setExpeditorRUINN(expeditor.getExpeditorRUINN());
-//            result.setExpeditorRUKPP(expeditor.getExpeditorRUKPP());
-//            result.setExpeditorRUOGRN(expeditor.getExpeditorRUOGRN());
-            result.getExpeditor().setShortName(expeditor.getExpeditorShortName());
-        }
+//        NeSmgsDeclarantInfo declarant = dao.getDeclarantInfo(Long.parseLong(invoiceId));
+//        if (declarant != null) {
+//            Declarant dec = new Declarant();
+//            Address add = new Address();
+//            result.setDeclarant(dec);
+//            result.getDeclarant().setAddress(add);
+//
+//            result.getDeclarant().getAddress().setAddress(declarant.getDeclarantAddress());
+////            result.setDeclarantAMNZOU(declarant.getDeclarantAMNZOU());
+////            result.setDeclarantAMUNN(declarant.getDeclarantAMUNN());
+////            result.setDeclarantBYIN(declarant.getDeclarantBYIN());
+////            result.setDeclarantBYUNP(declarant.getDeclarantBYUNP());
+//            result.getDeclarant().getAddress().setCity(declarant.getDeclarantCity());
+//            result.getDeclarant().setСountryCode(declarant.getDeclarantCountry());
+//            result.getDeclarant().setCountryName(getCountryNameByCode(declarant.getDeclarantCountry()));
+//            result.getDeclarant().setIndex(declarant.getDeclarantIndex());
+////            result.setDeclarantKGINN(declarant.getDeclarantKGINN());
+////            result.setDeclarantKGOKPO(declarant.getDeclarantKGOKPO());
+//            result.getDeclarant().getPersonal().setBin(declarant.getDeclarantKZBin());
+//            result.getDeclarant().getPersonal().setIin(declarant.getDeclarantKZIin());
+//            result.getDeclarant().getPersonal().setItn(declarant.getDeclarantKZITN());
+//            result.getDeclarant().getPersonal().setKato(declarant.getDeclarantKZKATO());
+//            result.getDeclarant().getPersonal().setPersonsCategory(declarant.getDeclarantKZPersonsCategory());
+//            result.getDeclarant().setName(declarant.getDeclarantName());
+//            result.getDeclarant().getAddress().setRegion(declarant.getDeclarantRegion());
+////            result.setDeclarantRUINN(declarant.getDeclarantRUINN());
+////            result.setDeclarantRUKPP(declarant.getDeclarantRUKPP());
+////            result.setDeclarantRUOGRN(declarant.getDeclarantRUOGRN());
+//            result.getDeclarant().setShortName(declarant.getDeclarantShortName());
+//        }
+//
+//        NeSmgsExpeditorInfo expeditor = dao.getExpeditorInfo(Long.parseLong(invoiceId));
+//        if (expeditor != null) {
+//            result.getExpeditor().getAddress().setAddress(expeditor.getExpeditorAddress());
+////            result.setExpeditorAMNZOU(expeditor.getExpeditorAMNZOU());
+////            result.setExpeditorAMUNN(expeditor.getExpeditorAMUNN());
+////            result.setExpeditorBYIN(expeditor.getExpeditorBYIN());
+////            result.setExpeditorBYUNP(expeditor.getExpeditorBYUNP());
+//            result.getExpeditor().getAddress().setCity(expeditor.getExpeditorCity());
+//            result.getExpeditor().setСountryCode(expeditor.getExpeditorCountry());
+//            result.getExpeditor().setCountryName(getCountryNameByCode(expeditor.getExpeditorCountry()));
+//            result.getExpeditor().setIndex(expeditor.getExpeditorIndex());
+////            result.setExpeditorKGINN(expeditor.getExpeditorKGINN());
+////            result.setExpeditorKGOKPO(expeditor.getExpeditorKGOKPO());
+//            result.getExpeditor().getPersonal().setBin(expeditor.getExpeditorKZBin());
+//            result.getExpeditor().getPersonal().setIin(expeditor.getExpeditorKZIin());
+//            result.getExpeditor().getPersonal().setItn(expeditor.getExpeditorKZITN());
+//            result.getExpeditor().getPersonal().setKato(expeditor.getExpeditorKZKATO());
+//            result.getExpeditor().getPersonal().setPersonsCategory(expeditor.getExpeditorKZPersonsCategory());
+//            result.getExpeditor().setName(expeditor.getExpeditorName());
+//            result.getExpeditor().getAddress().setRegion(expeditor.getExpeditorRegion());
+////            result.setExpeditorRUINN(expeditor.getExpeditorRUINN());
+////            result.setExpeditorRUKPP(expeditor.getExpeditorRUKPP());
+////            result.setExpeditorRUOGRN(expeditor.getExpeditorRUOGRN());
+//            result.getExpeditor().setShortName(expeditor.getExpeditorShortName());
+//        }
         if (vesselStaUns.contains(result.getArriveStation())) {
             NeSmgsShipList ship = dao.getNeSmgsShipList(Long.parseLong(invoiceId));
             if (ship != null) {

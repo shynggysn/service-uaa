@@ -19,4 +19,6 @@ public interface ForDataBeanLocal {
     void saveDocInfo(String invoiceId, String filename, Date date, String uuid);
 
     boolean checkExpeditorCode(Long code);
+
+    FormData getFormData(String invoiceId);
 }

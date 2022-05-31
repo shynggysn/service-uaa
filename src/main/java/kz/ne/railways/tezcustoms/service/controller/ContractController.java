@@ -59,12 +59,12 @@ public class ContractController {
     public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest requestDto) {
         log.debug("In loadContract...");
         try {
-        FormData formData = contractsService.loadContract(requestDto.getStartSta(),
-                        requestDto.getDestSta(), requestDto.getExpCode(), requestDto.getInvoiceNum());
-        if (formData == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Invalid parameters supplied"));
-        }
-        return ResponseEntity.ok(formData);
+            FormData formData = contractsService.loadContract(requestDto.getStartSta(),
+                    requestDto.getDestSta(), requestDto.getExpCode(), requestDto.getInvoiceNum());
+            if (formData == null) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Invalid parameters supplied"));
+            }
+            return ResponseEntity.ok(formData);
 
         } catch (Exception exception) {
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
@@ -86,9 +86,14 @@ public class ContractController {
         }
     }
 
-    @GetMapping("/getInvoices")
-    public ResponseEntity<List<UserInvoices>> getInvoices() {
+    @GetMapping("/invoices")
+    public ResponseEntity<List<UserInvoices>> getInvoicesByUser() {
         return ResponseEntity.ok(userInvoiceService.getUserInvoices(SecurityUtils.getCurrentUserId()));
+    }
+
+    @GetMapping("/invoices/{id}")
+    public ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
+        return ResponseEntity.ok(userInvoiceService.getInvoice(id));
     }
 
 }

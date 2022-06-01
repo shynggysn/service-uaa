@@ -39,22 +39,17 @@ public class HttpUtil {
 
         CloseableHttpClient httpclient = null;
         try {
-            // SSLContext ctx = SSLContexts.custom().useProtocol("TLSv1.2").build();
-            // httpclient = HttpClients.custom().setSSLSocketFactory(new
-            // SSLConnectionSocketFactory(ctx)).build();
             httpclient = new DefaultHttpClient();
             HttpResponse response = httpclient.execute(httpGet);
             HttpEntity entity = response.getEntity();
 
             if (response.getStatusLine().getStatusCode() == 200) {
-
                 if (entity != null) {
 
                     ByteArrayOutputStream result = new ByteArrayOutputStream();
                     entity.getContent().transferTo(result);
                     return result.toByteArray();
                 }
-
             }
         } catch (RuntimeException e) {
             log.error("RuntimeException in checkNaturalPersonFromStatApi: ", e);
@@ -68,25 +63,22 @@ public class HttpUtil {
                     log.error("IOException during closing in checkNaturalPersonFromStatApi: ", e);
                 }
             }
-
         }
-
         return null;
     }
 
-    public FormData getContractData(String startSta, String destSta, String expCode, String invoiceNum) {
-        String url = gatewayContractDataUrl + "&startSta=" + startSta;
-        url += "&destSta=" + destSta;
-        // url += "&expCode=" + expCode;
+    public FormData getContractData(String expCode, String invoiceNum) {
+        String url = gatewayContractDataUrl;
+//        String url = "http://localhost:8078/servlet?method=getContractData";
+        if (expCode != null)
+           url += "&expCode=" + expCode;
         url += "&invoiceNum=" + invoiceNum;
+        log.debug(url);
 
         HttpGet httpGet = new HttpGet(url);
         httpGet.addHeader("Accept-Encoding", "gzip, deflate, br");
         CloseableHttpClient httpclient = null;
         try {
-            // SSLContext ctx = SSLContexts.custom().useProtocol("TLSv1.2").build();
-            // httpclient = HttpClients.custom().setSSLSocketFactory(new
-            // SSLConnectionSocketFactory(ctx)).build();
             httpclient = new DefaultHttpClient();
             HttpResponse response = httpclient.execute(httpGet);
             HttpEntity entity = response.getEntity();
@@ -114,10 +106,7 @@ public class HttpUtil {
                     log.error("IOException during closing in checkNaturalPersonFromStatApi: ", e);
                 }
             }
-
         }
-
         return null;
     }
-
 }

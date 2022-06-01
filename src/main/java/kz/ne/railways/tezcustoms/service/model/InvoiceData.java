@@ -14,7 +14,7 @@ public class InvoiceData {
     private Integer totalGoodsNumber;
     private Integer totalPackageNumber;
     private String total;
-    private List<InvoiceRow> invoiceItems = new ArrayList<InvoiceRow>();
+    private List<InvoiceRow> invoiceItems = new ArrayList<>();
 
     public void addInvoiceItems(InvoiceRow row) {
         invoiceItems.add(row);

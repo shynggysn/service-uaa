@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.model.InvoiceData;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
+import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
@@ -120,24 +121,16 @@ public class ContractController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
     }
 
-
-//    //TODO: change method to save Invoice Goods in db
-//    @Operation(summary = "sends transit declaration to Astana1")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
-//                    content = {@Content(mediaType = "application/json")})
-//    })
-//    @PostMapping("/sendtoCustoms")
-//    public ResponseEntity<?> sendToCustoms(@RequestBody FormData formData) throws IOException {
-//        log.debug(formData.toString());
-//
-//        dataBean.saveInvoiceData(formData);
-//
-//        log.debug("invoiceId is: " + formData.getInvoiceId());
-//
-//        SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
-//        log.debug("declaration response result: " + result.toString());
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
-//    }
+    //TODO: change method to save InvoiceData fields (except InvoiceRows) in db
+    @Operation(summary = "sends transit declaration to Astana1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
+                    content = {@Content(mediaType = "application/json")})
+    })
+    @PostMapping("/sendtoCustoms")
+    public ResponseEntity<?> sendToCustoms(@RequestBody FormData formData){
+        dataBean.saveInvoiceData(formData);
+        SaveDeclarationResponseType result = transitDeclarationService.send(Long.parseLong(formData.getInvoiceId()));
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
+    }
 }

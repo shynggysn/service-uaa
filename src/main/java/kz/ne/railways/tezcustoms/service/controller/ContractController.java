@@ -68,9 +68,9 @@ public class ContractController {
         log.debug("In loadContract...");
 
         try {
-            if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Invoice already exists"));
-            }
+//            if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
+//                return ResponseEntity.badRequest().body(new MessageResponse("Invoice already exists"));
+//            }
             FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());
             if (formData == null) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Invalid parameters supplied"));

@@ -8,15 +8,11 @@ import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import kz.ne.railways.tezcustoms.service.util.HttpUtil;
 import kz.ne.railways.tezcustoms.service.util.SFtpSend;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;

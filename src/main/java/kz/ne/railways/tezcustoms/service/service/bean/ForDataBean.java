@@ -297,11 +297,15 @@ public class ForDataBean implements ForDataBeanLocal {
     @Override
     @Transactional
     public void saveInvoiceData(FormData formData) {
+
         /*TODO:
            set Currency Code (Un?)
            total goods number
            total package number
         */
+        if(formData.getInvoiceData() == null || formData.getInvoiceData().getInvoiceItems() == null)
+            return;
+
         for (InvoiceRow invoiceRow: formData.getInvoiceData().getInvoiceItems()) {
             NeSmgsTnVed neTnved = new NeSmgsTnVed();
             neTnved.setBruttoWeight(invoiceRow.getBrutto());

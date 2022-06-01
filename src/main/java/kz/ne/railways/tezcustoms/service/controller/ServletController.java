@@ -55,7 +55,8 @@ public class ServletController {
                             content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
     @PostMapping("sign-ecp-data")
-    //@PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or
+    // hasRole('ADMIN')")
     public ResponseEntity signEcpData(@Valid @RequestBody EcpSignRequest ecpSignRequest) {
         try {
             User user = userRepository.findByEmail(SecurityUtils.getCurrentUserLogin())
@@ -75,17 +76,17 @@ public class ServletController {
 
 
     @Operation(summary = "sends transit declaration to Astana1")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
-                    content = {@Content(mediaType = "application/json")})
-            })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Declaration successfully sent",
+                    content = {@Content(mediaType = "application/json")})})
     @PostMapping("/sendToAstana1")
-    public ResponseEntity<MessageResponse> sendToAstana1(@RequestParam("invNum")String invNum, @RequestParam("file") MultipartFile file) throws IOException {
-        if (ExcelReader.hasExcelFormat(file)){
+    public ResponseEntity<MessageResponse> sendToAstana1(@RequestParam("invNum") String invNum,
+                    @RequestParam("file") MultipartFile file) throws IOException {
+        if (ExcelReader.hasExcelFormat(file)) {
             FormData formData = dataBean.getContractData(invNum);
             log.debug(formData.toString());
 
-            //dataBean.saveInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()), Long.parseLong(formData.getInvoiceId()));
+            // dataBean.saveInvoiceData(excelReader.getInvoiceFromFile(file.getInputStream()),
+            // Long.parseLong(formData.getInvoiceId()));
 
             log.debug("invoiceId is: " + formData.getInvoiceId());
             SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));

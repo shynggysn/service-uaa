@@ -8,9 +8,7 @@ import java.util.List;
 
 @Entity
 @Data
-@Table( name = "roles",
-        schema = "TEZ"
-    )
+@Table(name = "roles", schema = "TEZ")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

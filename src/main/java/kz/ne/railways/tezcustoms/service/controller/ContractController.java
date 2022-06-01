@@ -57,21 +57,20 @@ public class ContractController {
     @Operation(summary = "Load a contract from ASU DKR")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Contract successfully loaded",
-                            content = {@Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = FormData.class))}),
+                            content = {@Content(mediaType = "application/json",
+                                            schema = @Schema(implementation = FormData.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")
     public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest requestDto) {
         log.debug("In loadContract...");
         try {
-        FormData formData = contractsService.loadContract(requestDto.getStartSta(),
-                        requestDto.getDestSta(), requestDto.getExpCode(), requestDto.getInvoiceNum());
-        if (formData == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Invalid parameters supplied"));
-        }
-        return ResponseEntity.ok(formData);
+            FormData formData = contractsService.loadContract(requestDto.getStartSta(), requestDto.getDestSta(),
+                            requestDto.getExpCode(), requestDto.getInvoiceNum());
+            if (formData == null) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Invalid parameters supplied"));
+            }
+            return ResponseEntity.ok(formData);
 
         } catch (Exception exception) {
             log.error(exception.getMessage());
@@ -80,18 +79,14 @@ public class ContractController {
     }
 
     @GetMapping("/xlsxTemplate")
-    public ResponseEntity<?> downloadExcelTemplate () {
+    public ResponseEntity<?> downloadExcelTemplate() {
         String headerValue = "attachment; filename=template.xlsx";
         try {
             Resource resource = resourceLoader.getResource("classpath:Template.xlsx");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-                    .body(resource);
-        }
-        catch (Exception exception) {
-            return ResponseEntity.badRequest()
-                    .body(new MessageResponse(exception.getMessage()));
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+                            .header(HttpHeaders.CONTENT_DISPOSITION, headerValue).body(resource);
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
     }
 
@@ -106,13 +101,11 @@ public class ContractController {
     }
 
     @Operation(summary = "Load Goods from Excel")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Goods successfully loaded",
-                    content = {@Content(mediaType = "application/json")})
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Goods successfully loaded",
+                    content = {@Content(mediaType = "application/json")})})
     @PostMapping("/xlsxTemplate")
     public ResponseEntity<?> sendToAstana1(@RequestParam("file") MultipartFile file) throws IOException {
-        if (ExcelReader.hasExcelFormat(file)){
+        if (ExcelReader.hasExcelFormat(file)) {
             InvoiceData invoiceData = excelReader.getInvoiceFromFile(file.getInputStream());
             log.debug("Invoice data: \n" + invoiceData);
             return ResponseEntity.ok(invoiceData);
@@ -121,23 +114,23 @@ public class ContractController {
     }
 
 
-//    //TODO: change method to save Invoice Goods in db
-//    @Operation(summary = "sends transit declaration to Astana1")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
-//                    content = {@Content(mediaType = "application/json")})
-//    })
-//    @PostMapping("/sendtoCustoms")
-//    public ResponseEntity<?> sendToCustoms(@RequestBody FormData formData) throws IOException {
-//        log.debug(formData.toString());
-//
-//        dataBean.saveInvoiceData(formData);
-//
-//        log.debug("invoiceId is: " + formData.getInvoiceId());
-//
-//        SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
-//        log.debug("declaration response result: " + result.toString());
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
-//    }
+    // //TODO: change method to save Invoice Goods in db
+    // @Operation(summary = "sends transit declaration to Astana1")
+    // @ApiResponses(value = {
+    // @ApiResponse(responseCode = "200", description = "Declaration successfully sent",
+    // content = {@Content(mediaType = "application/json")})
+    // })
+    // @PostMapping("/sendtoCustoms")
+    // public ResponseEntity<?> sendToCustoms(@RequestBody FormData formData) throws IOException {
+    // log.debug(formData.toString());
+    //
+    // dataBean.saveInvoiceData(formData);
+    //
+    // log.debug("invoiceId is: " + formData.getInvoiceId());
+    //
+    // SaveDeclarationResponseType result = td.send(Long.parseLong(formData.getInvoiceId()));
+    // log.debug("declaration response result: " + result.toString());
+    //
+    // return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
+    // }
 }

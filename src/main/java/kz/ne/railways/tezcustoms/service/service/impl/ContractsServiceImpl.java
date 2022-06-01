@@ -36,7 +36,7 @@ public class ContractsServiceImpl implements ContractsService {
         log.debug(" starSta: {}\n destSta: {}\n expCode: {}\n invoiceNum: {}", startSta, destSta, expCode, invoiceNum);
         FormData formData = httpUtil.getContractData(startSta, destSta, expCode, invoiceNum);
 
-        if (formData != null){
+        if (formData != null) {
             dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
             byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
             String docname = "Invoice Document";

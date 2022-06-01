@@ -53,7 +53,8 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public List<NeSmgsTnVed> getGridDatas(Long invoiceUn) {
         List<NeSmgsTnVed> result = null;
-        result = em.createQuery("select a from NeSmgsTnVed a where a.invoiceUn = ?1", NeSmgsTnVed.class).setParameter(1, invoiceUn).getResultList();
+        result = em.createQuery("select a from NeSmgsTnVed a where a.invoiceUn = ?1", NeSmgsTnVed.class)
+                        .setParameter(1, invoiceUn).getResultList();
         return result;
     }
 

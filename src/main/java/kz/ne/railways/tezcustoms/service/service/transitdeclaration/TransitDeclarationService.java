@@ -460,13 +460,13 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         // Трехзначный буквенный в графе 22 код валюты цены договора/ платежа (оценки). По классификатору
         // валют
         String result = "USD";
-//        if (tnVedList != null)
-//            for (NeSmgsTnVed row : tnVedList) {
-//                if (row.getCurrencyCode() != null) {
-//                    result = row.getCurrencyCode();
-//                    break;
-//                }
-//            }
+        // if (tnVedList != null)
+        // for (NeSmgsTnVed row : tnVedList) {
+        // if (row.getCurrencyCode() != null) {
+        // result = row.getCurrencyCode();
+        // break;
+        // }
+        // }
         return result;
     }
 
@@ -498,14 +498,14 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
     private BigDecimal getTotalPackageNumber(ESADoutCUGoodsShipmentType goodsShipment) {
         // Общее количество грузовых мест
         BigDecimal result = BigDecimal.ZERO;
-//        if (tnVedList != null && !tnVedList.isEmpty()) {
-//            for (NeSmgsTnVed tnVedRow : tnVedList) {
-//                result = result.add(tnVedRow.getPlaceCargoCount());
-//            }
-//        }
-//        if (BigDecimal.ZERO.equals(result)) {
-//            result = BigDecimal.ONE;
-//        }
+        // if (tnVedList != null && !tnVedList.isEmpty()) {
+        // for (NeSmgsTnVed tnVedRow : tnVedList) {
+        // result = result.add(tnVedRow.getPlaceCargoCount());
+        // }
+        // }
+        // if (BigDecimal.ZERO.equals(result)) {
+        // result = BigDecimal.ONE;
+        // }
         return result.setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -527,7 +527,8 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
 
     private String getOriginCountryName() {
         // TODO Auto-generated method stub
-        // Страна происхождения товара. Краткое название страны в соответствии с классификатором стран мира РАЗНЫЕ/ НЕИЗВЕСТНА/ ЕВРОСОЮЗ
+        // Страна происхождения товара. Краткое название страны в соответствии с классификатором стран мира
+        // РАЗНЫЕ/ НЕИЗВЕСТНА/ ЕВРОСОЮЗ
         String result = null;
         String code = "";
         if (tnVedList != null)
@@ -576,17 +577,17 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
             for (NeSmgsTnVed tnVedRow : tnVedList) {
                 ESADoutCUGoodsType goods = buildGoods(tnVedRow);
                 // TDG-5514
-//                goodsMap.put(tnVedRow.getTnVedCode() + tnVedRow.getPackingCode() + tnVedRow.getId(), goods);
+                // goodsMap.put(tnVedRow.getTnVedCode() + tnVedRow.getPackingCode() + tnVedRow.getId(), goods);
                 // --
                 goods.setAdditionalSheetCount(getAdditionalSheetCount(i++)); // Порядковый номер листа (первый подраздел
                                                                              // гр.3)
 
-//                Integer containerCount = goods.getESADContainer().getContainerNumber().size();
-//                goods.getESADContainer()
-//                                .setContainerQuantity(containerCount > 0 ? BigInteger.valueOf(containerCount) : null);
-//                goods.getESADContainer().setContainerKind(getContainerKind()); // Тип контейнера в соответствии с
-                                                                               // классификатором видов груза, упаковки
-                                                                               // и упаковочных материалов
+                // Integer containerCount = goods.getESADContainer().getContainerNumber().size();
+                // goods.getESADContainer()
+                // .setContainerQuantity(containerCount > 0 ? BigInteger.valueOf(containerCount) : null);
+                // goods.getESADContainer().setContainerKind(getContainerKind()); // Тип контейнера в соответствии с
+                // классификатором видов груза, упаковки
+                // и упаковочных материалов
 
                 // doutCUGoods.add(goods);
             }
@@ -704,52 +705,53 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         supplementaryQuantityType.setMeasureUnitQualifierName(tnVedRow.getUnitName());
         result.getSupplementaryGoodsQuantity1().add(supplementaryQuantityType);
 
-//        ESADGoodsPackagingType packagingType = new ESADGoodsPackagingType();
-//        packagingType.setPackageCode(tnVedRow.getPackingCode());
-//        if (tnVedRow.getPakagePartQuantity() != null
-//                        && tnVedRow.getPakagePartQuantity().toBigInteger() != BigInteger.ZERO) {
-//            packagingType.setPakagePartQuantity(tnVedRow.getPakagePartQuantity() != null
-//                            ? tnVedRow.getPakagePartQuantity().setScale(2, BigDecimal.ROUND_HALF_UP)
-//                            : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
-//        }
-//         TAV возможно фикс по количеству грузомест
-//         packagingType.setPakageQuantity(tnVedRow.getPackingCount() != null ?
-//         tnVedRow.getPackingCount().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO.setScale(2,
-//         BigDecimal.ROUND_HALF_UP));
-//        packagingType.setPakageQuantity(tnVedRow.getPlaceCargoCount() != null
-//                        ? tnVedRow.getPlaceCargoCount().setScale(2, BigDecimal.ROUND_HALF_UP)
-//                        : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
-//
-//         Если вид упаковки: навалом(VS), насыпью(VO, VR, VY), наливом(VL, VQ), неупакован(NE, NF, NG) или
-//         нет сведений (NA), то передавать PakageTypeCode=0.
-//        String pkgCode = tnVedRow.getPackingCode();
-//        if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
-//                        || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
-//                        || pkgCode.equals("NF") || pkgCode.equals("NG") || pkgCode.equals("NA")))
-//            packagingType.setPakageTypeCode("0");
-//        else
-//            packagingType.setPakageTypeCode((pkgCode != null ? "1" : "2")); // Если есть код упаковки, то ставим "С
-//                                                                            // упаковкой", иначе "Без упаковки в
-//                                                                            // оборудованных емкостях транспортного
-//                                                                            // средства"
-//
-//        PackingInformationType goodsPackingInformationType = new PackingInformationType();
-//        goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
-//        goodsPackingInformationType.setPakingQuantity(
-//                        tnVedRow.getPackingCount() != null ? BigInteger.valueOf(tnVedRow.getPackingCount().longValue())
-//                                        : null);
-//
-//        packagingType.getPackingInformation().add(goodsPackingInformationType);
-//
-//        result.setESADContainer(new ESADContainerType());
-//        addContainer(result, tnVedRow);
-//        List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
-//        if (docs != null) {
-//            for (NeSmgsTnVedDocuments doc : docs) {
-//                result.getESADoutCUPresentedDocument().add(buildPICUPresentedDoc(doc));
-//            }
-//        }
-//        result.setESADGoodsPackaging(packagingType);
+        // ESADGoodsPackagingType packagingType = new ESADGoodsPackagingType();
+        // packagingType.setPackageCode(tnVedRow.getPackingCode());
+        // if (tnVedRow.getPakagePartQuantity() != null
+        // && tnVedRow.getPakagePartQuantity().toBigInteger() != BigInteger.ZERO) {
+        // packagingType.setPakagePartQuantity(tnVedRow.getPakagePartQuantity() != null
+        // ? tnVedRow.getPakagePartQuantity().setScale(2, BigDecimal.ROUND_HALF_UP)
+        // : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
+        // }
+        // TAV возможно фикс по количеству грузомест
+        // packagingType.setPakageQuantity(tnVedRow.getPackingCount() != null ?
+        // tnVedRow.getPackingCount().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO.setScale(2,
+        // BigDecimal.ROUND_HALF_UP));
+        // packagingType.setPakageQuantity(tnVedRow.getPlaceCargoCount() != null
+        // ? tnVedRow.getPlaceCargoCount().setScale(2, BigDecimal.ROUND_HALF_UP)
+        // : BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_UP));
+        //
+        // Если вид упаковки: навалом(VS), насыпью(VO, VR, VY), наливом(VL, VQ), неупакован(NE, NF, NG) или
+        // нет сведений (NA), то передавать PakageTypeCode=0.
+        // String pkgCode = tnVedRow.getPackingCode();
+        // if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
+        // || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
+        // || pkgCode.equals("NF") || pkgCode.equals("NG") || pkgCode.equals("NA")))
+        // packagingType.setPakageTypeCode("0");
+        // else
+        // packagingType.setPakageTypeCode((pkgCode != null ? "1" : "2")); // Если есть код упаковки, то
+        // ставим "С
+        // // упаковкой", иначе "Без упаковки в
+        // // оборудованных емкостях транспортного
+        // // средства"
+        //
+        // PackingInformationType goodsPackingInformationType = new PackingInformationType();
+        // goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
+        // goodsPackingInformationType.setPakingQuantity(
+        // tnVedRow.getPackingCount() != null ? BigInteger.valueOf(tnVedRow.getPackingCount().longValue())
+        // : null);
+        //
+        // packagingType.getPackingInformation().add(goodsPackingInformationType);
+        //
+        // result.setESADContainer(new ESADContainerType());
+        // addContainer(result, tnVedRow);
+        // List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
+        // if (docs != null) {
+        // for (NeSmgsTnVedDocuments doc : docs) {
+        // result.getESADoutCUPresentedDocument().add(buildPICUPresentedDoc(doc));
+        // }
+        // }
+        // result.setESADGoodsPackaging(packagingType);
         Country country = dao.getCountry(tnVedRow.getTnVedCountry());
         if (country != null) {
             result.setOriginCountryCode(country.getCountryId());
@@ -758,7 +760,8 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
             result.setOriginCountryCode("00");
             result.setOriginCountryName("НЕИЗВЕСТНА");
         }
-//        result.setMilitaryProducts(tnVedRow.getTnVedIsArmy() != null && tnVedRow.getTnVedIsArmy() == 1 ? true : false);
+        // result.setMilitaryProducts(tnVedRow.getTnVedIsArmy() != null && tnVedRow.getTnVedIsArmy() == 1 ?
+        // true : false);
         result.setLanguageGoods(DOCUMENT_LANGUAGE);
         return result;
     }
@@ -2063,8 +2066,8 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
             user = new User("Altair", "Aimenov");
 
             ESADoutCUType tdDoc = build(invoiceUn);
-            if(tdDoc != null) {
-//                System.out.println(getXml(tdDoc));
+            if (tdDoc != null) {
+                // System.out.println(getXml(tdDoc));
                 result = sendTD(invoiceUn);
             }
             if (result != null && result.getValue() != null) {
@@ -2089,9 +2092,9 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
         SaveDeclarationResponseType result = readData();
 
         if (sender != null) {
-            //ESADoutCUType sendData = makeDataTD(invoiceUn);
+            // ESADoutCUType sendData = makeDataTD(invoiceUn);
 
-            this.result.setRefDocumentID( UUID.randomUUID().toString() );
+            this.result.setRefDocumentID(UUID.randomUUID().toString());
             this.uuid = this.result.getRefDocumentID();
 
             boolean ex = true;

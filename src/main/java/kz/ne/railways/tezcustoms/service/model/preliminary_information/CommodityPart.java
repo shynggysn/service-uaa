@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 
-public class CommodityPart{
+public class CommodityPart {
 
     @Schema(description = "Отправление")
     @NotBlank

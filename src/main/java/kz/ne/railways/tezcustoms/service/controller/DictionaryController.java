@@ -1,10 +1,7 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kz.ne.railways.tezcustoms.service.payload.response.CountryResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.CustomResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.StationResponse;
+import kz.ne.railways.tezcustoms.service.payload.response.*;
 import kz.ne.railways.tezcustoms.service.service.bean.DictionaryBeanLocal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/dictionary")
@@ -52,8 +48,8 @@ public class DictionaryController {
 
     @Operation(summary = "Get transit direction code")
     @GetMapping("/transitCode")
-    public ResponseEntity<?> getTransitCode () {
-        Map<String, String> customList = dictionaryBean.getTransitDirectionCode();
+    public ResponseEntity<?> getTransitCode() {
+        List<SimpleResponse> customList = dictionaryBean.getTransitDirectionCodes();
         if (customList != null)
             return ResponseEntity.ok(customList);
         return ResponseEntity.badRequest().body(new MessageResponse("could not find any custom organ"));

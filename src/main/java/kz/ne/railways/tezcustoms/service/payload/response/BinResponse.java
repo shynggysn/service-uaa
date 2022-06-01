@@ -14,14 +14,14 @@ public class BinResponse {
 
     private String bin;
 
-    //TODO parse into separate fields;
+    // TODO parse into separate fields;
     private String fio;
 
     private String organizationName;
     private String kato;
     private String address;
 
-    public BinResponse(){}
+    public BinResponse() {}
 
     public BinResponse(String organizationName, String kato, String address) {
         this.organizationName = organizationName;
@@ -29,7 +29,7 @@ public class BinResponse {
         this.address = address;
     }
 
-    public BinResponse(HashMap<String, String> map){
+    public BinResponse(HashMap<String, String> map) {
         this.bin = map.get("bin");
         this.fio = map.get("fio");
         this.organizationName = map.get("name");

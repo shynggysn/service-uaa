@@ -68,7 +68,7 @@ public class ContractController {
         log.debug("In loadContract...");
 
         try {
-        FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());
+            FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());
         if (formData == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Invalid parameters supplied"));
         }

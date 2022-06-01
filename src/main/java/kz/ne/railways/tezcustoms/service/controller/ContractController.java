@@ -81,7 +81,7 @@ public class ContractController {
     }
 
     @GetMapping("/xlsxTemplate")
-    public ResponseEntity<?> downloadExcelTemplate () {
+    public ResponseEntity<?> downloadExcelTemplate() {
         String headerValue = "attachment; filename=template.xlsx";
         try {
             Resource resource = resourceLoader.getResource("classpath:Template.xlsx");

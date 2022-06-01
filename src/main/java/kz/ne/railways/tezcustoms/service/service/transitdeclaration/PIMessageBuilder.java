@@ -841,68 +841,69 @@ public class PIMessageBuilder implements PIMessageBuilderLocal {
 
     private PIRWGoodsType buildGoods(NeSmgsTnVed tnVedRow) {
         PIRWGoodsType result = new PIRWGoodsType();
-//        result.setCurrencyCode(tnVedRow.getCurrencyCode());
+        // result.setCurrencyCode(tnVedRow.getCurrencyCode());
         result.setGoodsNumeric(null);
         result.setGoodsTNVEDCode(tnVedRow.getTnVedCode());
         result.setGrossWeightQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getBruttoWeight())));
         result.setInvoiceValue(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getPriceByFull())));
         result.setNetWeightQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getNettoWeight())));
-//        String description = (tnVedRow.getDescription() != null ? tnVedRow.getDescription() : "");
-//        if (org.apache.commons.lang3.StringUtils.isNotBlank(tnVedRow.getDescriptionAdditionaly())) {
-//            description += ", " + tnVedRow.getDescriptionAdditionaly();
-//        }
+        // String description = (tnVedRow.getDescription() != null ? tnVedRow.getDescription() : "");
+        // if (org.apache.commons.lang3.StringUtils.isNotBlank(tnVedRow.getDescriptionAdditionaly())) {
+        // description += ", " + tnVedRow.getDescriptionAdditionaly();
+        // }
         String description = "";
         if (tnVedRow.getTnVedName() != null) {
             description += "(" + tnVedRow.getTnVedName() + ")";
         }
         result.getGoodsDescription().add(description);
 
-//        if (tnVedRow.getUnitTypeUn() != null) {
-            SupplementaryQuantityType supplementaryQuantityType = new SupplementaryQuantityType();
-//            NeUnitType unitType = unitTypeMap.get(tnVedRow.getUnitTypeUn());
-            supplementaryQuantityType.setGoodsQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getCountByUnit())));
-            supplementaryQuantityType.setMeasureUnitQualifierName(tnVedRow.getUnitName());
-            result.getSupplementaryQuantity().add(supplementaryQuantityType);
-//        }
+        // if (tnVedRow.getUnitTypeUn() != null) {
+        SupplementaryQuantityType supplementaryQuantityType = new SupplementaryQuantityType();
+        // NeUnitType unitType = unitTypeMap.get(tnVedRow.getUnitTypeUn());
+        supplementaryQuantityType.setGoodsQuantity(BigDecimal.valueOf(Double.parseDouble(tnVedRow.getCountByUnit())));
+        supplementaryQuantityType.setMeasureUnitQualifierName(tnVedRow.getUnitName());
+        result.getSupplementaryQuantity().add(supplementaryQuantityType);
+        // }
 
-//        PIGoodsPackagingType packagingType = new PIGoodsPackagingType();
-//        packagingType.setPackageCode(tnVedRow.getPackingCode());
-//        packagingType.setPakageQuantity(tnVedRow.getPackingCount());
-//        packagingType.setPakagePartQuantity(tnVedRow.getPakagePartQuantity());
+        // PIGoodsPackagingType packagingType = new PIGoodsPackagingType();
+        // packagingType.setPackageCode(tnVedRow.getPackingCode());
+        // packagingType.setPakageQuantity(tnVedRow.getPackingCount());
+        // packagingType.setPakagePartQuantity(tnVedRow.getPakagePartQuantity());
 
         // Если вид упаковки: навалом(VS), насыпью(VO, VR, VY), наливом(VL, VQ), неупакован(NE, NF, NG) или
         // нет сведений (NA), то передавать PakageTypeCode=0.
-//        String pkgCode = tnVedRow.getPackingCode();
-//        if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
-//                        || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
-//                        || pkgCode.equals("NF") || pkgCode.equals("NG") || pkgCode.equals("NA")))
-//            packagingType.setPakageTypeCode("0");
-//        else
-//            packagingType.setPakageTypeCode((pkgCode != null ? "1" : "2")); // Если есть код упаковки, то ставим "С
-                                                                            // упаковкой", иначе "Без упаковки в
-                                                                            // оборудованных емкостях транспортного
-                                                                            // средства"
+        // String pkgCode = tnVedRow.getPackingCode();
+        // if (pkgCode != null && (pkgCode.equals("VS") || pkgCode.equals("VO") || pkgCode.equals("VR")
+        // || pkgCode.equals("VY") || pkgCode.equals("VL") || pkgCode.equals("VQ") || pkgCode.equals("NE")
+        // || pkgCode.equals("NF") || pkgCode.equals("NG") || pkgCode.equals("NA")))
+        // packagingType.setPakageTypeCode("0");
+        // else
+        // packagingType.setPakageTypeCode((pkgCode != null ? "1" : "2")); // Если есть код упаковки, то
+        // ставим "С
+        // упаковкой", иначе "Без упаковки в
+        // оборудованных емкостях транспортного
+        // средства"
 
 
-//        PIGoodsPackingInformationType goodsPackingInformationType = new PIGoodsPackingInformationType();
-//        goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
-//        goodsPackingInformationType.setPakingQuantity(
-//                        tnVedRow.getPackingCount() != null ? BigInteger.valueOf(tnVedRow.getPackingCount().longValue())
-//                                        : null);
-//        goodsPackingInformationType.setPackageMark(tnVedRow.getPlaceCargoMark());
-//
-//        packagingType.getPackingInformation().add(goodsPackingInformationType);
+        // PIGoodsPackingInformationType goodsPackingInformationType = new PIGoodsPackingInformationType();
+        // goodsPackingInformationType.setPackingCode(tnVedRow.getPackingCode());
+        // goodsPackingInformationType.setPakingQuantity(
+        // tnVedRow.getPackingCount() != null ? BigInteger.valueOf(tnVedRow.getPackingCount().longValue())
+        // : null);
+        // goodsPackingInformationType.setPackageMark(tnVedRow.getPlaceCargoMark());
+        //
+        // packagingType.getPackingInformation().add(goodsPackingInformationType);
 
-//        addContainer(result, tnVedRow);
+        // addContainer(result, tnVedRow);
 
-//        List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
-//        if (docs != null) {
-//            for (NeSmgsTnVedDocuments doc : docs) {
-//                result.getPresentedDocument().add(buildPICUPresentedDoc(doc));
-//            }
-//        }
-//
-//        result.setPIGoodsPackaging(packagingType);
+        // List<NeSmgsTnVedDocuments> docs = dao.getSmgsTnVedDocuments(tnVedRow.getId());
+        // if (docs != null) {
+        // for (NeSmgsTnVedDocuments doc : docs) {
+        // result.getPresentedDocument().add(buildPICUPresentedDoc(doc));
+        // }
+        // }
+        //
+        // result.setPIGoodsPackaging(packagingType);
 
         return result;
     }

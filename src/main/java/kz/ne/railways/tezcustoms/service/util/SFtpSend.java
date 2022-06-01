@@ -44,7 +44,7 @@ public class SFtpSend {
             channel.connect();
             ChannelSftp sftpChannel = (ChannelSftp) channel;
             String invoiceIdPath = "";
-            if (NumberUtils.isNumber(invoiceUn)) {
+            if (NumberUtils.isCreatable(invoiceUn)) {
                 Integer invoiceId = (Integer.parseInt(invoiceUn) / 10000) * 10000;
                 log.debug("divided invoiceId:", invoiceId);
                 invoiceIdPath = invoiceId.toString();
@@ -52,11 +52,11 @@ public class SFtpSend {
 
             try {
                 sftpChannel.mkdir("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath);
-            }catch (SftpException ex) {
+            } catch (SftpException ex) {
                 log.debug("in SFtp send: folder already exists");
             }
 
-            try{
+            try {
                 sftpChannel.mkdir("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceUn);
             } catch (SftpException ex) {
                 log.debug("in SFtp send: folder already exists");
@@ -67,7 +67,7 @@ public class SFtpSend {
             sftpChannel.exit();
             session.disconnect();
             result = true;
-        } catch(Exception ex){
+        } catch (Exception ex) {
             log.debug("in SFtp send: ", ex.getMessage());
         }
 
@@ -90,7 +90,7 @@ public class SFtpSend {
         // sftpChannel.cd("/dkrdata/EPDDOCFILES/"+invoiceUn);
         System.out.println("path: " + "/dkrdata/files/EPDDOCFILES/" + invoiceId + "/" + uuid);
         String invoiceIdPath = "";
-        if (NumberUtils.isNumber(invoiceId)) {
+        if (NumberUtils.isCreatable(invoiceId)) {
             Integer invoiceIdPathInt = (Integer.parseInt(invoiceId) / 10000) * 10000;
             invoiceIdPath = invoiceIdPathInt.toString();
         }

@@ -36,7 +36,7 @@ public class NeSmgsTnVed {
     @Column(name = "PLACE_CARGO_COUNT")
     private String placeCargoCount;
 
-    //TODO: REMOVE
+    // TODO: REMOVE
     @Column(name = "PACKING_COUNT")
     private String packingCount;
 

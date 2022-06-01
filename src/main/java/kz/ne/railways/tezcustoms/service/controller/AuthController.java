@@ -68,7 +68,7 @@ public class AuthController {
     @Operation(summary = "Sign in")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully signed in",
-                    content = {@Content(mediaType = "application/json")}),
+                            content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content)})
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -85,12 +85,8 @@ public class AuthController {
             List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                             .collect(Collectors.toList());
 
-            return ResponseEntity.ok(new JwtResponse(
-                    jwt,
-                    userDetails.getId(),
-                    userDetails.getEmail(),
-                    userDetails.getCompanyName(),
-                    roles));
+            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getEmail(),
+                            userDetails.getCompanyName(), roles));
         } catch (Exception exception) {
             return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
         }
@@ -112,12 +108,12 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: email is already in use!"));
             }
 
-//          Create new user's account
+            // Create new user's account
             User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
                             signUpRequest.getIinBin(), signUpRequest.getPhone(), signUpRequest.getAddress(),
-                            signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(), signUpRequest.getFirstName(),
-                            signUpRequest.getLastName(), signUpRequest.getMiddleName(), signUpRequest.isCompany(),
-                            signUpRequest.getKato(), signUpRequest.getExpeditorCode());
+                            signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(),
+                            signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getMiddleName(),
+                            signUpRequest.isCompany(), signUpRequest.getKato(), signUpRequest.getExpeditorCode());
 
             Set<String> strRoles = signUpRequest.getRoles();
             Set<Role> roles = new HashSet<>();
@@ -168,11 +164,10 @@ public class AuthController {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             log.info("Bin response: \n");
-            Map<String, Object> map
-                    = objectMapper.readValue(url, new TypeReference<HashMap<String,Object>>(){});
+            Map<String, Object> map = objectMapper.readValue(url, new TypeReference<HashMap<String, Object>>() {});
 
             log.info("map: " + map);
-            BinResponse binResponse = new BinResponse((HashMap<String, String>)map.get("obj"));
+            BinResponse binResponse = new BinResponse((HashMap<String, String>) map.get("obj"));
             log.info(String.valueOf(binResponse));
             return ResponseEntity.ok(binResponse);
         } catch (IOException e) {
@@ -187,7 +182,7 @@ public class AuthController {
     }
 
     @PostMapping("/checkEcp")
-    public ResponseEntity<?> checkEcp (@RequestParam("ecp") String ecp, @RequestParam("bin") String bin) {
+    public ResponseEntity<?> checkEcp(@RequestParam("ecp") String ecp, @RequestParam("bin") String bin) {
         try {
             boolean isValid = ecpService.isValidSigner(ecp, bin);
             if (isValid) {

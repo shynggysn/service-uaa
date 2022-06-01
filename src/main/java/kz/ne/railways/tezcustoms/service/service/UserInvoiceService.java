@@ -10,4 +10,6 @@ public interface UserInvoiceService {
     List<UserInvoices> getUserInvoices(Long userId);
 
     FormData getInvoice(Long id);
+
+    boolean existsByInvcNum(String invcNum);
 }

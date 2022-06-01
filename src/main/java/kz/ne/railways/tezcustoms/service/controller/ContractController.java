@@ -68,7 +68,7 @@ public class ContractController {
         log.debug("In loadContract...");
 
         try {
-            if (!dataBean.isInvoiceExists(request.getInvoiceNum())) {
+            if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Invoice already exists"));
             }
             FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());

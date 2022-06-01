@@ -1112,12 +1112,4 @@ public class ForDataBean implements ForDataBeanLocal {
         return Long.parseLong("" + query.getResultList().get(0)) > 0;
     }
 
-    @Override
-    public boolean isInvoiceExists(String invNum){
-        BigInteger cnt = (BigInteger) em.createNativeQuery(
-                        "SELECT count(*) FROM ktz.ne_invoice WHERE invc_num=?1")
-                .setParameter(1, invNum).getSingleResult();
-        return cnt.intValue() == 0;
-    }
-
 }

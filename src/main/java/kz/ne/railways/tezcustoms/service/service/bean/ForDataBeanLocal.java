@@ -22,5 +22,4 @@ public interface ForDataBeanLocal {
 
     FormData getFormData(String invoiceId);
 
-    boolean isInvoiceExists(String invNum);
 }

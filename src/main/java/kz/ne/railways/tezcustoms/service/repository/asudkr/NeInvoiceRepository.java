@@ -21,4 +21,6 @@ public interface NeInvoiceRepository extends JpaRepository<NeInvoice, Long> {
                     + "WHERE ni.userId = ?1")
     List<UserInvoices> getInvoicesByUser(Long userId);
 
+    boolean existsByInvcNum(String invcNum);
+
 }

@@ -64,11 +64,11 @@ public class ContractController {
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")
-    public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest requestDto) {
+    public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) {
         log.debug("In loadContract...");
+
         try {
-        FormData formData = contractsService.loadContract(requestDto.getStartSta(),
-                        requestDto.getDestSta(), requestDto.getExpCode(), requestDto.getInvoiceNum());
+        FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());
         if (formData == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Invalid parameters supplied"));
         }

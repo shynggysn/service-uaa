@@ -31,10 +31,10 @@ public class ContractsServiceImpl implements ContractsService {
     private final SFtpSend fileServer;
 
     @Override
-    public FormData loadContract(String startSta, String destSta, String expCode, String invoiceNum)
+    public FormData loadContract(String expCode, String invoiceNum)
                     throws IOException {
-        log.debug(" starSta: {}\n destSta: {}\n expCode: {}\n invoiceNum: {}", startSta, destSta, expCode, invoiceNum);
-        FormData formData = httpUtil.getContractData(startSta, destSta, expCode, invoiceNum);
+        log.debug(" expCode: {}\n invoiceNum: {}", expCode, invoiceNum);
+        FormData formData = httpUtil.getContractData(expCode, invoiceNum);
 
         if (formData != null){
             dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());

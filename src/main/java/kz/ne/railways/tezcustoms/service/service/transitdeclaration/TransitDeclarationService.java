@@ -2077,8 +2077,10 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
                     str = str.substring(0, 250);
 
                 result.setValue(str);
-
                 dataBean.saveCustomsResponse(invoiceUn, result, uuid);
+
+                String uinp = str.substring(0,21);
+                result.setValue(uinp);
             }
         }
         return result;

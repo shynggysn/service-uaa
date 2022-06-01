@@ -21,4 +21,6 @@ public interface ForDataBeanLocal {
     boolean checkExpeditorCode(Long code);
 
     FormData getFormData(String invoiceId);
+
+    boolean isInvoiceExists(String invNum);
 }

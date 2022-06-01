@@ -96,9 +96,9 @@ public class ExcelReader {
                     for (int j = i; j > 0; j--) {
                         String parent = sheet.getRow(j).getCell(1).getStringCellValue();
                         int count = StringUtils.countOccurrencesOf(parent, "—");
-                        if (count<counter) {
+                        if (count < counter) {
                             result.insert(0, parent.substring(count * 2) + " ");
-                            counter --;
+                            counter--;
                         }
                     }
                 }

@@ -49,16 +49,17 @@ public class FormData {
 
     /* Контейнерная отправка */
 
-    @Schema(description = "Контейнерная отправка", allowableValues = {"0","1"})
+    @Schema(description = "Контейнерная отправка", allowableValues = {"0", "1"})
     private String conteinerRef; // is container
 
     @Schema(description = "Номер контейнера")
     private String ContainerNumber;
 
-    //private Integer containerFilled; //признак заполненности контейнера
+    // private Integer containerFilled; //признак заполненности контейнера
 
     @Schema(description = "Принадлежность контейнера")
-    private Long vagonAccessory; //если отправка контейнерная, иначе принадлежность вагона(KTZ.NE_VAGON_LISTS.OWNER_RAILWAYS)
+    private Long vagonAccessory; // если отправка контейнерная, иначе принадлежность
+                                 // вагона(KTZ.NE_VAGON_LISTS.OWNER_RAILWAYS)
 
     @Schema(description = "Типоразмер контейнера")
     private String containerMark;

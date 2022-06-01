@@ -10,6 +10,7 @@ public class ContainerData {
 
     private String containerCodeName;
     private String vagonAccessoryName;
+
     public String getContainerCode() {
         return containerCode;
     }

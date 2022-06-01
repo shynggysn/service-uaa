@@ -17,12 +17,8 @@ import java.util.Set;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table( name = "users",
-        uniqueConstraints = {
-            @UniqueConstraint(columnNames = "iin_bin"),
-            @UniqueConstraint(columnNames = "email")
-        },
-        schema = "TEZ")
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iin_bin"),
+        @UniqueConstraint(columnNames = "email")}, schema = "TEZ")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,17 +84,21 @@ public class User implements Serializable {
     private String expeditorCode;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable( name = "user_roles", schema = "TEZ",
-                joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-                inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @JoinTable(name = "user_roles", schema = "TEZ",
+                    joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+                    inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
     public User() {}
 
-    public User(String email, String password, String iinBin, String phone,
-                String address, String companyName, String companyDirector, String firstName, String lastName,
-                String middleName, boolean isCompany, /*LocalDate createdDate, LocalDate lastModifiedDate,*/
-                String kato, String expeditorCode) {
+    public User(String email, String password, String iinBin, String phone, String address, String companyName,
+                    String companyDirector, String firstName, String lastName, String middleName, boolean isCompany, /*
+                                                                                                                      * LocalDate
+                                                                                                                      * createdDate,
+                                                                                                                      * LocalDate
+                                                                                                                      * lastModifiedDate,
+                                                                                                                      */
+                    String kato, String expeditorCode) {
         this.email = email;
         this.password = password;
         this.iinBin = iinBin;
@@ -110,8 +110,8 @@ public class User implements Serializable {
         this.lastName = lastName;
         this.middleName = middleName;
         this.isCompany = isCompany;
-//        this.createdDate = createdDate;
-//        this.lastModifiedDate = lastModifiedDate;
+        // this.createdDate = createdDate;
+        // this.lastModifiedDate = lastModifiedDate;
         this.kato = kato;
         this.expeditorCode = expeditorCode;
     }

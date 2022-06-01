@@ -10,7 +10,7 @@ import java.util.List;
 public interface NeInvoiceRepository extends JpaRepository<NeInvoice, Long> {
 
     @Query("select ni.invcUn as invoiceUn, ni.invcNum as invoiceNum, CONCAT(ni.reciveStationCode, ' ', sr.staName) as reciveStationCode, "
-                    + "CONCAT(ni.destStationCode, ' ', sd.staName) as destStationCode, ni.invcDt as invoiceDate, "
+                    + "CONCAT(ni.destStationCode, ' ', sd.staName) as destStationCode, nip.createDatetime as invoiceDate, "
                     + "CONCAT(nip.arriveStaNo, ' ',  sa.staName) as arriveStation, "
                     + "ni.invoiceStatus as invoiceStatus, nip.responseText as uinpCode, ns.declarantName as declarantName from NeInvoice ni "
                     + "left join NeSmgsDeclarantInfo ns ON ni.invcUn = ns.invUn "
@@ -20,5 +20,7 @@ public interface NeInvoiceRepository extends JpaRepository<NeInvoice, Long> {
                     + "left join Sta sa ON nip.arriveStaNo = sa.staNo and sa.stEnd > CURRENT_TIMESTAMP "
                     + "WHERE ni.userId = ?1")
     List<UserInvoices> getInvoicesByUser(Long userId);
+
+    boolean existsByInvcNum(String invcNum);
 
 }

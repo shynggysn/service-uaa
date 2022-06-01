@@ -26,4 +26,9 @@ public class UserInvoiceServiceImpl implements UserInvoiceService {
     public FormData getInvoice(Long id) {
         return dataBean.getFormData(id.toString());
     }
+
+    @Override
+    public boolean existsByInvcNum(String invcNum){
+        return neInvoiceRepository.existsByInvcNum(invcNum);
+    }
 }

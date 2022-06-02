@@ -6,26 +6,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
-import kz.ne.railways.tezcustoms.service.model.FormData;
-import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.service.EcpService;
-import kz.ne.railways.tezcustoms.service.service.bean.ForDataBean;
-import kz.ne.railways.tezcustoms.service.service.transitdeclaration.TransitDeclarationService;
-import kz.ne.railways.tezcustoms.service.service.transitdeclaration.TransitDeclarationServiceLocal;
-import kz.ne.railways.tezcustoms.service.util.ExcelReader;
 import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
-import java.io.*;
 
 @Slf4j
 @RestController
@@ -38,13 +33,8 @@ public class ServletController {
      * response.setCharacterEncoding("UTF-8");
      */
 
-    private static final long serialVersionUID = 1L;
-
     private final UserRepository userRepository;
     private final EcpService ecpService;
-    private final ForDataBean dataBean;
-    private final ExcelReader excelReader;
-    private final TransitDeclarationServiceLocal td;
 
     @Operation(summary = "Sign ecp")
     @ApiResponses(value = {
@@ -56,7 +46,7 @@ public class ServletController {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
     @PostMapping("sign-ecp-data")
     //@PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity signEcpData(@Valid @RequestBody EcpSignRequest ecpSignRequest) {
+    public ResponseEntity<?> signEcpData(@Valid @RequestBody EcpSignRequest ecpSignRequest) {
         try {
             User user = userRepository.findByEmail(SecurityUtils.getCurrentUserLogin())
                             .orElseThrow(() -> new ResourceNotFoundException("User not found."));

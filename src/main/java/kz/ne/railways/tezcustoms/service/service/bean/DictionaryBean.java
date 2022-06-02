@@ -44,7 +44,7 @@ public class DictionaryBean implements DictionaryBeanLocal {
         } else {
             builder.append(" and sta_name in (");
             for (int i = 0; i < defaultStations.size(); i++) {
-                builder.append("'" + defaultStations.get(i) + "'");
+                builder.append("'").append(defaultStations.get(i)).append("'");
                 if (i != defaultStations.size() - 1)
                     builder.append(",");
             }

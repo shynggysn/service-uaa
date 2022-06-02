@@ -1,6 +1,5 @@
 package kz.ne.railways.tezcustoms.service.service.bean;
 
-
 import kz.ne.railways.tezcustoms.service.payload.response.CountryResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.CustomResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.SimpleResponse;

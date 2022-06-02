@@ -3,6 +3,7 @@ package kz.ne.railways.tezcustoms.service.service.bean;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.DataCaneVagInfo;
 import kz.ne.railways.tezcustoms.service.model.VagonItem;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -10,16 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
-    @PersistenceContext
-    private EntityManager em;
+    private final EntityManager entityManager;
 
     public Integer existLikeInvoiceByNumAndSta(Long invoiceId) {
         Integer count = 0; // Если 0 даем отправить!
@@ -52,18 +52,18 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public List<NeSmgsTnVed> getGridDatas(Long invoiceUn) {
-        List<NeSmgsTnVed> result = null;
-        result = em.createQuery("select a from NeSmgsTnVed a where a.invoiceUn = ?1", NeSmgsTnVed.class)
+        List<NeSmgsTnVed> result;
+        result = entityManager.createQuery("select a from NeSmgsTnVed a where a.invoiceUn = ?1", NeSmgsTnVed.class)
                         .setParameter(1, invoiceUn).getResultList();
         return result;
     }
 
     public Map<String, DataCaneVagInfo> getDatacaneVagInfo(List<String> dataCaneVagons) {
-        Map<String, DataCaneVagInfo> map = new HashMap<String, DataCaneVagInfo>();
+        Map<String, DataCaneVagInfo> map = new HashMap<>();
         if (dataCaneVagons.isEmpty())
             return map;
-        Map<String, String> cacheMap = new HashMap<String, String>();
-        StringBuffer buffer = new StringBuffer("select " + "NUM_VAG/*Номер вагона*/," + "VZ_D/*Собственник*/,"
+        Map<String, String> cacheMap = new HashMap<>();
+        StringBuilder buffer = new StringBuilder("select " + "NUM_VAG/*Номер вагона*/," + "VZ_D/*Собственник*/,"
                         + "KOD_S/*Код собственника*/," + "VCHD_PRIPIS/*Депо*/," + "NAME_SOB/*Имя собственника*/,"
                         + "TIP/*Тип Вагона*/," + "TARA/*Тара TARA/10*/," + "KOD_SOB/*Администрация*/,"
                         + "GRUZ/*Груз GRUZ/10*/," + "KOD_AR," + "KOD_AR_MG," + "PRIZ_AR," + "PRIZ_AR_MG," + "KOL_OSEY,"
@@ -76,10 +76,10 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
             buffer.append(i == 0 ? "" : ",").append("'").append(toDataCane).append("'");
         }
         buffer.append(")");
-        List<Object[]> result = new ArrayList<Object[]>();
+        List<Object[]> result = new ArrayList<>();
         try {
-            System.out.println(buffer.toString());
-            result = em.createNativeQuery(buffer.toString()).getResultList();
+            System.out.println(buffer);
+            result = entityManager.createNativeQuery(buffer.toString()).getResultList();
         } catch (RuntimeException e) {
         }
         for (Object[] row : result) {
@@ -140,7 +140,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public NeCustomsOrgs getCustomsOrgs(Long customOrgUn) {
         log.debug("customOrgUn is: " + customOrgUn);
-        List<NeCustomsOrgs> list = em.createQuery("select a from NeCustomsOrgs a where a.customsOrgUn = ?1")
+        List<NeCustomsOrgs> list = entityManager.createQuery("select a from NeCustomsOrgs a where a.customsOrgUn = ?1")
                         .setParameter(1, customOrgUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -149,21 +149,21 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public CurrencyCode getCurrencyCode(long curCodeUn) {
-        return em.find(CurrencyCode.class, curCodeUn);
+        return entityManager.find(CurrencyCode.class, curCodeUn);
     }
 
     public List<CurrencyCode> getCurrencyCodeList(Date date) {
         String sql = "select a from CurrencyCode a where (?1 between a.curCodeBgn and a.curCodeEnd)";
-        return em.createQuery(sql).setParameter(1, date).getResultList();
+        return entityManager.createQuery(sql).setParameter(1, date).getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public Map<Long, String> getTnVedDocuments(Long invoiceUn) {
-        Map<Long, String> result = new HashMap<Long, String>();
+        Map<Long, String> result = new HashMap<>();
         String sqlText = "select d1.SMGS_TNVED_DOCUMENTS_UN, d1.SMGS_TNVED_UN, d1.DOCUMENT_CODE, d1.DOCUMENT_NAME, d1.DOCUMENT_NUMBER, d1.DOCUMENT_DATE,  d1.DOCUMENT_DATE_TO, d1.COPY_COUNT, d1.LIST_COUNT "
                         + "from KTZ.NE_SMGS_TN_VED t1 "
                         + "JOIN KTZ.NE_SMGS_TNVED_DOCUMENTS d1 ON d1.SMGS_TNVED_UN=t1.SMGS_TN_VED_UN where t1.INVOICE_UN = ?1";
-        List<NeSmgsTnVedDocuments> list = em.createNativeQuery(sqlText, NeSmgsTnVedDocuments.class)
+        List<NeSmgsTnVedDocuments> list = entityManager.createNativeQuery(sqlText, NeSmgsTnVedDocuments.class)
                         .setParameter(1, invoiceUn).getResultList();
         for (NeSmgsTnVedDocuments item : list) {
             String docs = result.get(item.getSmgsTnVedUn());
@@ -176,14 +176,15 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public List<NeCurrencyRates> getRates(Date date) {
         String sql = "select * from NSI.NE_CURRENCY_RATES where (? between RATE_BGN and RATE_END) and CURRENCU_CODE_UN IN (select b.CUR_CODE_UN from nsi.CURRENCY_CODE b where ? between b.CUR_CODE_BGN and b.CUR_CODE_END)";
-        List<NeCurrencyRates> list = em.createNativeQuery(sql, NeCurrencyRates.class).setParameter(1, date)
-                        .setParameter(2, date).getResultList();
-        return list;
+
+        return (List<NeCurrencyRates>) entityManager.createNativeQuery(sql, NeCurrencyRates.class)
+                .setParameter(1, date)
+                .setParameter(2, date).getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public List<NeVagonLists> getVagonList(Long invoiceUn) {
-        return em.createQuery("select a from NeVagonLists a where a.invcUn = :inv").setParameter("inv", invoiceUn)
+        return entityManager.createQuery("select a from NeVagonLists a where a.invcUn = :inv").setParameter("inv", invoiceUn)
                         .getResultList();
     }
 
@@ -193,20 +194,20 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
         if (statusPI == null)
             statusPI = "";
 
-        String vagNo = "";
+        StringBuilder vagNo = new StringBuilder();
 
-        if (!vagonList.isEmpty() || vagonList.size() > 0) {
+        if (!vagonList.isEmpty()) {
             for (VagonItem vagonItem : vagonList) {
-                if (vagNo.equals(""))
-                    vagNo = "'" + vagonItem.getNumber() + "'";
+                if (vagNo.toString().equals(""))
+                    vagNo = new StringBuilder("'" + vagonItem.getNumber() + "'");
                 else
-                    vagNo = vagNo + ",'" + vagonItem.getNumber() + "'";
+                    vagNo.append(",'").append(vagonItem.getNumber()).append("'");
             }
         } else {
-            vagNo = "''";
+            vagNo = new StringBuilder("''");
         }
 
-        String sqlText = "";
+        String sqlText;
         // Контейнер
         if (conteinerNum != null && !conteinerNum.equals("false")) {
             String[] strings = conteinerNum.split("-");
@@ -246,7 +247,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
         Integer no = 0; // Если 0 даем отправить!
         try {
             System.out.println(sqlText);
-            no = (Integer) em.createNativeQuery(sqlText).getSingleResult();
+            no = (Integer) entityManager.createNativeQuery(sqlText).getSingleResult();
         } catch (NoResultException e) {
         }
 
@@ -254,7 +255,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public String getStationName(String stationCode, boolean onlyName) {
-        List<Sta> list = em.createQuery("select a from Sta a where a.staNo = ?1 and a.stEnd > CURRENT_TIMESTAMP")
+        List<Sta> list = entityManager.createQuery("select a from Sta a where a.staNo = ?1 and a.stEnd > CURRENT_TIMESTAMP")
                         .setParameter(1, stationCode).getResultList();
         if (list.size() > 0) {
             Sta sta = list.get(0);
@@ -267,7 +268,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public NeInvoice getInvoice(Long invoiceUn) {
-        List<NeInvoice> list = em.createQuery("select a from NeInvoice a where a.invcUn = ?1", NeInvoice.class)
+        List<NeInvoice> list = entityManager.createQuery("select a from NeInvoice a where a.invcUn = ?1", NeInvoice.class)
                         .setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -277,7 +278,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public NeInvcRefPi getNeInvcRefPi(final Long piId) {
         String sql = "select * from ktz.NE_INVC_REF_PI  where PREV_INFO_INVC_UN = ?";
-        List<NeInvcRefPi> list = em.createNativeQuery(sql, NeInvcRefPi.class).setParameter(1, piId).getResultList();
+        List<NeInvcRefPi> list = entityManager.createNativeQuery(sql, NeInvcRefPi.class).setParameter(1, piId).getResultList();
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
@@ -286,7 +287,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public NeSmgsCargo getNeSmgsCargo(Long invoiceUn) {
-        List<NeSmgsCargo> list = em.createQuery("select a from NeSmgsCargo a where a.invUn = ?1", NeSmgsCargo.class)
+        List<NeSmgsCargo> list = entityManager.createQuery("select a from NeSmgsCargo a where a.invUn = ?1", NeSmgsCargo.class)
                         .setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -295,7 +296,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public NeInvoicePrevInfo getInvoicePrevInfo(Long invoiceUn) {
-        List<NeInvoicePrevInfo> list = em.createQuery("select a from NeInvoicePrevInfo a where a.invoiceUn = ?1",
+        List<NeInvoicePrevInfo> list = entityManager.createQuery("select a from NeInvoicePrevInfo a where a.invoiceUn = ?1",
                         NeInvoicePrevInfo.class).setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -305,7 +306,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public NeSmgsSenderInfo getSenderInfo(Long invoiceUn) {
         List<NeSmgsSenderInfo> list =
-                        em.createQuery("select a from NeSmgsSenderInfo a where a.invUn = ?1", NeSmgsSenderInfo.class)
+                        entityManager.createQuery("select a from NeSmgsSenderInfo a where a.invUn = ?1", NeSmgsSenderInfo.class)
                                         .setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -314,7 +315,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public NeSmgsDeclarantInfo getDeclarantInfo(Long invoiceUn) {
-        List<NeSmgsDeclarantInfo> list = em.createQuery("select a from NeSmgsDeclarantInfo a where a.invUn = ?1",
+        List<NeSmgsDeclarantInfo> list = entityManager.createQuery("select a from NeSmgsDeclarantInfo a where a.invUn = ?1",
                         NeSmgsDeclarantInfo.class).setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -335,7 +336,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     // }
 
     public NeSmgsExpeditorInfo getExpeditorInfo(Long invoiceUn) {
-        List<NeSmgsExpeditorInfo> list = em.createQuery("select a from NeSmgsExpeditorInfo a where a.invUn = ?1",
+        List<NeSmgsExpeditorInfo> list = entityManager.createQuery("select a from NeSmgsExpeditorInfo a where a.invUn = ?1",
                         NeSmgsExpeditorInfo.class).setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -344,7 +345,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public NeSmgsRecieverInfo getRecieverInfo(Long invoiceUn) {
-        List<NeSmgsRecieverInfo> list = em
+        List<NeSmgsRecieverInfo> list = entityManager
                         .createQuery("select a from NeSmgsRecieverInfo a where a.invUn = ?1", NeSmgsRecieverInfo.class)
                         .setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
@@ -355,7 +356,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public NeSmgsDestinationPlaceInfo getNeSmgsDestinationPlaceInfo(Long invoiceUn) {
         List<NeSmgsDestinationPlaceInfo> list =
-                        em.createQuery("select a from NeSmgsDestinationPlaceInfo a where a.invoiceUn = ?1",
+                        entityManager.createQuery("select a from NeSmgsDestinationPlaceInfo a where a.invoiceUn = ?1",
                                         NeSmgsDestinationPlaceInfo.class).setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -365,7 +366,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public NeSmgsShipList getNeSmgsShipList(Long invoiceUn) {
         List<NeSmgsShipList> list =
-                        em.createQuery("select a from NeSmgsShipList a where a.invUn = ?1", NeSmgsShipList.class)
+                        entityManager.createQuery("select a from NeSmgsShipList a where a.invUn = ?1", NeSmgsShipList.class)
                                         .setParameter(1, invoiceUn).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -374,16 +375,16 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public NeVessel getVessel(Long un) {
-        return em.find(NeVessel.class, un);
+        return entityManager.find(NeVessel.class, un);
     }
 
     public List<NeSmgsTnVed> getTnVedList(Long invoiceUn) {
-        return em.createQuery("select a from NeSmgsTnVed a where a.invoiceUn = ?1", NeSmgsTnVed.class)
+        return entityManager.createQuery("select a from NeSmgsTnVed a where a.invoiceUn = ?1", NeSmgsTnVed.class)
                         .setParameter(1, invoiceUn).getResultList();
     }
 
     public NeVagonGroup getVagonGroup(Long id) {
-        List<NeVagonGroup> list = em.createNativeQuery(
+        List<NeVagonGroup> list = entityManager.createNativeQuery(
                         "SELECT a.* FROM KTZ.NE_VAGON_GROUP a join ktz.NE_VAGON_LISTS b on a.VAG_GROUP_UN = b.VAG_GROUP_UN where b.INVC_UN = ?1 fetch first row only",
                         NeVagonGroup.class).setParameter(1, id).getResultList();
         if (list != null && !list.isEmpty()) {
@@ -393,7 +394,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public Country getCountry(String countryCode) {
-        List<Country> list = em.createQuery("select a from Country a where a.countryNo = ?1")
+        List<Country> list = entityManager.createQuery("select a from Country a where a.countryNo = ?1")
                         .setParameter(1, countryCode).getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -403,7 +404,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public Sta getStation(String stationCode) {
-        List<Sta> list = em.createQuery("select a from Sta a where a.staNo = ?1 and a.stEnd > CURRENT_TIMESTAMP")
+        List<Sta> list = entityManager.createQuery("select a from Sta a where a.staNo = ?1 and a.stEnd > CURRENT_TIMESTAMP")
                         .setParameter(1, stationCode).getResultList();
         if (list.size() > 0) {
             return list.get(0);
@@ -412,7 +413,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public Management getManagement(Long managUn) {
-        List<Management> list = em.createQuery("select a from Management a where a.managUn = ?1 ")
+        List<Management> list = entityManager.createQuery("select a from Management a where a.managUn = ?1 ")
                         .setParameter(1, managUn).getResultList();
         if (list.size() > 0) {
             return list.get(0);
@@ -421,7 +422,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public Country getCountry(Long countryUn) {
-        List<Country> list = em.createQuery("select a from Country a where a.couUn = ?1").setParameter(1, countryUn)
+        List<Country> list = entityManager.createQuery("select a from Country a where a.couUn = ?1").setParameter(1, countryUn)
                         .getResultList();
         if (list != null && list.size() > 0) {
             return list.get(0);
@@ -431,15 +432,15 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     @SuppressWarnings("unchecked")
     public List<NeSmgsTnVedDocuments> getSmgsTnVedDocuments(Long tnVedId) {
-        return em.createQuery(
+        return entityManager.createQuery(
                         "select a from NeSmgsTnVedDocuments a where a.smgsTnVedUn = ?1 order by a.smgsTnVedDocumentsUn asc")
                         .setParameter(1, tnVedId).getResultList();
     }
 
     @Transactional
     public NeSmgsTnVedDocuments saveSmgsTnVedDocuments(NeSmgsTnVedDocuments saveDoc) {
-        saveDoc = em.merge(saveDoc);
-        em.flush();
+        saveDoc = entityManager.merge(saveDoc);
+        entityManager.flush();
         return saveDoc;
     }
 
@@ -448,8 +449,8 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
         if (id != null) {
             NeSmgsTnVedDocuments doc = getSmgsTnVedDocumentsById(id);
             if (doc != null) {
-                em.remove(doc);
-                em.flush();
+                entityManager.remove(doc);
+                entityManager.flush();
             }
         }
     }
@@ -464,8 +465,8 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
             doc.setDocumentCode(updateDoc.getDocumentCode());
             doc.setCopyCount(updateDoc.getCopyCount());
             doc.setListCount(updateDoc.getListCount());
-            em.merge(doc);
-            em.flush();
+            entityManager.merge(doc);
+            entityManager.flush();
         }
 
     }
@@ -473,15 +474,15 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     @Transactional
     public void updateNeInvoicePrevInfo(Long id, NeInvoicePrevInfo updateDoc) {
         if (updateDoc != null) {
-            em.merge(updateDoc);
-            em.flush();
+            entityManager.merge(updateDoc);
+            entityManager.flush();
         }
 
     }
 
     public NeSmgsTnVedDocuments getSmgsTnVedDocumentsById(Long id) {
         List<NeSmgsTnVedDocuments> list =
-                        em.createQuery("select a from NeSmgsTnVedDocuments a where a.smgsTnVedDocumentsUn = ?1")
+                        entityManager.createQuery("select a from NeSmgsTnVedDocuments a where a.smgsTnVedDocumentsUn = ?1")
                                         .setParameter(1, id).getResultList();
         if (list != null && !list.isEmpty()) {
             return list.get(0);
@@ -490,7 +491,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public NeSmgsExpeditorInfo getExpeditor(Long id) {
-        List<NeSmgsExpeditorInfo> list = em.createQuery("select a from NeSmgsExpeditorInfo a where a.invUn = ?1")
+        List<NeSmgsExpeditorInfo> list = entityManager.createQuery("select a from NeSmgsExpeditorInfo a where a.invUn = ?1")
                         .setParameter(1, id).getResultList();
         if (list != null && !list.isEmpty()) {
             return list.get(0);
@@ -499,18 +500,17 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public List<NeUnitType> getUnitType() {
-        return em.createQuery("select a from NeUnitType a ").getResultList();
+        return entityManager.createQuery("select a from NeUnitType a ").getResultList();
     }
 
     public Country getCountryBycode(String countryCode) {
-        return (Country) em.createNativeQuery("select * from NSI.COUNTRY s where s.COUNTRY_NO = ?1", Country.class)
+        return (Country) entityManager.createNativeQuery("select * from NSI.COUNTRY s where s.COUNTRY_NO = ?1", Country.class)
                         .setParameter(1, countryCode).getSingleResult();
     }
 
     public List<NeContainerLists> getContinerList(Long id) {
-        List<NeContainerLists> result = em.createQuery("select a from NeContainerLists a where a.invoiceUn = ?1")
+        return (List<NeContainerLists>) entityManager.createQuery("select a from NeContainerLists a where a.invoiceUn = ?1")
                         .setParameter(1, id).getResultList();
-        return result;
     }
 
     public void bigUpdateTnVedDocuments(Long id, NeSmgsTnVedDocuments updateDoc) {
@@ -520,8 +520,8 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
             doc.setDocumentName(updateDoc.getDocumentName());
             doc.setDocumentNumber(updateDoc.getDocumentNumber());
             doc.setDocumentCode(updateDoc.getDocumentCode());
-            em.merge(doc);
-            em.flush();
+            entityManager.merge(doc);
+            entityManager.flush();
         }
     }
 
@@ -530,16 +530,13 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
         String sql = "select 1 as num, REPLACE(REPLACE(REPLACE(VARCHAR( XML2CLOB( XMLAGG( XMLELEMENT( NAME a ,D.SMGS_TN_VED_UN) ) ) ,2048 ) ,'</A><A>',',') ,'<A>','') ,'</A>','') AS ids "
                         + "from KTZ.NE_SMGS_TN_VED D WHERE D.INVOICE_UN IN(" + invoiceUn + ") " + "GROUP BY 1";
         try {
-            Query query = em.createNativeQuery(sql);
+            Query query = entityManager.createNativeQuery(sql);
             List<Object[]> list = query.getResultList();
             for (Object[] object : list) {
                 res = (String) object[1];
             }
-        } catch (NoResultException nre) {
+        } catch (Exception nre) {
             nre.getLocalizedMessage();
-            return null;
-        } catch (Exception e) {
-            e.getLocalizedMessage();
             return null;
         }
         return res;
@@ -547,7 +544,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public NePersonCategoryType getPersonCategoryType(Long categoryType) {
         if (categoryType != null) {
-            return em.find(NePersonCategoryType.class, categoryType);
+            return entityManager.find(NePersonCategoryType.class, categoryType);
         } else {
             return null;
         }
@@ -555,7 +552,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     public Country getCountryByManagNo(int managNo) {
         String sql = "select * from nsi.COUNTRY where COU_UN in (select COU_UN from NSI.MANAGEMENT where MANAG_NO = ?1 and CURRENT_TIMESTAMP between MANAG_BGN and MANAG_END )";
-        List<Country> list = em.createNativeQuery(sql, Country.class).setParameter(1, managNo).getResultList();
+        List<Country> list = entityManager.createNativeQuery(sql, Country.class).setParameter(1, managNo).getResultList();
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
@@ -569,7 +566,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
             return null;
         }
         String sql = "select * from nsi.COUNTRY where COU_UN in (select COU_UN from NSI.MANAGEMENT where MANAG_UN = ?1 and MANAG_END > CURRENT_TIMESTAMP FETCH FIRST 1 ROWS ONLY)";
-        List<Country> list = em.createNativeQuery(sql, Country.class).setParameter(1, managUn).getResultList();
+        List<Country> list = entityManager.createNativeQuery(sql, Country.class).setParameter(1, managUn).getResultList();
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
@@ -578,7 +575,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
     }
 
     public void updatePrevInfoStatus(NeInvoicePrevInfo invoicePrevInfo) {
-        em.merge(invoicePrevInfo);
+        entityManager.merge(invoicePrevInfo);
     }
 
 }

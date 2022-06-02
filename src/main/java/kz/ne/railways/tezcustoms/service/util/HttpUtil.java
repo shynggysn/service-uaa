@@ -1,7 +1,6 @@
 package kz.ne.railways.tezcustoms.service.util;
 
 import com.google.gson.Gson;
-import kz.ne.railways.tezcustoms.service.model.Contract;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -10,17 +9,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 @Slf4j
 @Component
+// TODO бизнес логика в Util
 public class HttpUtil {
 
     @Value("${services.external.gateway.contractData.url}")
@@ -28,9 +25,10 @@ public class HttpUtil {
     @Value("${services.external.gateway.contractDoc.url}")
     private String gatewayContractDocUrl;
 
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public byte[] getContractDoc(String invoiceId) {
+        // TODO may be WebClient
         String url = gatewayContractDocUrl + "&invoiceId=" + invoiceId;
 
         HttpGet httpGet = new HttpGet(url);
@@ -85,7 +83,7 @@ public class HttpUtil {
 
             if (response.getStatusLine().getStatusCode() == 200) {
 
-                String strResponse = null;
+                String strResponse;
                 if (entity != null) {
                     strResponse = EntityUtils.toString(entity, "UTF-8");
                     FormData formData = gson.fromJson(strResponse, FormData.class);

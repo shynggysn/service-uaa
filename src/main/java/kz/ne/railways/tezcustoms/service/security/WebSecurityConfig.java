@@ -3,7 +3,7 @@ package kz.ne.railways.tezcustoms.service.security;
 import kz.ne.railways.tezcustoms.service.security.jwt.AuthEntryPointJwt;
 import kz.ne.railways.tezcustoms.service.security.jwt.AuthTokenFilter;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,25 +17,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(
                 // securedEnabled = true,
                 // jsr250Enabled = true,
                 prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @PersistenceContext
-    private EntityManager em;
-
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -66,7 +58,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
     }
 
 }

@@ -40,7 +40,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            log.error("Cannot set user authentication: {}", e);
+            log.error("Cannot set user authentication: ", e);
         }
 
         filterChain.doFilter(request, response);
@@ -51,7 +51,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
         log.info("Authorization " + headerAuth);
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            headerAuth = headerAuth.substring(7, headerAuth.length());
+            headerAuth = headerAuth.substring(7);
             return headerAuth;
         }
         return null;

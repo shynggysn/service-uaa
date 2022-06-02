@@ -1,6 +1,5 @@
 package kz.ne.railways.tezcustoms.service.service.bean;
 
-import com.google.gson.Gson;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.*;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
@@ -9,7 +8,6 @@ import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +23,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ForDataBean implements ForDataBeanLocal {
 
-    private final PrevInfoBeanDAOLocal dao;
-
-    private Gson gson = new Gson();
-
-    @PersistenceContext
-    EntityManager em;
+    private final PrevInfoBeanDAOLocal prevInfoBeanDAOLocal;
+    private final EntityManager entityManager;
 
     private static final Long NEW_INVOICE = -1L;
 
@@ -62,7 +56,7 @@ public class ForDataBean implements ForDataBeanLocal {
         sqlBuilder.append(sqlB);
         sqlBuilder.append(sqlWhe);
 
-        Query searchPIQuery = em.createNativeQuery(sqlBuilder.toString());
+        Query searchPIQuery = entityManager.createNativeQuery(sqlBuilder.toString());
         searchPIQuery.setParameter(1, invNum);
         List<Long> qResult = searchPIQuery.getResultList();
         String invoiceId = String.valueOf(qResult.get(0));
@@ -76,7 +70,7 @@ public class ForDataBean implements ForDataBeanLocal {
         result.setInvoiceId(invoiceId);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        NeInvoice neInvoice = dao.getInvoice(Long.parseLong(invoiceId));
+        NeInvoice neInvoice = prevInfoBeanDAOLocal.getInvoice(Long.parseLong(invoiceId));
         if (neInvoice != null) { // neInvoice @Table(name="NE_INVOICE")
             result.setTrainIndex(neInvoice.getTrainIndex());
             result.setInvoiceNumber(neInvoice.getInvcNum());
@@ -87,9 +81,9 @@ public class ForDataBean implements ForDataBeanLocal {
                 result.setInvDateTime(dateFormat.format(date));
             }
             result.setStartStation(neInvoice.getReciveStationCode());
-            result.setStartStationName(dao.getStationName(neInvoice.getReciveStationCode(), false));
+            result.setStartStationName(prevInfoBeanDAOLocal.getStationName(neInvoice.getReciveStationCode(), false));
             result.setDestStation(neInvoice.getDestStationCode());
-            result.setDestStationName(dao.getStationName(neInvoice.getDestStationCode(), false));
+            result.setDestStationName(prevInfoBeanDAOLocal.getStationName(neInvoice.getDestStationCode(), false));
         }
 
         GngModel gngModel = getGngModel(Long.parseLong(invoiceId));
@@ -97,7 +91,7 @@ public class ForDataBean implements ForDataBeanLocal {
             result.setGngCode(gngModel.getCode());
             result.setGngName(gngModel.getShortName1());
         }
-        NeInvoicePrevInfo neInvoicePrevInfo = dao.getInvoicePrevInfo(Long.parseLong(invoiceId));
+        NeInvoicePrevInfo neInvoicePrevInfo = prevInfoBeanDAOLocal.getInvoicePrevInfo(Long.parseLong(invoiceId));
         if (neInvoicePrevInfo != null) {
             Date date = new Date(neInvoicePrevInfo.getCreateDatetime().getTime());
             result.setCreateDate(dateFormat.format(date));
@@ -116,7 +110,7 @@ public class ForDataBean implements ForDataBeanLocal {
             result.setDestStationCountry(neInvoicePrevInfo.getDestStationCouNo());
             result.setResponseMessage(neInvoicePrevInfo.getResponseText());
         }
-        NeSmgsSenderInfo senderInfo = dao.getSenderInfo(Long.parseLong(invoiceId));
+        NeSmgsSenderInfo senderInfo = prevInfoBeanDAOLocal.getSenderInfo(Long.parseLong(invoiceId));
         if (senderInfo != null) {
             result.setSenderCountry(senderInfo.getSenderCountryCode());
             result.setSenderCountryName(getCountryName(senderInfo.getSenderCountryCode()));
@@ -143,7 +137,7 @@ public class ForDataBean implements ForDataBeanLocal {
             }
             result.setSenderITNreserv(senderInfo.getItn());
         }
-        NeSmgsRecieverInfo recieverinfo = dao.getRecieverInfo(Long.parseLong(invoiceId));
+        NeSmgsRecieverInfo recieverinfo = prevInfoBeanDAOLocal.getRecieverInfo(Long.parseLong(invoiceId));
         if (recieverinfo != null) {
             result.setRecieverCountry(recieverinfo.getRecieverCountryCode());
             result.setRecieverCountryName(getCountryName(recieverinfo.getRecieverCountryCode()));
@@ -171,12 +165,12 @@ public class ForDataBean implements ForDataBeanLocal {
             result.setRecieverITNreserv(recieverinfo.getItn());
         }
         NeSmgsDestinationPlaceInfo neSmgsDestinationPlaceInfo =
-                        dao.getNeSmgsDestinationPlaceInfo(Long.parseLong(invoiceId));
+                        prevInfoBeanDAOLocal.getNeSmgsDestinationPlaceInfo(Long.parseLong(invoiceId));
         if (neSmgsDestinationPlaceInfo != null) {
             String destPlaceSta = neSmgsDestinationPlaceInfo.getDestPlaceSta();
             result.setDestPlace(neSmgsDestinationPlaceInfo.getDestPlace());
             result.setDestPlaceStation(destPlaceSta);
-            result.setDestPlaceStationName(dao.getStationName(destPlaceSta, true));
+            result.setDestPlaceStationName(prevInfoBeanDAOLocal.getStationName(destPlaceSta, true));
             result.setDestPlaceCountryCode(neSmgsDestinationPlaceInfo.getDestPlaceCountryCode());
             result.setDestPlaceIndex(neSmgsDestinationPlaceInfo.getDestPlaceIndex());
             result.setDestPlacePoint(neSmgsDestinationPlaceInfo.getDestPlaceCity());
@@ -244,16 +238,16 @@ public class ForDataBean implements ForDataBeanLocal {
 //            result.getExpeditor().setShortName(expeditor.getExpeditorShortName());
 //        }
         if (vesselStaUns.contains(result.getArriveStation())) {
-            NeSmgsShipList ship = dao.getNeSmgsShipList(Long.parseLong(invoiceId));
+            NeSmgsShipList ship = prevInfoBeanDAOLocal.getNeSmgsShipList(Long.parseLong(invoiceId));
             if (ship != null) {
                 result.setVesselUn(ship.getNeVesselUn());
                 if (ship.getNeVesselUn() != null) {
-                    NeVessel vessel = em.find(NeVessel.class, ship.getNeVesselUn());
+                    NeVessel vessel = entityManager.find(NeVessel.class, ship.getNeVesselUn());
                     result.setVessel(new DicDao(vessel.getNeVesselUn(), vessel.getVesselName()));
                 }
             }
         }
-        List<VagonItem> vagonItems = dao.getVagonList(Long.parseLong(invoiceId))
+        List<VagonItem> vagonItems = prevInfoBeanDAOLocal.getVagonList(Long.parseLong(invoiceId))
                 .stream()
                 .map(neVagonLists -> {
                     VagonItem vagonItem = new VagonItem();
@@ -274,7 +268,7 @@ public class ForDataBean implements ForDataBeanLocal {
              * result.setContainerMark(containerLists.getContainerMark());
              * result.setContainerCode(containerLists.getConUn()); }
              */
-            List<NeContainerLists> contList = dao.getContinerList(Long.parseLong(invoiceId));
+            List<NeContainerLists> contList = prevInfoBeanDAOLocal.getContinerList(Long.parseLong(invoiceId));
             for (NeContainerLists neContainerLists : contList) {
                 ContainerData container = new ContainerData();
                 container.setContainerListUn(neContainerLists.getContainerListsUn());
@@ -284,15 +278,15 @@ public class ForDataBean implements ForDataBeanLocal {
                 container.setContainerMark(neContainerLists.getContainerMark());
                 container.setContainerCode(neContainerLists.getConUn());
                 result.addContainer(container);
-                Container code = em.find(Container.class, PIHelper.getLongVal(neContainerLists.getConUn()));
+                Container code = entityManager.find(Container.class, PIHelper.getLongVal(neContainerLists.getConUn()));
                 if (code != null) {
                     result.setContainerCode(new DicDao(code.getConUn(), code.getConCode()));
                     container.setContainerCodeName(code.getConCode());
                 }
 
-                Management mng = em.find(Management.class, neContainerLists.getManagUn());
+                Management mng = entityManager.find(Management.class, neContainerLists.getManagUn());
                 if (mng != null) {
-                    Country cntry = em.find(Country.class, mng.getCouUn());
+                    Country cntry = entityManager.find(Country.class, mng.getCouUn());
                     if (cntry != null) {
                         result.setContainerCountry(new DicDao(mng.getManagUn(), cntry.getCountryName()));
                         container.setVagonAccessoryName(cntry.getCountryName());
@@ -331,11 +325,12 @@ public class ForDataBean implements ForDataBeanLocal {
             neTnved.setCurrencyCodeUn(invoiceRow.getCurrencyCode());
             neTnved.setTnVedDescription(invoiceRow.getDescription());
 
-            BigInteger cnt = (BigInteger) em.createNativeQuery(
+            BigInteger cnt = (BigInteger) entityManager.createNativeQuery(
                             "select count(*) from ktz.ne_smgs_tn_ved a WHERE a.invoice_un = (?1) and a.tn_ved_code = (?2)")
-                    .setParameter(1, neTnved.getInvoiceUn()).setParameter(2, neTnved.getTnVedCode()).getSingleResult();
+                            .setParameter(1, neTnved.getInvoiceUn()).setParameter(2, neTnved.getTnVedCode())
+                            .getSingleResult();
             if (cnt.intValue() == 0)
-                em.persist(neTnved);
+                entityManager.persist(neTnved);
         }
 
     }
@@ -343,7 +338,7 @@ public class ForDataBean implements ForDataBeanLocal {
     @Override
     @Transactional
     public void saveContractData(Long id, FormData formData, List<VagonItem> vagonList, ContainerDatas containerDatas) {
-        Long invoiceUn = null;
+        Long invoiceUn;
         NeInvoice invoice = null;
         NeSmgsCargo neSmgsCargo = null;
         NeInvoicePrevInfo neInvoicePrevInfo = null;
@@ -354,32 +349,32 @@ public class ForDataBean implements ForDataBeanLocal {
         NeSmgsShipList neSmgsShipList = null;
         NeSmgsDeclarantInfo neSmgsDeclarantInfo = null;
         NeSmgsExpeditorInfo neSmgsExpeditorInfo = null;
-        Map<Long, NeSmgsTnVed> neSmgsTnVedMap = new HashMap<Long, NeSmgsTnVed>();
-        Map<String, NeVagonLists> neVagonListsMap = new HashMap<String, NeVagonLists>();
-        Map<Long, NeContainerLists> containerListsMap = new HashMap<Long, NeContainerLists>();
+        Map<Long, NeSmgsTnVed> neSmgsTnVedMap = new HashMap<>();
+        Map<String, NeVagonLists> neVagonListsMap = new HashMap<>();
+        Map<Long, NeContainerLists> containerListsMap = new HashMap<>();
 
         if (!NEW_INVOICE.equals(id)) {
-            invoice = dao.getInvoice(id);
-            neInvoicePrevInfo = dao.getInvoicePrevInfo(id);
-            senderInfo = dao.getSenderInfo(id);
-            recieverinfo = dao.getRecieverInfo(id);
-            neSmgsDestinationPlaceInfo = dao.getNeSmgsDestinationPlaceInfo(id);
-            neSmgsShipList = dao.getNeSmgsShipList(id);
-            neSmgsDeclarantInfo = dao.getDeclarantInfo(id);
-            neSmgsExpeditorInfo = dao.getExpeditorInfo(id);
+            invoice = prevInfoBeanDAOLocal.getInvoice(id);
+            neInvoicePrevInfo = prevInfoBeanDAOLocal.getInvoicePrevInfo(id);
+            senderInfo = prevInfoBeanDAOLocal.getSenderInfo(id);
+            recieverinfo = prevInfoBeanDAOLocal.getRecieverInfo(id);
+            neSmgsDestinationPlaceInfo = prevInfoBeanDAOLocal.getNeSmgsDestinationPlaceInfo(id);
+            neSmgsShipList = prevInfoBeanDAOLocal.getNeSmgsShipList(id);
+            neSmgsDeclarantInfo = prevInfoBeanDAOLocal.getDeclarantInfo(id);
+            neSmgsExpeditorInfo = prevInfoBeanDAOLocal.getExpeditorInfo(id);
             neSmgsTnVedMap = getSmgsTnVedMap(id);
-            vagonGroup = dao.getVagonGroup(id);
+            vagonGroup = prevInfoBeanDAOLocal.getVagonGroup(id);
             neVagonListsMap = getNeVagonListsMap(id);
-            neSmgsCargo = dao.getNeSmgsCargo(id);
+            neSmgsCargo = prevInfoBeanDAOLocal.getNeSmgsCargo(id);
             containerListsMap = getNeContainerListsMap(id);
         }
 
         invoice = createInvoice(invoice, formData);
         if (invoice.getInvcUn() == null) {
-            em.persist(invoice);
+            entityManager.persist(invoice);
         } else {
-            em.merge(invoice);
-            em.flush();
+            entityManager.merge(invoice);
+            entityManager.flush();
         }
 
         invoiceUn = invoice.getInvcUn();
@@ -387,14 +382,14 @@ public class ForDataBean implements ForDataBeanLocal {
         System.out.println("getGngCode:::::::::::::::::::::::::::::::" + formData.getGngCode());
         if (StringUtils.isNotBlank(formData.getGngCode())) {
             neSmgsCargo = createNeSmgsCargo(neSmgsCargo, formData, invoiceUn);
-            em.merge(neSmgsCargo);
+            entityManager.merge(neSmgsCargo);
         }
         neInvoicePrevInfo = createInvoicePrevInfo(neInvoicePrevInfo, formData, invoiceUn);
-        em.merge(neInvoicePrevInfo);
-        NeSmgsSenderInfo senderInfoToCheckForSolrUpdate = dao.getSenderInfo(invoiceUn);
-        NeSmgsRecieverInfo receiverInfoToCheckForSolrUpdate = dao.getRecieverInfo(invoiceUn);
+        entityManager.merge(neInvoicePrevInfo);
+        NeSmgsSenderInfo senderInfoToCheckForSolrUpdate = prevInfoBeanDAOLocal.getSenderInfo(invoiceUn);
+        NeSmgsRecieverInfo receiverInfoToCheckForSolrUpdate = prevInfoBeanDAOLocal.getRecieverInfo(invoiceUn);
         // NeSmgsDeclarantInfo declarantInfoToCheckForSolrUpdate = dao.getDeclarantInfo(invoiceUn);
-        Map<String, String> solrPropertyMap = new HashMap<String, String>();
+        Map<String, String> solrPropertyMap = new HashMap<>();
         solrPropertyMap.put("senderSolrUUID", formData.getSenderSolrUUID());
         solrPropertyMap.put("receiverSolrUUID", formData.getRecieverSolrUUID());
         solrPropertyMap.put("declarantSolrUUID", formData.getDeclarantSolrUUID());
@@ -424,33 +419,33 @@ public class ForDataBean implements ForDataBeanLocal {
         if (declarantInfoFieldsAreNotNull(formData)) {
             neSmgsDeclarantInfo = createDeclarantInfo(neSmgsDeclarantInfo, formData, invoiceUn);
             System.out.println("invc_UN:::::::::::::::::::::::::::::::::" + neSmgsDeclarantInfo.getInvUn());
-            em.merge(neSmgsDeclarantInfo);
+            entityManager.merge(neSmgsDeclarantInfo);
         }
 
         if (expeditorInfoFieldsAreNotNull(formData)) {
             neSmgsExpeditorInfo = createExpeditorInfo(neSmgsExpeditorInfo, formData, invoiceUn);
             System.out.println("neSmgsExpeditorInfo invc_UN:::::::::::::::::::::::::::::::::"
                             + neSmgsExpeditorInfo.getInvUn());
-            em.merge(neSmgsExpeditorInfo);
+            entityManager.merge(neSmgsExpeditorInfo);
         } else if (neSmgsExpeditorInfo != null && neSmgsExpeditorInfo.getInvUn() == invoiceUn) {
-            em.remove(neSmgsExpeditorInfo);
+            entityManager.remove(neSmgsExpeditorInfo);
         }
 
         if (senderInfoFieldsAreNotNull(formData)) {
             senderInfo = createSenderInfo(senderInfo, formData, invoiceUn);
-            em.merge(senderInfo);
+            entityManager.merge(senderInfo);
         }
         if (receiverInfoFieldsAreNotNull(formData)) {
             recieverinfo = createRecieverInfo(recieverinfo, formData, invoiceUn);
-            em.merge(recieverinfo);
+            entityManager.merge(recieverinfo);
         }
 
         neSmgsDestinationPlaceInfo = createNeSmgsDestPlaceInfo(neSmgsDestinationPlaceInfo, formData, invoiceUn);
-        em.merge(neSmgsDestinationPlaceInfo);
+        entityManager.merge(neSmgsDestinationPlaceInfo);
 
         if (vesselStaUns.contains(formData.getArriveStation())) {
             neSmgsShipList = createNeSmgsShipList(neSmgsShipList, formData, invoiceUn);
-            em.merge(neSmgsShipList);
+            entityManager.merge(neSmgsShipList);
         }
 
 
@@ -466,10 +461,10 @@ public class ForDataBean implements ForDataBeanLocal {
                         boolean persist = cl == null;
                         cl = createNeContainerLists(invoiceUn, cl, item);
                         if (persist) {
-                            em.persist(cl);
+                            entityManager.persist(cl);
                             System.out.println("++++Insert CL" + cl.getContainerListsUn());
                         } else {
-                            em.merge(cl);
+                            entityManager.merge(cl);
                             System.out.println("++++Update CL" + cl.getContainerListsUn());
                         }
                     }
@@ -479,7 +474,7 @@ public class ForDataBean implements ForDataBeanLocal {
                     for (ContainerData item : containerDatas.getContainerRemData()) {
                         NeContainerLists cl = containerListsMap.get(item.getContainerListUn());
                         if (cl != null) {
-                            em.remove(cl);
+                            entityManager.remove(cl);
                         }
                     }
                 }
@@ -489,7 +484,7 @@ public class ForDataBean implements ForDataBeanLocal {
         if (vagonList != null && !vagonList.isEmpty()) {
             if (vagonGroup == null) {
                 vagonGroup = createNeVagonGroup(vagonGroup);
-                em.persist(vagonGroup);
+                entityManager.persist(vagonGroup);
             }
             for (VagonItem vagonItem : vagonList) {
                 NeVagonLists neVagonLists = neVagonListsMap.get(vagonItem.getNumber());
@@ -501,9 +496,9 @@ public class ForDataBean implements ForDataBeanLocal {
                     neVagonLists = createNeVagonLists(neVagonLists, vagonItem, invoiceUn, vagonGroup.getVagGroupUn(),
                                     null);
                 }
-                em.merge(neVagonLists);
+                entityManager.merge(neVagonLists);
             }
-            em.merge(vagonGroup);
+            entityManager.merge(vagonGroup);
             // Удаление вагонов
             List<String> deletedVagon = getDeletedVagons(neVagonListsMap, vagonList);
             if (deletedVagon != null && !deletedVagon.isEmpty()) {
@@ -516,7 +511,7 @@ public class ForDataBean implements ForDataBeanLocal {
             deleteVagonList(deletedVagon, invoiceUn);
             deleteVagonGroup(vagonGroup, invoiceUn);
         }
-        em.flush();
+        entityManager.flush();
     }
 
     private Timestamp convertToTimestamp(String timestamp_str) {
@@ -532,11 +527,11 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private void deleteVagonGroup(NeVagonGroup vagonGroup, Long invoiceUn) {
         if (vagonGroup != null) {
-            Integer count = (Integer) em.createNativeQuery(
+            Integer count = (Integer) entityManager.createNativeQuery(
                             "select count(*) from ktz.NE_VAGON_LISTS WHERE VAG_GROUP_UN = (?1) and INVC_UN <> (?2)")
                             .setParameter(1, vagonGroup.getVagGroupUn()).setParameter(2, invoiceUn).getSingleResult();
             if (count == 0) {
-                em.remove(vagonGroup);
+                entityManager.remove(vagonGroup);
             }
         }
 
@@ -545,7 +540,7 @@ public class ForDataBean implements ForDataBeanLocal {
     @Transactional
     public void saveCustomsResponse(Long invoiceId, SaveDeclarationResponseType result, String uuid) {
         try {
-            NeInvoicePrevInfo invoicePrevInfo = dao.getInvoicePrevInfo(invoiceId);
+            NeInvoicePrevInfo invoicePrevInfo = prevInfoBeanDAOLocal.getInvoicePrevInfo(invoiceId);
             if (invoicePrevInfo != null && result != null && result.getValue() != null) {
                 String[] message = result.getValue().split("/n");
                 if (message.length > 0) {
@@ -556,7 +551,7 @@ public class ForDataBean implements ForDataBeanLocal {
                     invoicePrevInfo.setResponseDatetime(timestamp);
                 }
                 if (result.getCode() != null) {
-                    Long code = null;
+                    Long code;
                     try {
                         code = Long.parseLong(result.getCode());
                         invoicePrevInfo.setPrevInfoStatus(
@@ -566,8 +561,8 @@ public class ForDataBean implements ForDataBeanLocal {
                     }
                 }
                 invoicePrevInfo.setResponseUUID(uuid);
-                em.merge(invoicePrevInfo);
-                em.flush();
+                entityManager.merge(invoicePrevInfo);
+                entityManager.flush();
             }
         } catch (Exception e) {
             log.error(e.getLocalizedMessage(), e);
@@ -576,17 +571,17 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private void deleteVagonList(List<String> deletedVagon, Long invoiceUn) {
         if (deletedVagon != null && !deletedVagon.isEmpty() && invoiceUn != null) {
-            StringBuffer list_str = new StringBuffer("");
+            StringBuilder list_str = new StringBuilder();
             for (String item : deletedVagon) {
                 list_str.append(",");
-                list_str.append("'" + item + "'");
+                list_str.append("'").append(item).append("'");
             }
             String str1 = list_str.toString();
-            str1 = str1.substring(1, str1.length());
+            str1 = str1.substring(1);
             String sql = "DELETE FROM KTZ.NE_VAGON_LISTS where VAG_NO IN (" + str1 + ") AND INVC_UN = "
                             + invoiceUn.toString();
-            em.createNativeQuery(sql).executeUpdate();
-            em.flush();
+            entityManager.createNativeQuery(sql).executeUpdate();
+            entityManager.flush();
         }
 
     }
@@ -610,7 +605,7 @@ public class ForDataBean implements ForDataBeanLocal {
         String answer = null;
         String sql = "select m.MANAG_NO from NSI.MANAGEMENT m where m.MANAG_UN=" + managUn.toString();
         try {
-            answer = String.valueOf(em.createNativeQuery(sql).getSingleResult());
+            answer = String.valueOf(entityManager.createNativeQuery(sql).getSingleResult());
         } catch (NoResultException e) {
             return null;
         }
@@ -676,7 +671,7 @@ public class ForDataBean implements ForDataBeanLocal {
     }
 
     private Map<Long, NeSmgsTnVed> getSmgsTnVedMap(Long invoiceUn) {
-        List<NeSmgsTnVed> list = dao.getTnVedList(invoiceUn);
+        List<NeSmgsTnVed> list = prevInfoBeanDAOLocal.getTnVedList(invoiceUn);
         Map<Long, NeSmgsTnVed> result = new HashMap<Long, NeSmgsTnVed>();
         if (list != null && list.size() > 0) {
             for (NeSmgsTnVed item : list) {
@@ -688,7 +683,7 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private Map<String, NeVagonLists> getNeVagonListsMap(Long invoiceUn) {
         Map<String, NeVagonLists> result = new HashMap<String, NeVagonLists>();
-        List<NeVagonLists> list = dao.getVagonList(invoiceUn);
+        List<NeVagonLists> list = prevInfoBeanDAOLocal.getVagonList(invoiceUn);
         if (list != null && !list.isEmpty()) {
             for (NeVagonLists item : list) {
                 result.put(item.getVagNo(), item);
@@ -699,7 +694,7 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private Map<Long, NeContainerLists> getNeContainerListsMap(Long invoiceUn) {
         Map<Long, NeContainerLists> result = new HashMap<Long, NeContainerLists>();
-        List<NeContainerLists> list = dao.getContinerList(invoiceUn);
+        List<NeContainerLists> list = prevInfoBeanDAOLocal.getContinerList(invoiceUn);
         if (list != null && !list.isEmpty()) {
             for (NeContainerLists item : list) {
                 result.put(item.getContainerListsUn(), item);
@@ -1022,7 +1017,7 @@ public class ForDataBean implements ForDataBeanLocal {
     }
 
     private String getCountryName(String code) {
-        List<Country> countrylist = em
+        List<Country> countrylist = entityManager
                         .createQuery("select a from Country a where a.countryNo = ?1 and a.couEnd > CURRENT_TIMESTAMP",
                                         Country.class)
                         .setParameter(1, code).getResultList();
@@ -1037,7 +1032,7 @@ public class ForDataBean implements ForDataBeanLocal {
         if (code == null)
             return null;
         String sql = "select country_name from nsi.country where COU_END > current_timestamp and country_no = ?1";
-        Query q = em.createNativeQuery(sql);
+        Query q = entityManager.createNativeQuery(sql);
         q.setParameter(1, code);
         String country = null;
         try {
@@ -1050,7 +1045,7 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private NeKatoType getKatoType(String katoType) {
         if (katoType != null) {
-            List<NeKatoType> list = em.createQuery(
+            List<NeKatoType> list = entityManager.createQuery(
                             "select a from NeKatoType a where a.katoCode = ?1 AND a.katoEnd > CURRENT_TIMESTAMP",
                             NeKatoType.class).setParameter(1, katoType).getResultList();
             if (list.size() > 0) {
@@ -1064,7 +1059,7 @@ public class ForDataBean implements ForDataBeanLocal {
         Long answer = null;
         java.math.BigInteger s = null;
         String sql = "select MANAG_UN from nsi.MANAGEMENT where MANAG_NO in (select cast(OWNER_RAILWAYS as SMALLINT) from KTZ.NE_VAGON_LISTS where INVC_UN in(?1)) and MANAG_END>CURRENT_TIMESTAMP";
-        Query q = em.createNativeQuery(sql);
+        Query q = entityManager.createNativeQuery(sql);
         q.setParameter(1, invoiceUn);
         try {
             s = (java.math.BigInteger) q.getSingleResult();
@@ -1075,7 +1070,7 @@ public class ForDataBean implements ForDataBeanLocal {
     }
 
     private NePersonCategoryType getPersonCategoryType(Long categoryType) {
-        List<NePersonCategoryType> list = em.createQuery(
+        List<NePersonCategoryType> list = entityManager.createQuery(
                         "select a from NePersonCategoryType a where a.categoryTypeUn = ?1 and a.categoryEnd > CURRENT_TIMESTAMP",
                         NePersonCategoryType.class).setParameter(1, categoryType).getResultList();
         if (list.size() > 0) {
@@ -1087,7 +1082,7 @@ public class ForDataBean implements ForDataBeanLocal {
 
     private GngModel getGngModel(Long invoiceUn) {
         List<GngModel> gngModelList = null;
-        Query query = em.createNativeQuery(
+        Query query = entityManager.createNativeQuery(
                 "select a.SMGS_CARGO_UN as id, a.INV_UN as invoiceUn,a.GNG_CODE as code, b.CARGO_SHORTNAME1 as shortName1 from KTZ.NE_SMGS_CARGO a "
                         + "left join NSI.CARGO_GNG b on a.GNG_CODE = b.CARGO_GROUP "
                         + "where a.INV_UN = ?1 and b.C_GN_END > current_timestamp "
@@ -1113,12 +1108,12 @@ public class ForDataBean implements ForDataBeanLocal {
         document.setDocDate(date);
         document.setDocName(filename);
         document.setFileUuid(uuid);
-        em.persist(document);
+        entityManager.persist(document);
     }
 
     @Override
     public boolean checkExpeditorCode(Long code) {
-        Query query = em.createNativeQuery("SELECT count(*) FROM nsi.forwarder WHERE forwarder_exp_no=?1");
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM nsi.forwarder WHERE forwarder_exp_no=?1");
         query.setParameter(1, code);
         return Long.parseLong("" + query.getResultList().get(0)) > 0;
     }

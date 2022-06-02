@@ -33,7 +33,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/contract")
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
@@ -44,8 +43,6 @@ public class ContractController {
      * TODO make general encoding request.setCharacterEncoding("UTF-8");
      * response.setCharacterEncoding("UTF-8");
      */
-
-    private static final long serialVersionUID = 1L;
 
     private final ContractsService contractsService;
     private final ResourceLoader resourceLoader;

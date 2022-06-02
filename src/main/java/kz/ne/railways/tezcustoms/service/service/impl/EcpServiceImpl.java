@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -44,11 +43,7 @@ public class EcpServiceImpl implements EcpService {
                 }
             }
 
-            if (signerIIN != null && signerIIN.substring(3, 15).equals(user.getIinBin())) {
-                return true;
-            } else {
-                return false;
-            }
+            return signerIIN != null && signerIIN.substring(3, 15).equals(user.getIinBin());
 
         } catch (Exception exception) {
             log.error("Error while verifying ecp signer " + exception.getMessage());
@@ -60,7 +55,7 @@ public class EcpServiceImpl implements EcpService {
     @Override
     public boolean isValidSigner(String signedData, String bin) {
         try {
-            String signerBIN = null;;
+            String signerBIN = null;
             byte[] decodedBytes = Base64.getDecoder().decode(signedData);
             CMSSignedData signData = new CMSSignedData(decodedBytes);
             Store<X509CertificateHolder> certStore = signData.getCertificates();

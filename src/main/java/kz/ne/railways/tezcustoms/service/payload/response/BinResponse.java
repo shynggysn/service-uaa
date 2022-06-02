@@ -1,15 +1,10 @@
 package kz.ne.railways.tezcustoms.service.payload.response;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.util.HashMap;
-import java.util.Map;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class BinResponse {
 
     private String bin;

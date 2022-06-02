@@ -21,12 +21,13 @@ import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
 import kz.ne.railways.tezcustoms.service.service.EcpService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -42,28 +43,16 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
-
-    @Autowired
-    ForDataBeanLocal dataBean;
-
-    @Autowired
-    private EcpService ecpService;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder encoder;
+    private final JwtUtils jwtUtils;
+    private final ForDataBeanLocal dataBean;
+    private final EcpService ecpService;
 
     @Operation(summary = "Sign in")
     @ApiResponses(value = {
@@ -82,7 +71,7 @@ public class AuthController {
             String jwt = jwtUtils.generateJwtToken(authentication);
 
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                             .collect(Collectors.toList());
 
             return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getEmail(),
@@ -123,27 +112,22 @@ public class AuthController {
             } else {
                 strRoles.forEach(role -> {
                     switch (role) {
-                        case "CONSIGNEE":
+                        case "CONSIGNEE" -> {
                             Role userRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                             roles.add(userRole);
-
-                            break;
-                        case "EXPEDITOR":
+                        }
+                        case "EXPEDITOR" -> {
                             Role expeditorRole = roleRepository.findByName(ERole.ROLE_EXPEDITOR)
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                             roles.add(expeditorRole);
-
-                            break;
-                        case "BROKER":
+                        }
+                        case "BROKER" -> {
                             Role operatorRole = roleRepository.findByName(ERole.ROLE_BROKER)
-                                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                             roles.add(operatorRole);
-
-                            break;
-
-                        default:
-                            throw new RuntimeException("Error: Role is invalid");
+                        }
+                        default -> throw new RuntimeException("Error: Role is invalid");
                     }
                 });
             }

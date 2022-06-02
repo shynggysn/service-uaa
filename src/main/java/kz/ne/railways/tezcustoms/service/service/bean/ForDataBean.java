@@ -18,6 +18,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -252,6 +253,16 @@ public class ForDataBean implements ForDataBeanLocal {
                 }
             }
         }
+        List<VagonItem> vagonItems = dao.getVagonList(Long.parseLong(invoiceId))
+                .stream()
+                .map(neVagonLists -> {
+                    VagonItem vagonItem = new VagonItem();
+                    vagonItem.setId(neVagonLists.getVagListsUn());
+                    vagonItem.setNumber(neVagonLists.getVagNo());
+                    return vagonItem;
+                })
+                .collect(Collectors.toList());
+        result.setVagonList(vagonItems);
 
         if ("1".equals(result.getConteinerRef())) {
 

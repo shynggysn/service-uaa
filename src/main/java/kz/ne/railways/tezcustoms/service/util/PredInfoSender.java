@@ -24,7 +24,7 @@ public class PredInfoSender implements PredInfoSenderLocal {
     @Value("${services.external.astana1.host}")
     private String proxyHost;
 
-    private ICustomsReqcuestDecarartion service = new CustomsRequestDeclaration();
+    private final ICustomsReqcuestDecarartion service = new CustomsRequestDeclaration();
 
     public String getUser() {
         return user;

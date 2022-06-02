@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Vector;
 
-
 @Slf4j
 @Component
 public class SFtpSend {
@@ -33,7 +32,7 @@ public class SFtpSend {
         boolean result = false;
         try {
             JSch jsch = new JSch();
-            Session session = null;
+            Session session;
 
             session = jsch.getSession(user, host, port);
             session.setConfig("StrictHostKeyChecking", "no");
@@ -46,7 +45,7 @@ public class SFtpSend {
             String invoiceIdPath = "";
             if (NumberUtils.isCreatable(invoiceUn)) {
                 Integer invoiceId = (Integer.parseInt(invoiceUn) / 10000) * 10000;
-                log.debug("divided invoiceId:", invoiceId);
+                log.debug("divided invoiceId: {}", invoiceId);
                 invoiceIdPath = invoiceId.toString();
             }
 
@@ -68,7 +67,7 @@ public class SFtpSend {
             session.disconnect();
             result = true;
         } catch (Exception ex) {
-            log.debug("in SFtp send: ", ex.getMessage());
+            log.debug("in SFtp send: ");
         }
 
         return result;
@@ -77,7 +76,7 @@ public class SFtpSend {
     public void get(String invoiceId, String uuid, java.io.OutputStream out)
                     throws JSchException, SftpException, FileNotFoundException {
         JSch jsch = new JSch();
-        Session session = null;
+        Session session;
 
         session = jsch.getSession(user, host, port);
         session.setConfig("StrictHostKeyChecking", "no");
@@ -91,18 +90,18 @@ public class SFtpSend {
         System.out.println("path: " + "/dkrdata/files/EPDDOCFILES/" + invoiceId + "/" + uuid);
         String invoiceIdPath = "";
         if (NumberUtils.isCreatable(invoiceId)) {
-            Integer invoiceIdPathInt = (Integer.parseInt(invoiceId) / 10000) * 10000;
-            invoiceIdPath = invoiceIdPathInt.toString();
+            int invoiceIdPathInt = (Integer.parseInt(invoiceId) / 10000) * 10000;
+            invoiceIdPath = Integer.toString(invoiceIdPathInt);
         }
         String newPath = "/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceId + "/" + uuid;
         String oldPath = "/dkrdata/files/EPDDOCFILES/" + invoiceId + "/" + uuid;
-        Vector<LsEntry> lsEntryVector = new Vector<LsEntry>();
+        Vector<LsEntry> lsEntryVector = new Vector<>();
         try {
             lsEntryVector = sftpChannel.ls("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceId);
         } catch (SftpException ex) {
             // TODO: handle exception
         }
-        Boolean foundInNewPath = false;
+        boolean foundInNewPath = false;
         for (LsEntry lsEntry : lsEntryVector) {
             if (uuid.equals(lsEntry.getFilename())) {
                 foundInNewPath = true;
@@ -116,7 +115,5 @@ public class SFtpSend {
         }
         sftpChannel.exit();
         session.disconnect();
-
-        // return is;
     }
 }

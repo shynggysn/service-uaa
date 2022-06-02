@@ -6,22 +6,22 @@ import ru.customs.information.customsdocuments.pirwinformationcu._5_11.PIRWInfor
 
 public interface ICustomsReqcuestDecarartion {
 
-    public SaveDeclarationResponseType send(String user, String password, String customsCode, String request);
+    SaveDeclarationResponseType send(String user, String password, String customsCode, String request);
 
-    public SaveDeclarationResponseType send(String user, String password, String customsCode,
+    SaveDeclarationResponseType send(String user, String password, String customsCode,
                     PIRWInformationCUType request) throws Exception;
 
-    public String objectToString(PIRWInformationCUType request);
+    String objectToString(PIRWInformationCUType request);
 
-    public SaveDeclarationResponseType sendTD(String user, String password, String customsCode, String request);
+    SaveDeclarationResponseType sendTD(String user, String password, String customsCode, String request);
 
-    public SaveDeclarationResponseType sendTD(String user, String password, String customsCode, ESADoutCUType request)
+    SaveDeclarationResponseType sendTD(String user, String password, String customsCode, ESADoutCUType request)
                     throws Exception;
 
-    public String objectToStringTD(ESADoutCUType request);
+    String objectToStringTD(ESADoutCUType request);
 
-    public void setProxyHost(String proxyHost);
+    void setProxyHost(String proxyHost);
 
-    public void setProxyPort(String proxyPort);
+    void setProxyPort(String proxyPort);
 
 }

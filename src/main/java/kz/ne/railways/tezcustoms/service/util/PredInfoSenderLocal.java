@@ -4,8 +4,8 @@ import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarati
 import ru.customs.information.customsdocuments.pirwinformationcu._5_11.PIRWInformationCUType;
 
 public interface PredInfoSenderLocal {
-    public SaveDeclarationResponseType send(String user, String password, String customsCode,
+    SaveDeclarationResponseType send(String user, String password, String customsCode,
                     PIRWInformationCUType data);
 
-    public SaveDeclarationResponseType send(PIRWInformationCUType data);
+    SaveDeclarationResponseType send(PIRWInformationCUType data);
 }

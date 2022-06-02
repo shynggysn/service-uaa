@@ -17,9 +17,7 @@ public class PIHelper {
     public static Long getLongVal(String value) {
         Long result = null;
         try {
-            Long l = Long.parseLong(value);
-
-            return l;
+            return Long.parseLong(value);
         } catch (Exception e) {
             return result;
         }
@@ -30,9 +28,7 @@ public class PIHelper {
         if (value == null)
             return result;
         try {
-            Long l = Long.parseLong(value.toString());
-
-            return l;
+            return Long.parseLong(value.toString());
         } catch (Exception e) {
             return result;
         }
@@ -43,8 +39,7 @@ public class PIHelper {
         if (value == null)
             return result;
         try {
-            Integer i = Integer.parseInt(value.toString());
-            return i;
+            return Integer.parseInt(value.toString());
         } catch (Exception e) {
             return result;
         }
@@ -53,8 +48,7 @@ public class PIHelper {
     public static Short getShortVal(Object value) {
         Short result = null;
         try {
-            Short i = Short.parseShort(value.toString());
-            return i;
+            return Short.parseShort(value.toString());
         } catch (Exception e) {
             return result;
         }
@@ -71,8 +65,7 @@ public class PIHelper {
             decimalFormat.setParseBigDecimal(true);
 
             // parse the string
-            BigDecimal bigDecimal = (BigDecimal) decimalFormat.parse(value.toString());
-            return bigDecimal;
+            return (BigDecimal) decimalFormat.parse(value.toString());
         } catch (Exception e) {
             e.printStackTrace();
             return result;
@@ -82,8 +75,7 @@ public class PIHelper {
     public static String getStringVal(Object value) {
         String result = null;
         try {
-            String i = value.toString();
-            return i;
+            return value.toString();
         } catch (Exception e) {
             return result;
         }
@@ -103,8 +95,7 @@ public class PIHelper {
         xml = xml.replace("<A>", "");
         xml = xml.replace("</A>", "");
         xml = xml.replaceAll("<A/>", "");
-        Set<String> set = new HashSet<String>();
-        set.addAll(Arrays.asList(xml.split(delimeter)));
+        Set<String> set = new HashSet<>(Arrays.asList(xml.split(delimeter)));
         return StringUtils.join(set, delimeter);
     }
 }

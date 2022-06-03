@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import kz.ne.railways.tezcustoms.service.errors.Errors;
+import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.model.InvoiceData;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
@@ -61,27 +63,27 @@ public class ContractController {
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")
-    public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) {
+    public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) throws FLCException {
         log.debug("In loadContract...");
 
         try {
-//            if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
-//                return ResponseEntity.badRequest().body(new MessageResponse("Invoice already exists"));
-//            }
+            if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
+                throw new FLCException(Errors.INVOICE_EXISTS);
+            }
             FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());
             if (formData == null) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Invalid parameters supplied"));
+                throw new FLCException(Errors.INVALID_PARAMETERS);
             }
             return ResponseEntity.ok(formData);
 
         } catch (Exception exception) {
             log.error(exception.getMessage());
-            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+            throw new FLCException(exception.getMessage());
         }
     }
 
     @GetMapping("/xlsxTemplate")
-    public ResponseEntity<?> downloadExcelTemplate() {
+    public ResponseEntity<?> downloadExcelTemplate() throws FLCException {
         String headerValue = "attachment; filename=template.xlsx";
         try {
             Resource resource = resourceLoader.getResource("classpath:Template.xlsx");
@@ -91,8 +93,7 @@ public class ContractController {
                     .body(resource);
         }
         catch (Exception exception) {
-            return ResponseEntity.badRequest()
-                    .body(new MessageResponse(exception.getMessage()));
+            throw new FLCException(exception.getMessage());
         }
     }
 
@@ -112,13 +113,13 @@ public class ContractController {
                     content = {@Content(mediaType = "application/json")})
     })
     @PostMapping("/xlsxTemplate")
-    public ResponseEntity<?> sendToAstana1(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<InvoiceData> sendToAstana1(@RequestParam("file") MultipartFile file) throws IOException, FLCException {
         if (ExcelReader.hasExcelFormat(file)){
             InvoiceData invoiceData = excelReader.getInvoiceFromFile(file.getInputStream());
             log.debug("Invoice data: \n" + invoiceData);
             return ResponseEntity.ok(invoiceData);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Please upload an excel file!"));
+        throw new FLCException(Errors.UNSUPPORTED_MEDIA_TYPE);
     }
 
     //TODO: change method to save InvoiceData fields (except InvoiceRows) in db

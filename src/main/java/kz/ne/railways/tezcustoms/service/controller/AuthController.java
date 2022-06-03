@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.Role;
 import kz.ne.railways.tezcustoms.service.entity.User;
+import kz.ne.railways.tezcustoms.service.errors.Errors;
+import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.model.ERole;
 import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
@@ -60,7 +62,7 @@ public class AuthController {
                             content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content)})
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws FLCException {
         log.info("request password: " + loginRequest.getPassword());
         log.info("encoded password: " + encoder.encode(loginRequest.getPassword()));
         try {
@@ -77,7 +79,7 @@ public class AuthController {
             return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getEmail(),
                             userDetails.getCompanyName(), roles));
         } catch (Exception exception) {
-            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+            throw new FLCException(exception.getMessage());
         }
     }
 
@@ -86,15 +88,15 @@ public class AuthController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully signed up",
                     content = {@Content(mediaType = "application/json")})})
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws FLCException {
         try {
 
             if (userRepository.existsByIinBin(signUpRequest.getIinBin())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: iin/bin is already taken!"));
+                throw new FLCException(Errors.IIN_TAKEN);
             }
 
             if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: email is already in use!"));
+                throw new FLCException(Errors.EMAIL_IN_USE);
             }
 
             // Create new user's account
@@ -108,26 +110,26 @@ public class AuthController {
             Set<Role> roles = new HashSet<>();
 
             if (strRoles == null || strRoles.isEmpty()) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Role can not be empty"));
+                throw new FLCException(Errors.ROLE_CANNOT_BE_EMPTY);
             } else {
                 strRoles.forEach(role -> {
                     switch (role) {
                         case "CONSIGNEE" -> {
                             Role userRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
-                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                        .orElseThrow(() -> new RuntimeException(Errors.ROLE_NOT_FOUND));
                             roles.add(userRole);
                         }
                         case "EXPEDITOR" -> {
                             Role expeditorRole = roleRepository.findByName(ERole.ROLE_EXPEDITOR)
-                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                    .orElseThrow(() -> new RuntimeException(Errors.ROLE_NOT_FOUND));
                             roles.add(expeditorRole);
                         }
                         case "BROKER" -> {
                             Role operatorRole = roleRepository.findByName(ERole.ROLE_BROKER)
-                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                    .orElseThrow(() -> new RuntimeException(Errors.ROLE_NOT_FOUND));
                             roles.add(operatorRole);
                         }
-                        default -> throw new RuntimeException("Error: Role is invalid");
+                        default -> throw new RuntimeException(Errors.INVALID_ROLE);
                     }
                 });
             }
@@ -137,12 +139,12 @@ public class AuthController {
 
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         } catch (Exception exception) {
-            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+            throw new FLCException(exception.getMessage());
         }
     }
 
     @GetMapping("/checkBin/{bin}")
-    public ResponseEntity<?> checkBin(@PathVariable String bin) throws MalformedURLException {
+    public ResponseEntity<?> checkBin(@PathVariable String bin) throws MalformedURLException, FLCException {
         String formatUrl = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
         URL url = new URL(formatUrl);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -156,7 +158,7 @@ public class AuthController {
             return ResponseEntity.ok(binResponse);
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+            throw new FLCException(e.getMessage());
         }
     }
 
@@ -166,7 +168,7 @@ public class AuthController {
     }
 
     @PostMapping("/checkEcp")
-    public ResponseEntity<?> checkEcp(@RequestParam("ecp") String ecp, @RequestParam("bin") String bin) {
+    public ResponseEntity<?> checkEcp(@RequestParam("ecp") String ecp, @RequestParam("bin") String bin) throws FLCException {
         try {
             boolean isValid = ecpService.isValidSigner(ecp, bin);
             if (isValid) {
@@ -174,10 +176,10 @@ public class AuthController {
             } else {
                 String errorCode = "NOT_VALID_USER";
                 String message = "IIN/BIN is not match";
-                return ResponseEntity.badRequest().body(new MessageResponse(message, errorCode));
+                throw new FLCException(errorCode, message);
             }
         } catch (Exception exception) {
-            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+            throw new FLCException(exception.getMessage());
         }
     }
 }

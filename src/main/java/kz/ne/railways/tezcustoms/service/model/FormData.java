@@ -35,10 +35,6 @@ public class FormData {
     @Schema(description = "Индекс поезда")
     private String trainIndex;
 
-    @Schema(description = "Номер вагона")
-    @NotBlank
-    private String transportIdentifier;
-
     @Schema(description = "Принадлежность вагона ")
     private String transportOwner;
 

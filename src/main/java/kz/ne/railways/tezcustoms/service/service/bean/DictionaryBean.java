@@ -1,9 +1,6 @@
 package kz.ne.railways.tezcustoms.service.service.bean;
 
-import kz.ne.railways.tezcustoms.service.payload.response.CountryResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.CustomResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.SimpleResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.StationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigInteger;
 import java.util.*;
 
 @Service
@@ -28,7 +26,7 @@ public class DictionaryBean implements DictionaryBeanLocal {
 
 
     @Override
-    public List<StationResponse> getStationList(String query) {
+    public List<SimpleResponse> getStationList(String query) {
         query = query.toUpperCase();
         List<Object> result;
         StringBuilder builder = new StringBuilder(" select st_un, sta_no, sta_name from NSI.STA ");
@@ -55,17 +53,17 @@ public class DictionaryBean implements DictionaryBeanLocal {
 
         sql.setMaxResults(15);
         result = (List<Object>) sql.getResultList();
-        List<StationResponse> stationList = null;
+        List<SimpleResponse> stationList = null;
 
         if (result != null && !result.isEmpty()) {
             stationList = new ArrayList<>();
 
             for (Object o : result) {
                 Object[] row = (Object[]) o;
-                StationResponse station = new StationResponse();
-                station.setStationId(String.valueOf(row[0]));
-                station.setStationNumber(String.valueOf(row[1]));
-                station.setStationName(String.valueOf(row[2]));
+                SimpleResponse station = new SimpleResponse();
+                station.setId(String.valueOf(row[0]));
+                station.setCode(String.valueOf(row[1]));
+                station.setName(String.valueOf(row[2]));
                 stationList.add(station);
             }
         }
@@ -74,7 +72,7 @@ public class DictionaryBean implements DictionaryBeanLocal {
     }
 
     @Override
-    public List<CountryResponse> getCountryList(String query) {
+    public List<SimpleResponse> getCountryList(String query) {
         query = query.toUpperCase();
         List<Object> result;
         StringBuilder builder = new StringBuilder(" select country_no, country_name from NSI.COUNTRY ");
@@ -92,16 +90,16 @@ public class DictionaryBean implements DictionaryBeanLocal {
         Query sql = getQuery(query, builder, existQuery);
 
         result = (List<Object>) sql.getResultList();
-        List<CountryResponse> countryList = null;
+        List<SimpleResponse> countryList = null;
 
         if (result != null && !result.isEmpty()) {
             countryList = new ArrayList<>();
 
             for (Object o : result) {
                 Object[] row = (Object[]) o;
-                CountryResponse station = new CountryResponse();
-                station.setCountryCode(String.valueOf(row[0]));
-                station.setCountryName(String.valueOf(row[1]));
+                SimpleResponse station = new SimpleResponse();
+                station.setCode(String.valueOf(row[0]));
+                station.setName(String.valueOf(row[1]));
                 countryList.add(station);
             }
         }
@@ -110,7 +108,7 @@ public class DictionaryBean implements DictionaryBeanLocal {
     }
 
     @Override
-    public List<CustomResponse> getCustomList(String query) {
+    public List<SimpleResponse> getCustomList(String query) {
         query = query.toUpperCase();
         List<Object> result;
         StringBuilder builder =
@@ -129,17 +127,17 @@ public class DictionaryBean implements DictionaryBeanLocal {
         Query sql = getQuery(query, builder, existQuery);
 
         result = (List<Object>) sql.getResultList();
-        List<CustomResponse> customList = null;
+        List<SimpleResponse> customList = null;
 
         if (result != null && !result.isEmpty()) {
             customList = new ArrayList<>();
 
             for (Object o : result) {
                 Object[] row = (Object[]) o;
-                CustomResponse custom = new CustomResponse();
-                custom.setCustomCode(String.valueOf(row[0]));
-                custom.setCustomName(String.valueOf(row[1]));
-                custom.setCustomId(String.valueOf(row[2]));
+                SimpleResponse custom = new SimpleResponse();
+                custom.setCode(String.valueOf(row[0]));
+                custom.setName(String.valueOf(row[1]));
+                custom.setId(String.valueOf(row[2]));
                 customList.add(custom);
             }
         }
@@ -163,13 +161,29 @@ public class DictionaryBean implements DictionaryBeanLocal {
     public List<SimpleResponse> getTransitDirectionCodes() {
         if (Objects.isNull(transitDirectionCodes)) {
             transitDirectionCodes = List.of(
-                    new SimpleResponse(1, messageGetter("transit.direction.code1")),
-                    new SimpleResponse(2, messageGetter("transit.direction.code2")),
-                    new SimpleResponse(3, messageGetter("transit.direction.code3"))
+                    new SimpleResponse("1", messageGetter("transit.direction.code1")),
+                    new SimpleResponse("2", messageGetter("transit.direction.code2")),
+                    new SimpleResponse("3", messageGetter("transit.direction.code3"))
             );
         }
         return transitDirectionCodes;
     }
+
+//    public DataDao<DicDao> getVagonCountryList(String name) {
+//        String sql = "select m.manag_un, c.COUNTRY_NAME from nsi.MANAGEMENT as m join nsi.COUNTRY as c on m.cou_un =c.cou_un where m.manag_end > CURRENT_TIMESTAMP";
+//        if(name!=null){
+//            sql+=(" and c.COUNTRY_NAME like UCASE('"+name+"%')");
+//        }
+//        Query q = em.createNativeQuery(sql);
+//        List<Object[]> result = q.getResultList();
+//        DataDao<DicDao> list = new DataDao<DicDao>();
+//        for(Object[] country : result) {
+//            list.addRow(new DicDao(((BigInteger)country[0]).longValue(),(String)country[1]));
+//        }
+//        list.setSuccess(true);
+//        return list;
+//    }
+
 
     private String messageGetter(String name) {
         return messageSource.getMessage(name, null, Locale.getDefault());

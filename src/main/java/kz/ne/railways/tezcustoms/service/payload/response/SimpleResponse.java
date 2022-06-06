@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SimpleResponse {
-    private Integer id;
+    private String id;
+    private String code;
     private String name;
+
+    public SimpleResponse(String id, String name){
+        this.id = id;
+        this.name = name;
+    }
 }

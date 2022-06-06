@@ -5,7 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.User;
-import kz.ne.railways.tezcustoms.service.exception.ResourceNotFoundException;
+import kz.ne.railways.tezcustoms.service.constants.errors.Errors;
+import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
@@ -46,20 +47,20 @@ public class ServletController {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
     @PostMapping("sign-ecp-data")
     //@PreAuthorize("hasRole('CLIENT') or hasRole('OPERATOR') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<?> signEcpData(@Valid @RequestBody EcpSignRequest ecpSignRequest) {
+    public ResponseEntity<?> signEcpData(@Valid @RequestBody EcpSignRequest ecpSignRequest) throws FLCException {
         try {
             User user = userRepository.findByEmail(SecurityUtils.getCurrentUserLogin())
-                            .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+                            .orElseThrow(() -> new FLCException(Errors.USER_NOT_FOUND));
             boolean isValid = ecpService.isValidSigner(ecpSignRequest.getSignedData(), user);
             if (isValid) {
                 return ResponseEntity.ok(new MessageResponse("Document successfully signed"));
             } else {
                 String errorCode = "NOT_VALID_SIGNER";
                 String message = "IIN/BIN is not allowed to sign this document";
-                return ResponseEntity.badRequest().body(new MessageResponse(message, errorCode));
+                throw new FLCException(errorCode,message);
             }
         } catch (Exception exception) {
-            return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+            throw new FLCException(exception.getMessage());
         }
     }
 }

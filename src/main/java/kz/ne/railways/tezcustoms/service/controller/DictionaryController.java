@@ -1,7 +1,7 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kz.ne.railways.tezcustoms.service.errors.Errors;
+import kz.ne.railways.tezcustoms.service.constants.errors.Errors;
 import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.payload.response.*;
 import kz.ne.railways.tezcustoms.service.service.bean.DictionaryBeanLocal;

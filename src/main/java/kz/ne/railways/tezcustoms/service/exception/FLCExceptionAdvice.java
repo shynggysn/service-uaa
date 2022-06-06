@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class FLCExceptionHandler extends ResponseEntityExceptionHandler {
+public class FLCExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FLCException.class)
     ResponseEntity<Object> handleException(FLCException exception) {

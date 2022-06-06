@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.User;
-import kz.ne.railways.tezcustoms.service.errors.Errors;
+import kz.ne.railways.tezcustoms.service.constants.errors.Errors;
 import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.payload.request.EcpSignRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;

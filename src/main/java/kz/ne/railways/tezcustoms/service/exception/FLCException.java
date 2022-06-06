@@ -3,14 +3,13 @@ package kz.ne.railways.tezcustoms.service.exception;
 import lombok.Data;
 
 @Data
-public class FLCException extends Exception{
+public class FLCException extends RuntimeException{
 
     private String errorMessage;
     private String errorCode;
 
-    public FLCException(String errorMessage) {
-        super(errorMessage);
-        this.errorMessage = errorMessage;
+    public FLCException(String errorCode) {
+        this.errorCode = errorCode;
     }
 
     public FLCException(String errorCode, String errorMessage){

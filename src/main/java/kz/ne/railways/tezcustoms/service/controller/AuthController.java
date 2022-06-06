@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.entity.Role;
 import kz.ne.railways.tezcustoms.service.entity.User;
-import kz.ne.railways.tezcustoms.service.errors.Errors;
+import kz.ne.railways.tezcustoms.service.constants.errors.Errors;
 import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.model.ERole;
 import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
@@ -116,20 +116,20 @@ public class AuthController {
                     switch (role) {
                         case "CONSIGNEE" -> {
                             Role userRole = roleRepository.findByName(ERole.ROLE_CONSIGNEE)
-                                        .orElseThrow(() -> new RuntimeException(Errors.ROLE_NOT_FOUND));
+                                        .orElseThrow(() -> new FLCException(Errors.ROLE_NOT_FOUND));
                             roles.add(userRole);
                         }
                         case "EXPEDITOR" -> {
                             Role expeditorRole = roleRepository.findByName(ERole.ROLE_EXPEDITOR)
-                                    .orElseThrow(() -> new RuntimeException(Errors.ROLE_NOT_FOUND));
+                                    .orElseThrow(() -> new FLCException(Errors.ROLE_NOT_FOUND));
                             roles.add(expeditorRole);
                         }
                         case "BROKER" -> {
                             Role operatorRole = roleRepository.findByName(ERole.ROLE_BROKER)
-                                    .orElseThrow(() -> new RuntimeException(Errors.ROLE_NOT_FOUND));
+                                    .orElseThrow(() -> new FLCException(Errors.ROLE_NOT_FOUND));
                             roles.add(operatorRole);
                         }
-                        default -> throw new RuntimeException(Errors.INVALID_ROLE);
+                        default -> throw new FLCException(Errors.INVALID_ROLE);
                     }
                 });
             }

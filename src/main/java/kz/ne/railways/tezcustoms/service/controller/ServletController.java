@@ -57,7 +57,7 @@ public class ServletController {
             } else {
                 String errorCode = "NOT_VALID_SIGNER";
                 String message = "IIN/BIN is not allowed to sign this document";
-                throw new FLCException(message,errorCode);
+                throw new FLCException(errorCode,message);
             }
         } catch (Exception exception) {
             throw new FLCException(exception.getMessage());

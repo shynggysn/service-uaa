@@ -12,6 +12,4 @@ public interface DictionaryBeanLocal {
     List<SimpleResponse> getCustomList(String query);
 
     List<SimpleResponse> getTransitDirectionCodes();
-
-
 }

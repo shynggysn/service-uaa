@@ -63,23 +63,17 @@ public class ContractController {
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")
-    public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) throws FLCException {
+    public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) throws FLCException, IOException {
         log.debug("In loadContract...");
 
-        try {
-            if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
-                throw new FLCException(Errors.INVOICE_EXISTS);
-            }
-            FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());
-            if (formData == null) {
-                throw new FLCException(Errors.INVALID_PARAMETERS);
-            }
-            return ResponseEntity.ok(formData);
-
-        } catch (Exception exception) {
-            log.error(exception.getMessage());
-            throw new FLCException(exception.getMessage());
+        if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
+            throw new FLCException(Errors.INVOICE_EXISTS);
         }
+        FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());
+        if (formData == null) {
+            throw new FLCException(Errors.INVALID_PARAMETERS);
+        }
+        return ResponseEntity.ok(formData);
     }
 
     @GetMapping("/xlsxTemplate")

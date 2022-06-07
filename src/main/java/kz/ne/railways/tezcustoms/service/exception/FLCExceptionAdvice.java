@@ -12,7 +12,7 @@ public class FLCExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FLCException.class)
     ResponseEntity<Object> handleException(FLCException exception) {
-        MessageResponse response = new MessageResponse(exception.getErrorMessage(), exception.getErrorCode());
+        MessageResponse response = new MessageResponse(exception.getErrorCode(), exception.getErrorMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

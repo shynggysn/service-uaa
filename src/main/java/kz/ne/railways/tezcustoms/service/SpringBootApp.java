@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableConfigurationProperties
 @EnableScheduling
-@EnableJpaAuditing
 @EnableJpaRepositories({"kz.ne.railways.tezcustoms.service"})
 public class SpringBootApp {
     public static void main(String[] args) {

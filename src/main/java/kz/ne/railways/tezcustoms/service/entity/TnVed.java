@@ -19,10 +19,6 @@ public class TnVed extends AbstractAuditingEntity {
     @Id
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TnVed next;
-
     @Column
     private Integer level;
 
@@ -47,4 +43,5 @@ public class TnVed extends AbstractAuditingEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private TnVed parent;
+
 }

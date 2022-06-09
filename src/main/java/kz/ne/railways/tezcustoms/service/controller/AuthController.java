@@ -40,6 +40,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -137,6 +139,9 @@ public class AuthController {
                 });
             }
             user.setActivationKey(RandomUtil.generateActivationKey());
+            LocalDateTime today = LocalDateTime.now();
+            LocalDateTime tomorrow = today.plusDays(1);
+            user.setActivationKeyDate(Timestamp.valueOf(tomorrow));
             user.setRoles(roles);
             mailService.sendActivationEmail(user);
             //userRepository.save(user);

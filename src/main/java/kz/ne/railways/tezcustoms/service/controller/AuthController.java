@@ -22,7 +22,9 @@ import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
 import kz.ne.railways.tezcustoms.service.service.EcpService;
+import kz.ne.railways.tezcustoms.service.service.MailService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +57,7 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final ForDataBeanLocal dataBean;
     private final EcpService ecpService;
+    private final MailService mailService;
 
     @Operation(summary = "Sign in")
     @ApiResponses(value = {
@@ -103,7 +106,7 @@ public class AuthController {
             User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
                             signUpRequest.getIinBin(), signUpRequest.getPhone(), signUpRequest.getAddress(),
                             signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(),
-                            signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getMiddleName(),
+                            /*signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getMiddleName(),*/
                             signUpRequest.isCompany(), signUpRequest.getKato(), signUpRequest.getExpeditorCode());
 
             Set<String> strRoles = signUpRequest.getRoles();
@@ -133,9 +136,10 @@ public class AuthController {
                     }
                 });
             }
-
+            user.setActivationKey(RandomUtil.generateActivationKey());
             user.setRoles(roles);
-            userRepository.save(user);
+            mailService.sendActivationEmail(user);
+            //userRepository.save(user);
 
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         } catch (Exception exception) {

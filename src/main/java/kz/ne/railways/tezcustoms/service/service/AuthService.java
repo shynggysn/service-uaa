@@ -3,6 +3,7 @@ package kz.ne.railways.tezcustoms.service.service;
 import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.JwtResponse;
+import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 
 public interface AuthService {
 
@@ -10,6 +11,6 @@ public interface AuthService {
 
     JwtResponse authenticateUser (LoginRequest loginRequest);
 
-    String activateEmail (String key);
+    MessageResponse activateEmail (String key);
 
 }

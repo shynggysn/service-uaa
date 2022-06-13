@@ -62,7 +62,7 @@ public class AuthController {
 
     @GetMapping("/activate")
     public ResponseEntity<?> activateEmail(@RequestParam(value = "key") String key) {
-        return ResponseEntity.ok(new MessageResponse(authService.activateEmail(key)));
+        return ResponseEntity.ok(authService.activateEmail(key));
     }
 
     @GetMapping("/checkBin/{bin}")

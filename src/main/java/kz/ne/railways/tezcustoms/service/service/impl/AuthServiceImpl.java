@@ -8,16 +8,17 @@ import kz.ne.railways.tezcustoms.service.model.ERole;
 import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.JwtResponse;
+import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
 import kz.ne.railways.tezcustoms.service.service.MailService;
 import kz.ne.railways.tezcustoms.service.service.AuthService;
+import kz.ne.railways.tezcustoms.service.util.LocaleUtils;
 import kz.ne.railways.tezcustoms.service.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +32,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,7 +47,6 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final MessageSource messageSource;
 
     @Override
     public void createUser (SignupRequest signUpRequest) {
@@ -71,13 +70,10 @@ public class AuthServiceImpl implements AuthService {
 
         Set<Role> roles = roleRepository.findByNameIn(strRoles);
 
-        user.setActivationKey(RandomUtil.generateActivationKey());
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime tomorrow = today.plusDays(1);
-        user.setActivationKeyDate(Timestamp.valueOf(tomorrow));
+        setActivationKey(user);
         user.setRoles(roles);
-        mailService.sendActivationEmail(user);
         userRepository.save(user);
+        mailService.sendActivationEmail(user);
     }
 
     @Override
@@ -89,6 +85,9 @@ public class AuthServiceImpl implements AuthService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        if (!userRepository.isEmailActivated(userDetails.getEmail())) {
+            throw new FLCException(Errors.EMAIL_NOT_ACTIVATED);
+        }
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
@@ -97,12 +96,27 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String activateEmail (String key) {
-        User user = userRepository.findOneByActivationKey(key).orElseThrow(() -> new FLCException(Errors.INVALID_ACTIVATION_KEY));
+    public MessageResponse activateEmail (String key) {
+        User user = userRepository.findOneByActivationKey(key).orElseThrow(() ->
+                new FLCException(Errors.EMAIL_IS_ACTIVATED, LocaleUtils.getDefaultBundle("activation.key.time2")));
         if (user.getActivationKeyDate().before(Timestamp.from(Instant.now()))) {
-            return messageSource.getMessage("activation.key.time0", null, Locale.getDefault());
+            setActivationKey(user);
+            userRepository.save(user);
+            mailService.sendActivationEmail(user);
+            return new MessageResponse(Errors.ACTIVATION_CODE_IS_EXPIRED, LocaleUtils.getDefaultBundle("activation.key.time0"));
         }
-        return messageSource.getMessage("activation.key.time1", null, Locale.getDefault());
+        user.setEmailActivated(true);
+        user.setActivationKey(null);
+        user.setActivationKeyDate(null);
+        userRepository.save(user);
+        return new MessageResponse(LocaleUtils.getDefaultBundle("activation.key.time1"));
+    }
+
+    private void setActivationKey (User user) {
+        user.setActivationKey(RandomUtil.generateActivationKey());
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime tomorrow = today.plusDays(1);
+        user.setActivationKeyDate(Timestamp.valueOf(tomorrow));
     }
 
 }

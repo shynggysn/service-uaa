@@ -1,5 +1,6 @@
 package kz.ne.railways.tezcustoms.service.payload.request;
 
+import kz.ne.railways.tezcustoms.service.model.ERole;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,7 +46,7 @@ public class SignupRequest {
 
     private boolean isCompany;
 
-    private Set<String> roles;
+    private Set<ERole> roles;
 
     @NotBlank
     @Size(min = 6, max = 40)

@@ -1,16 +1,15 @@
 package kz.ne.railways.tezcustoms.service.service.bean;
 
 import kz.ne.railways.tezcustoms.service.payload.response.SimpleResponse;
+import kz.ne.railways.tezcustoms.service.util.LocaleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.*;
 
 @Service
@@ -19,7 +18,6 @@ import java.util.*;
 public class DictionaryBean implements DictionaryBeanLocal {
 
     private final EntityManager entityManager;
-    private final MessageSource messageSource;
     List<String> defaultStations = Arrays.asList("Достык (эксп.)", "Алтынколь", "Хоргос");
 
     private List<SimpleResponse> transitDirectionCodes;
@@ -161,9 +159,9 @@ public class DictionaryBean implements DictionaryBeanLocal {
     public List<SimpleResponse> getTransitDirectionCodes() {
         if (Objects.isNull(transitDirectionCodes)) {
             transitDirectionCodes = List.of(
-                    new SimpleResponse("1", messageGetter("transit.direction.code1")),
-                    new SimpleResponse("2", messageGetter("transit.direction.code2")),
-                    new SimpleResponse("3", messageGetter("transit.direction.code3"))
+                    new SimpleResponse("1", LocaleUtils.getDefaultBundle("transit.direction.code1")),
+                    new SimpleResponse("2", LocaleUtils.getDefaultBundle("transit.direction.code2")),
+                    new SimpleResponse("3", LocaleUtils.getDefaultBundle("transit.direction.code3"))
             );
         }
         return transitDirectionCodes;
@@ -183,10 +181,5 @@ public class DictionaryBean implements DictionaryBeanLocal {
 //        list.setSuccess(true);
 //        return list;
 //    }
-
-
-    private String messageGetter(String name) {
-        return messageSource.getMessage(name, null, Locale.getDefault());
-    }
 
 }

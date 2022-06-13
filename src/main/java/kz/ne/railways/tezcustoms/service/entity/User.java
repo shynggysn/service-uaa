@@ -1,5 +1,6 @@
 package kz.ne.railways.tezcustoms.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -83,6 +85,32 @@ public class User implements Serializable {
     @Size(max = 10)
     private String expeditorCode;
 
+    /**
+     * Учетка активирована
+     */
+    @Column(name = "activated", nullable = false)
+    private boolean activated = false;
+
+    /**
+     * E-mail активирован
+     */
+    @Column(name = "email_activated", nullable = false)
+    private boolean emailActivated = false;
+
+    /**
+     * Код активации
+     */
+    @Size(max = 20)
+    @Column(name = "activation_key", length = 20)
+    @JsonIgnore
+    private String activationKey;
+
+    /**
+     * Срок кода активации
+     */
+    @Column(name = "activation_key_date")
+    private Timestamp activationKeyDate;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", schema = "TEZ",
                     joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -91,14 +119,9 @@ public class User implements Serializable {
 
     public User() {}
 
-    public User(String email, String password, String iinBin, String phone, String address, String companyName,
-                    String companyDirector, String firstName, String lastName, String middleName, boolean isCompany, /*
-                                                                                                                      * LocalDate
-                                                                                                                      * createdDate,
-                                                                                                                      * LocalDate
-                                                                                                                      * lastModifiedDate,
-                                                                                                                      */
-                    String kato, String expeditorCode) {
+    public User(String email, String password, String iinBin, String phone,
+                String address, String companyName, String companyDirector, /*String firstName, String lastName,
+                String middleName,*/ boolean isCompany, String kato, String expeditorCode) {
         this.email = email;
         this.password = password;
         this.iinBin = iinBin;
@@ -106,12 +129,10 @@ public class User implements Serializable {
         this.address = address;
         this.companyName = companyName;
         this.companyDirector = companyDirector;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleName = middleName;
+        //this.firstName = firstName;
+        //this.lastName = lastName;
+        //this.middleName = middleName;
         this.isCompany = isCompany;
-        // this.createdDate = createdDate;
-        // this.lastModifiedDate = lastModifiedDate;
         this.kato = kato;
         this.expeditorCode = expeditorCode;
     }

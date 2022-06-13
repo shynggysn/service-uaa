@@ -9,5 +9,4 @@ public interface MailService {
 
         void sendActivationEmail(User user);
 
-
 }

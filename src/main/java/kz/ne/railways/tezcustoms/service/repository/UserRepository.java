@@ -17,7 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findOneByActivationKey(String activationKey);
 
-    @Query("select emailActivated as emailActivated from User where email=?1")
-    Boolean isEmailActivated (String email);
+    boolean existsByEmailAndEmailActivatedTrue(String email);
 
 }

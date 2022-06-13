@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        if (!userRepository.isEmailActivated(userDetails.getEmail())) {
+        if (!userRepository.existsByEmailAndEmailActivatedTrue(userDetails.getEmail())) {
             throw new FLCException(Errors.EMAIL_NOT_ACTIVATED);
         }
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)

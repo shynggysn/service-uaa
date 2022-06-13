@@ -10,4 +10,7 @@ public class InvoiceRequest {
 
     @NotBlank
     private String invoiceNum;
+
+    @NotBlank
+    private String invoiceDate;
 }

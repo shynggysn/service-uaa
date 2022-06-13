@@ -6,7 +6,7 @@
 6) Не совместимость с lowercase username keycloak
 7) SEND EMAIL request делать вызов на новый EMAILSERVICE
 8) в проектах entity добавить schemas
-11)-Djava.awt.headless=true там где jasper ++ laod resources from ResourceLoader + library digest
+11)-Djava.awt.headless=true там где jasper ++ load resources from ResourceLoader + library digest
 9) В @Entity добавить информацию про Schemas
 10) Использовать CommonLibs для models, services
 

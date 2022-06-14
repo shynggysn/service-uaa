@@ -12,5 +12,5 @@ public class InvoiceRequest {
     private String invoiceNum;
 
     @NotBlank
-    private String invoiceDate;
+    private String date;
 }

@@ -69,7 +69,7 @@ public class ContractController {
         if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
             throw new FLCException(Errors.INVOICE_EXISTS);
         }
-        FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum());
+        FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum(), request.getInvoiceDate());
         if (formData == null) {
             throw new FLCException(Errors.INVALID_PARAMETERS);
         }

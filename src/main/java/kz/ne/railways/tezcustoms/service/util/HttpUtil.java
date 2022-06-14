@@ -65,12 +65,14 @@ public class HttpUtil {
         return null;
     }
 
-    public FormData getContractData(String expCode, String invoiceNum) {
+    public FormData getContractData(String expCode, String invoiceNum, String invoiceDate) {
         String url = gatewayContractDataUrl;
 //        String url = "http://localhost:8078/servlet?method=getContractData";
         if (expCode != null)
            url += "&expCode=" + expCode;
         url += "&invoiceNum=" + invoiceNum;
+        url += "&invoiceDate=" + invoiceDate;
+
         log.debug(url);
 
         HttpGet httpGet = new HttpGet(url);

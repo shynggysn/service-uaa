@@ -69,7 +69,7 @@ public class ContractController {
         if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
             throw new FLCException(Errors.INVOICE_EXISTS);
         }
-        FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum(), request.getDate());
+        FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum(), request.getYear(), request.getMonth());
         if (formData == null) {
             throw new FLCException(Errors.INVALID_PARAMETERS);
         }
@@ -107,7 +107,7 @@ public class ContractController {
                     content = {@Content(mediaType = "application/json")})
     })
     @PostMapping("/xlsxTemplate")
-    public ResponseEntity<InvoiceData> sendToAstana1(@RequestParam("file") MultipartFile file) throws IOException, FLCException {
+    public ResponseEntity<InvoiceData> uploadExcel(@RequestParam("file") MultipartFile file) throws IOException, FLCException {
         if (ExcelReader.hasExcelFormat(file)){
             InvoiceData invoiceData = excelReader.getInvoiceFromFile(file.getInputStream());
             log.debug("Invoice data: \n" + invoiceData);

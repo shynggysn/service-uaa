@@ -1,18 +1,26 @@
 package kz.ne.railways.tezcustoms.service.service.impl;
 
+import com.google.gson.Gson;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
-import kz.ne.railways.tezcustoms.service.util.HttpUtil;
 import kz.ne.railways.tezcustoms.service.util.SFtpSend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
@@ -22,19 +30,25 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 public class ContractsServiceImpl implements ContractsService {
 
-    private final HttpUtil httpUtil;
+    @Value("${services.external.gateway.contractData.url}")
+    private String gatewayContractDataUrl;
+
+    @Value("${services.external.gateway.contractDoc.url}")
+    private String gatewayContractDocUrl;
+
     private final ForDataBeanLocal dataBean;
     private final SFtpSend fileServer;
+    private final Gson gson = new Gson();
 
     @Override
-    public FormData loadContract(String expCode, String invoiceNum, String invoiceDate)
+    public FormData loadContract(String expCode, String invoiceNum, int year, int month)
                     throws IOException {
         log.debug(" expCode: {}\n invoiceNum: {}", expCode, invoiceNum);
-        FormData formData = httpUtil.getContractData(expCode, invoiceNum, invoiceDate);
+        FormData formData = getContractData(expCode, invoiceNum, year, month);
 
         if (formData != null) {
             dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
-            byte[] arr = httpUtil.getContractDoc(formData.getInvoiceId());
+            byte[] arr = getContractDoc(formData.getInvoiceId());
             String docname = "Invoice Document";
             String filename = UUID.randomUUID().toString();
 
@@ -47,5 +61,88 @@ public class ContractsServiceImpl implements ContractsService {
         }
 
         return formData;
+    }
+
+    public byte[] getContractDoc(String invoiceId) {
+        // TODO may be WebClient
+        String url = gatewayContractDocUrl + "&invoiceId=" + invoiceId;
+
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.addHeader("charset", "UTF-8");
+        httpGet.addHeader("Accept-Charset", "UTF-8");
+
+        CloseableHttpClient httpclient = null;
+        try {
+            httpclient = new DefaultHttpClient();
+            HttpResponse response = httpclient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+
+            if (response.getStatusLine().getStatusCode() == 200) {
+                if (entity != null) {
+
+                    ByteArrayOutputStream result = new ByteArrayOutputStream();
+                    entity.getContent().transferTo(result);
+                    return result.toByteArray();
+                }
+            }
+        } catch (RuntimeException e) {
+            log.error("RuntimeException in checkNaturalPersonFromStatApi: ", e);
+        } catch (Exception e) {
+            log.error("Exception in checkNaturalPersonFromStatApi: ", e);
+        } finally {
+            if (httpclient != null) {
+                try {
+                    httpclient.close();
+                } catch (IOException e) {
+                    log.error("IOException during closing in checkNaturalPersonFromStatApi: ", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    public FormData getContractData(String expCode, String invoiceNum, int year, int month) {
+        String url = gatewayContractDataUrl;
+//        String url = "http://localhost:8078/servlet?method=getContractData";
+        if (expCode != null)
+            url += "&expCode=" + expCode;
+        url += "&invoiceNum=" + invoiceNum;
+        url += "&year=" + year;
+        url += "&month=" + month;
+
+        log.debug(url);
+
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.addHeader("Accept-Encoding", "gzip, deflate, br");
+        CloseableHttpClient httpclient = null;
+        try {
+            httpclient = new DefaultHttpClient();
+            HttpResponse response = httpclient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+
+            if (response.getStatusLine().getStatusCode() == 200) {
+
+                String strResponse;
+                if (entity != null) {
+                    strResponse = EntityUtils.toString(entity, "UTF-8");
+                    FormData formData = gson.fromJson(strResponse, FormData.class);
+                    return formData;
+                }
+
+            }
+        } catch (RuntimeException e) {
+            log.error("RuntimeException in checkNaturalPersonFromStatApi: ", e);
+        } catch (Exception e) {
+            log.error("Exception in checkNaturalPersonFromStatApi: ", e);
+        } finally {
+            if (httpclient != null) {
+                try {
+                    httpclient.close();
+                } catch (IOException e) {
+                    log.error("IOException during closing in checkNaturalPersonFromStatApi: ", e);
+                }
+            }
+        }
+        return null;
     }
 }

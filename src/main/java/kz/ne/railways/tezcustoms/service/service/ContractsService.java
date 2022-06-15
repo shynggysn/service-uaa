@@ -5,6 +5,7 @@ import kz.ne.railways.tezcustoms.service.model.FormData;
 import java.io.IOException;
 
 public interface ContractsService {
-    FormData loadContract(String expCode, String invoiceNum, String invoiceDate) throws IOException;
+
+    FormData loadContract(String expCode, String invoiceNum, int year, int month) throws IOException;
 
 }

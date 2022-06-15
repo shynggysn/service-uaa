@@ -1,14 +1,19 @@
 package kz.ne.railways.tezcustoms.service.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.ne.railways.tezcustoms.service.constants.errors.Errors;
+import kz.ne.railways.tezcustoms.service.entity.Company;
 import kz.ne.railways.tezcustoms.service.entity.Role;
 import kz.ne.railways.tezcustoms.service.entity.User;
 import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.model.ERole;
 import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
+import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.JwtResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
+import kz.ne.railways.tezcustoms.service.repository.CompanyRepository;
 import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
 import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
@@ -28,10 +33,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +51,7 @@ import java.util.stream.Collectors;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
     private final RoleRepository roleRepository;
     private final MailService mailService;
     private final PasswordEncoder encoder;
@@ -50,9 +60,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void createUser (SignupRequest signUpRequest) {
-        if (userRepository.existsByIinBin(signUpRequest.getIinBin())) {
-            throw new FLCException(Errors.IIN_TAKEN);
-        }
+        // TODO check iin after eds validation added
+//        if (userRepository.existsByIin(signUpRequest.getIinBin())) {
+//            throw new FLCException(Errors.IIN_TAKEN);
+//        }
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new FLCException(Errors.EMAIL_IN_USE);
         }
@@ -60,16 +71,31 @@ public class AuthServiceImpl implements AuthService {
         if (strRoles == null || strRoles.isEmpty()) {
             throw new FLCException(Errors.ROLE_CANNOT_BE_EMPTY);
         }
+        Company company = companyRepository.findOneByIdentifier(signUpRequest.getIinBin());
+        if (company != null) {
+            // Create new user's account
+            newUser(signUpRequest, strRoles, company);
+        } else {
+            company = new Company(signUpRequest.getIinBin(), signUpRequest.getAddress(),
+                    signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(),
+                    signUpRequest.isCompany(), signUpRequest.getKato());
+            if (signUpRequest.isCompany()) {
+                company.setBin(signUpRequest.getIinBin());
+            } else {
+                company.setIin(signUpRequest.getIinBin());
+            }
+            companyRepository.save(company);
+            newUser(signUpRequest, strRoles, company);
+        }
 
-        // Create new user's account
+    }
+
+    private void newUser(SignupRequest signUpRequest, Set<ERole> strRoles, Company company) {
         User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getIinBin(), signUpRequest.getPhone(), signUpRequest.getAddress(),
-                signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(),
-                /*signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getMiddleName(),*/
-                signUpRequest.isCompany(), signUpRequest.getKato(), signUpRequest.getExpeditorCode());
+               signUpRequest.getPhone());
 
         Set<Role> roles = roleRepository.findByNameIn(strRoles);
-
+        user.setCompany(company);
         setActivationKey(user);
         user.setRoles(roles);
         userRepository.save(user);
@@ -110,6 +136,28 @@ public class AuthServiceImpl implements AuthService {
         user.setActivationKeyDate(null);
         userRepository.save(user);
         return new MessageResponse(LocaleUtils.getDefaultBundle("activation.key.time1"));
+    }
+
+    @Override
+    public BinResponse getCompanyByBin(String bin) throws IOException {
+        String formatUrl = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
+        URL url = new URL(formatUrl);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            log.info("Bin response: \n");
+            Map<String, Object> map = objectMapper.readValue(url, new TypeReference<HashMap<String, Object>>() {});
+            log.info("map: " + map);
+            if (map.get("obj") == null) {
+                throw new FLCException(Errors.COMPANY_NOT_FOUND_BY_BIN);
+            }
+            BinResponse binResponse = new BinResponse((HashMap<String, String>) map.get("obj"));
+            log.info(String.valueOf(binResponse));
+            return binResponse;
+        } catch (IOException e) {
+            throw new FLCException(Errors.SERVICE_IS_UNAVAILABLE, e.getMessage());
+        } catch (Exception e) {
+            throw new FLCException(e.getMessage());
+        }
     }
 
     private void setActivationKey (User user) {

@@ -19,7 +19,7 @@ import java.util.Set;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iin_bin"),
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "iin"),
         @UniqueConstraint(columnNames = "email")}, schema = "TEZ")
 public class User implements Serializable {
     @Id
@@ -35,25 +35,18 @@ public class User implements Serializable {
     @Size(max = 120)
     private String password;
 
-    @NotBlank
-    @Column(name = "iin_bin")
+//    @NotBlank
+    @Column(name = "iin")
     @Size(max = 12)
-    private String iinBin;
+    private String iin;
 
     @NotBlank
     @Size(max = 50)
     private String phone;
 
-    @Size(max = 250)
-    private String address;
-
-    @Column(name = "company_name")
-    @Size(max = 120)
-    private String companyName;
-
-    @Column(name = "company_director")
-    @Size(max = 120)
-    private String companyDirector;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="company_id", nullable=false)
+    private Company company;
 
     @Column(name = "first_name")
     @Size(max = 50)
@@ -67,9 +60,6 @@ public class User implements Serializable {
     @Size(max = 50)
     private String middleName;
 
-    @Column(columnDefinition = "boolean default false", name = "is_company")
-    private boolean isCompany;
-
     @Column(name = "created_date")
     @CreatedDate
     private Date createdDate;
@@ -77,9 +67,6 @@ public class User implements Serializable {
     @Column(name = "last_modified_date")
     @LastModifiedDate
     private Date lastModifiedDate;
-
-    @Size(max = 10)
-    private String kato;
 
     @Column(name = "expeditor_code")
     @Size(max = 10)
@@ -119,22 +106,10 @@ public class User implements Serializable {
 
     public User() {}
 
-    public User(String email, String password, String iinBin, String phone,
-                String address, String companyName, String companyDirector, /*String firstName, String lastName,
-                String middleName,*/ boolean isCompany, String kato, String expeditorCode) {
+    public User(String email, String password, String phone) {
         this.email = email;
         this.password = password;
-        this.iinBin = iinBin;
         this.phone = phone;
-        this.address = address;
-        this.companyName = companyName;
-        this.companyDirector = companyDirector;
-        //this.firstName = firstName;
-        //this.lastName = lastName;
-        //this.middleName = middleName;
-        this.isCompany = isCompany;
-        this.kato = kato;
-        this.expeditorCode = expeditorCode;
     }
 }
 

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -56,8 +57,8 @@ public class AuthController {
     }
 
     @GetMapping("/activate")
-    public ResponseEntity<MessageResponse> activateEmail(@RequestParam(value = "key") String key) {
-        return ResponseEntity.ok(authService.activateEmail(key));
+    public RedirectView activateEmail(@RequestParam(value = "key") String key) {
+        return authService.activateEmail(key);
     }
 
     @GetMapping("/checkBin/{bin}")

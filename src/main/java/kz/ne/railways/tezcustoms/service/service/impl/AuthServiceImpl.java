@@ -12,7 +12,6 @@ import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.JwtResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.repository.CompanyRepository;
 import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
 import kz.ne.railways.tezcustoms.service.repository.UserRepository;
@@ -20,10 +19,10 @@ import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
 import kz.ne.railways.tezcustoms.service.service.MailService;
 import kz.ne.railways.tezcustoms.service.service.AuthService;
-import kz.ne.railways.tezcustoms.service.util.LocaleUtils;
 import kz.ne.railways.tezcustoms.service.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +30,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -57,6 +57,8 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    @Value("${server.redirectUrl}")
+    private String url;
 
     @Override
     public void createUser (SignupRequest signUpRequest) {
@@ -122,20 +124,29 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public MessageResponse activateEmail (String key) {
-        User user = userRepository.findOneByActivationKey(key).orElseThrow(() ->
-                new FLCException(Errors.EMAIL_IS_ACTIVATED, LocaleUtils.getDefaultBundle("activation.key.time2")));
+    public RedirectView activateEmail (String key) {
+        RedirectView redirectView = new RedirectView();
+        User user = userRepository.findOneByActivationKey(key);
+        if (user == null) {
+            redirectView.setUrl(url + "3");
+            return redirectView;
+            //new FLCException(Errors.EMAIL_IS_ACTIVATED, LocaleUtils.getDefaultBundle("activation.key.time2")));
+        }
         if (user.getActivationKeyDate().before(Timestamp.from(Instant.now()))) {
             setActivationKey(user);
             userRepository.save(user);
             mailService.sendActivationEmail(user);
-            return new MessageResponse(Errors.ACTIVATION_CODE_IS_EXPIRED, LocaleUtils.getDefaultBundle("activation.key.time0"));
+            redirectView.setUrl(url + "2");
+            return redirectView;
+            //return new MessageResponse(Errors.ACTIVATION_CODE_IS_EXPIRED, LocaleUtils.getDefaultBundle("activation.key.time0"));
         }
         user.setEmailActivated(true);
         user.setActivationKey(null);
         user.setActivationKeyDate(null);
         userRepository.save(user);
-        return new MessageResponse(LocaleUtils.getDefaultBundle("activation.key.time1"));
+        redirectView.setUrl(url + "1");
+        return redirectView;
+        //return new MessageResponse(LocaleUtils.getDefaultBundle("activation.key.time1"));
     }
 
     @Override

@@ -43,7 +43,7 @@ public class EcpServiceImpl implements EcpService {
                 }
             }
 
-            return signerIIN != null && signerIIN.substring(3, 15).equals(user.getIinBin());
+            return signerIIN != null && signerIIN.substring(3, 15).equals(user.getCompany().getIdentifier());
 
         } catch (Exception exception) {
             log.error("Error while verifying ecp signer " + exception.getMessage());

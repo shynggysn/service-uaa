@@ -1,7 +1,5 @@
 package kz.ne.railways.tezcustoms.service.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,9 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Slf4j
@@ -55,33 +50,19 @@ public class AuthController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully signed up",
                     content = {@Content(mediaType = "application/json")})})
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         authService.createUser(signUpRequest);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
     @GetMapping("/activate")
-    public ResponseEntity<?> activateEmail(@RequestParam(value = "key") String key) {
+    public ResponseEntity<MessageResponse> activateEmail(@RequestParam(value = "key") String key) {
         return ResponseEntity.ok(authService.activateEmail(key));
     }
 
     @GetMapping("/checkBin/{bin}")
-    public ResponseEntity<?> checkBin(@PathVariable String bin) throws MalformedURLException, FLCException {
-        String formatUrl = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
-        URL url = new URL(formatUrl);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            log.info("Bin response: \n");
-            Map<String, Object> map = objectMapper.readValue(url, new TypeReference<HashMap<String, Object>>() {});
-
-            log.info("map: " + map);
-            BinResponse binResponse = new BinResponse((HashMap<String, String>) map.get("obj"));
-            log.info(String.valueOf(binResponse));
-            return ResponseEntity.ok(binResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new FLCException(e.getMessage());
-        }
+    public ResponseEntity<BinResponse> checkBin(@PathVariable String bin) throws IOException {
+        return ResponseEntity.ok(authService.getCompanyByBin(bin));
     }
 
     @GetMapping("/checkExpeditor/{code}")

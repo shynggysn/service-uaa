@@ -4,7 +4,7 @@ import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
 import kz.ne.railways.tezcustoms.service.payload.response.JwtResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ public interface AuthService {
 
     JwtResponse authenticateUser (LoginRequest loginRequest);
 
-    MessageResponse activateEmail (String key);
+    RedirectView activateEmail (String key);
 
     BinResponse getCompanyByBin(String bin) throws IOException;
 

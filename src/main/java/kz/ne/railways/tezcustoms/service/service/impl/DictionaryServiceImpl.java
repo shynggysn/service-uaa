@@ -1,6 +1,7 @@
-package kz.ne.railways.tezcustoms.service.service.bean;
+package kz.ne.railways.tezcustoms.service.service.impl;
 
 import kz.ne.railways.tezcustoms.service.payload.response.SimpleResponse;
+import kz.ne.railways.tezcustoms.service.service.DictionaryService;
 import kz.ne.railways.tezcustoms.service.util.LocaleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DictionaryBean implements DictionaryBeanLocal {
+public class DictionaryServiceImpl implements DictionaryService {
 
     private final EntityManager entityManager;
     List<String> defaultStations = Arrays.asList("Достык (эксп.)", "Алтынколь", "Хоргос");

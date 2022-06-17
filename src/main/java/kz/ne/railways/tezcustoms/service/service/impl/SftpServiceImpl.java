@@ -33,6 +33,7 @@ public class SftpServiceImpl implements SftpService {
 
     private final String invoicesPath = "/tezcustoms/files/invoices/";
     private final String registrationDocsPath = "/tezcustoms/files/registration_docs/";
+
     @Override
     public boolean sendInvoice(InputStream is, String filename, String invoiceUn) throws JSchException, SftpException, FileNotFoundException {
         boolean result = false;
@@ -92,7 +93,7 @@ public class SftpServiceImpl implements SftpService {
         channel.connect();
         ChannelSftp sftpChannel = (ChannelSftp) channel;
         // sftpChannel.cd("/tezcustoms/files/invoices/"+invoiceUn);
-        System.out.println("path: " + invoicesPath + invoiceId + "/" + uuid);
+        log.info("path: " + invoicesPath + invoiceId + "/" + uuid);
         String invoiceIdPath = "";
         if (NumberUtils.isCreatable(invoiceId)) {
             int invoiceIdPathInt = (Integer.parseInt(invoiceId) / 10000) * 10000;
@@ -149,7 +150,7 @@ public class SftpServiceImpl implements SftpService {
             String filename = UUID.randomUUID().toString();
 
             sftpChannel.put(inputStream, filename);
-            filepath = registrationDocsPath + filename;
+            filepath = registrationDocsPath + iin + "/" + filename;
 
             sftpChannel.exit();
             session.disconnect();

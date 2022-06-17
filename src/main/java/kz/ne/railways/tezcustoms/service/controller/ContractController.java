@@ -15,7 +15,7 @@ import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.UserInvoiceService;
-import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.service.ForDataService;
 import kz.ne.railways.tezcustoms.service.service.transitdeclaration.TransitDeclarationService;
 import kz.ne.railways.tezcustoms.service.util.ExcelReader;
 import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
@@ -51,7 +51,7 @@ public class ContractController {
     private final UserInvoiceService userInvoiceService;
     private final ExcelReader excelReader;
     private final TransitDeclarationService transitDeclarationService;
-    private final ForDataBeanLocal dataBean;
+    private final ForDataService forDataService;
 
 
     @Operation(summary = "Load a contract from ASU DKR")
@@ -63,7 +63,7 @@ public class ContractController {
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Contract not found", content = @Content)})
     @PostMapping("load")
-    public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) throws FLCException, IOException {
+    public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) throws FLCException {
         log.debug("In loadContract...");
 
         if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
@@ -124,7 +124,7 @@ public class ContractController {
     })
     @PostMapping("/sendtoCustoms")
     public ResponseEntity<?> sendToCustoms(@RequestBody FormData formData){
-        dataBean.saveInvoiceData(formData);
+        forDataService.saveInvoiceData(formData);
         SaveDeclarationResponseType result = transitDeclarationService.send(Long.parseLong(formData.getInvoiceId()));
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(result.getValue()));
     }

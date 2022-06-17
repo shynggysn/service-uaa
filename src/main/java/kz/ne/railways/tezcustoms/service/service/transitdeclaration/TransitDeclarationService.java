@@ -7,7 +7,7 @@ import kz.ne.ktzh.epd.service.Method;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.DataCaneVagInfo;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
-import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.service.ForDataService;
 import kz.ne.railways.tezcustoms.service.service.bean.PrevInfoBeanDAOLocal;
 import kz.ne.railways.tezcustoms.service.util.PredInfoSender;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +75,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
     private PrevInfoBeanDAOLocal dao;
 
     @Autowired
-    private ForDataBeanLocal dataBean;
+    private ForDataService forDataService;
 
     private User user;
 
@@ -2077,7 +2077,7 @@ public class TransitDeclarationService implements TransitDeclarationServiceLocal
                     str = str.substring(0, 250);
 
                 result.setValue(str);
-                dataBean.saveCustomsResponse(invoiceUn, result, uuid);
+                forDataService.saveCustomsResponse(invoiceUn, result, uuid);
 
                 String uinp = str.substring(0,21);
                 result.setValue(uinp);

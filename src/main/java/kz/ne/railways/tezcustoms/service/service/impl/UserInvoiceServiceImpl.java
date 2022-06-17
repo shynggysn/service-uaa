@@ -4,7 +4,7 @@ import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
 import kz.ne.railways.tezcustoms.service.repository.asudkr.NeInvoiceRepository;
 import kz.ne.railways.tezcustoms.service.service.UserInvoiceService;
-import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.service.ForDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class UserInvoiceServiceImpl implements UserInvoiceService {
 
     private final NeInvoiceRepository neInvoiceRepository;
-    private final ForDataBeanLocal dataBean;
+    private final ForDataService forDataService;
 
     @Override
     public List<UserInvoices> getUserInvoices(Long userId) {
@@ -24,7 +24,7 @@ public class UserInvoiceServiceImpl implements UserInvoiceService {
 
     @Override
     public FormData getInvoice(Long id) {
-        return dataBean.getFormData(id.toString());
+        return forDataService.getFormData(id.toString());
     }
 
     @Override

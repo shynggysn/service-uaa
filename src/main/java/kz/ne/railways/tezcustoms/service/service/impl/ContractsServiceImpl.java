@@ -6,7 +6,7 @@ import com.jcraft.jsch.SftpException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.SftpService;
-import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.service.ForDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -37,7 +37,7 @@ public class ContractsServiceImpl implements ContractsService {
     @Value("${services.external.gateway.contractDoc.url}")
     private String gatewayContractDocUrl;
 
-    private final ForDataBeanLocal dataBean;
+    private final ForDataService forDataService;
     private final SftpService fileServer;
     private final Gson gson = new Gson();
 
@@ -46,7 +46,7 @@ public class ContractsServiceImpl implements ContractsService {
         FormData formData = getContractData(expCode, invoiceNum, year, month);
 
         if (formData != null) {
-            dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
+            forDataService.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
             byte[] arr = getContractDoc(formData.getInvoiceId());
             saveDocIntoFtp(arr, formData.getInvoiceId());
         }
@@ -116,8 +116,7 @@ public class ContractsServiceImpl implements ContractsService {
                 String strResponse;
                 if (entity != null) {
                     strResponse = EntityUtils.toString(entity, "UTF-8");
-                    FormData formData = gson.fromJson(strResponse, FormData.class);
-                    return formData;
+                    return gson.fromJson(strResponse, FormData.class);
                 }
 
             }
@@ -138,12 +137,12 @@ public class ContractsServiceImpl implements ContractsService {
     }
 
     void saveDocIntoFtp(byte[] file, String invoiceId){
-        String docname = "Invoice Document";
+        String docName = "Invoice Document";
         String filename = UUID.randomUUID().toString();
 
         try {
             if (fileServer.sendInvoice(new ByteArrayInputStream(file), filename, invoiceId))
-                dataBean.saveDocInfo(invoiceId, docname, new Date(), filename);
+                forDataService.saveDocInfo(invoiceId, docName, new Date(), filename);
         } catch (JSchException | SftpException | FileNotFoundException e) {
             log.debug("in loadContract" + e.getMessage());
         }

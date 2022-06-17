@@ -1,8 +1,10 @@
-package kz.ne.railways.tezcustoms.service.service.bean;
+package kz.ne.railways.tezcustoms.service.service.impl;
 
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.*;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.service.ForDataService;
+import kz.ne.railways.tezcustoms.service.service.bean.PrevInfoBeanDAOLocal;
 import kz.ne.railways.tezcustoms.service.util.PIHelper;
 import kz.ne.railways.tezcustoms.service.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ForDataBean implements ForDataBeanLocal {
+public class ForDataServiceImpl implements ForDataService {
 
     private final PrevInfoBeanDAOLocal prevInfoBeanDAOLocal;
     private final EntityManager entityManager;

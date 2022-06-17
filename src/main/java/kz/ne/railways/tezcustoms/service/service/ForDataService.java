@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.service.bean;
+package kz.ne.railways.tezcustoms.service.service;
 
 import kz.ne.railways.tezcustoms.service.model.*;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
@@ -6,7 +6,7 @@ import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarati
 import java.util.Date;
 import java.util.List;
 
-public interface ForDataBeanLocal {
+public interface ForDataService {
 
     FormData getContractData(String invNum);
 

@@ -12,10 +12,9 @@ import kz.ne.railways.tezcustoms.service.payload.response.ExpeditorValidation;
 import kz.ne.railways.tezcustoms.service.payload.response.MessageResponse;
 import kz.ne.railways.tezcustoms.service.service.EcpService;
 import kz.ne.railways.tezcustoms.service.service.AuthService;
-import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
+import kz.ne.railways.tezcustoms.service.service.ForDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ import java.io.IOException;
 public class AuthController {
 
     private final PasswordEncoder encoder;
-    private final ForDataBeanLocal dataBean;
+    private final ForDataService forDataService;
     private final EcpService ecpService;
     private final AuthService authService;
 
@@ -71,7 +70,7 @@ public class AuthController {
 
     @GetMapping("/checkExpeditor/{code}")
     public ResponseEntity<?> checkExpeditor(@PathVariable String code) {
-        return ResponseEntity.ok(new ExpeditorValidation(dataBean.checkExpeditorCode(Long.parseLong(code))));
+        return ResponseEntity.ok(new ExpeditorValidation(forDataService.checkExpeditorCode(Long.parseLong(code))));
     }
 
     @PostMapping("/checkEcp")

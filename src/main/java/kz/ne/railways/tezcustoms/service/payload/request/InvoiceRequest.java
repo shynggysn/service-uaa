@@ -19,6 +19,6 @@ public class InvoiceRequest {
     private int year;
 
     @NotNull
-    @Range(min = 1, max = 31, message = "Month must be in range [1,31]!")
+    @Range(min = 1, max = 12, message = "Month must be in range [1,12]!")
     private int month;
 }

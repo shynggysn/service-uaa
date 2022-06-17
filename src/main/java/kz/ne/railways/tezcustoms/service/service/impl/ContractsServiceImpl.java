@@ -5,8 +5,8 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import kz.ne.railways.tezcustoms.service.model.FormData;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
+import kz.ne.railways.tezcustoms.service.service.SftpService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
-import kz.ne.railways.tezcustoms.service.util.SFtpSend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
@@ -37,27 +38,17 @@ public class ContractsServiceImpl implements ContractsService {
     private String gatewayContractDocUrl;
 
     private final ForDataBeanLocal dataBean;
-    private final SFtpSend fileServer;
+    private final SftpService fileServer;
     private final Gson gson = new Gson();
 
     @Override
-    public FormData loadContract(String expCode, String invoiceNum, int year, int month)
-                    throws IOException {
-        log.debug(" expCode: {}\n invoiceNum: {}", expCode, invoiceNum);
+    public FormData loadContract(String expCode, String invoiceNum, int year, int month){
         FormData formData = getContractData(expCode, invoiceNum, year, month);
 
         if (formData != null) {
             dataBean.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
             byte[] arr = getContractDoc(formData.getInvoiceId());
-            String docname = "Invoice Document";
-            String filename = UUID.randomUUID().toString();
-
-            try {
-                if (fileServer.send(new ByteArrayInputStream(arr), filename, formData.getInvoiceId()))
-                    dataBean.saveDocInfo(formData.getInvoiceId(), docname, new Date(), filename);
-            } catch (JSchException | SftpException e) {
-                log.debug("in loadContract" + e.getMessage());
-            }
+            saveDocIntoFtp(arr, formData.getInvoiceId());
         }
 
         return formData;
@@ -144,5 +135,17 @@ public class ContractsServiceImpl implements ContractsService {
             }
         }
         return null;
+    }
+
+    void saveDocIntoFtp(byte[] file, String invoiceId){
+        String docname = "Invoice Document";
+        String filename = UUID.randomUUID().toString();
+
+        try {
+            if (fileServer.sendInvoice(new ByteArrayInputStream(file), filename, invoiceId))
+                dataBean.saveDocInfo(invoiceId, docname, new Date(), filename);
+        } catch (JSchException | SftpException | FileNotFoundException e) {
+            log.debug("in loadContract" + e.getMessage());
+        }
     }
 }

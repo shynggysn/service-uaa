@@ -19,6 +19,7 @@ import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
 import kz.ne.railways.tezcustoms.service.service.MailService;
 import kz.ne.railways.tezcustoms.service.service.AuthService;
+import kz.ne.railways.tezcustoms.service.service.SftpService;
 import kz.ne.railways.tezcustoms.service.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.transaction.Transactional;
@@ -57,11 +59,12 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final SftpService fileserver;
     @Value("${server.redirectUrl}")
     private String url;
 
     @Override
-    public void createUser (SignupRequest signUpRequest) {
+    public void createUser (SignupRequest signUpRequest, MultipartFile file) {
         // TODO check iin after eds validation added
 //        if (userRepository.existsByIin(signUpRequest.getIinBin())) {
 //            throw new FLCException(Errors.IIN_TAKEN);
@@ -73,33 +76,40 @@ public class AuthServiceImpl implements AuthService {
         if (strRoles == null || strRoles.isEmpty()) {
             throw new FLCException(Errors.ROLE_CANNOT_BE_EMPTY);
         }
-        Company company = companyRepository.findOneByIdentifier(signUpRequest.getIinBin());
-        if (company != null) {
-            // Create new user's account
-            newUser(signUpRequest, strRoles, company);
-        } else {
-            company = new Company(signUpRequest.getIinBin(), signUpRequest.getAddress(),
-                    signUpRequest.getCompanyName(), signUpRequest.getCompanyDirector(),
-                    signUpRequest.isCompany(), signUpRequest.getKato());
-            if (signUpRequest.isCompany()) {
-                company.setBin(signUpRequest.getIinBin());
-            } else {
-                company.setIin(signUpRequest.getIinBin());
-            }
-            companyRepository.save(company);
-            newUser(signUpRequest, strRoles, company);
-        }
 
+        Company company = findUserCompany(signUpRequest);
+        String filepath = fileserver.sendRegistrationDoc(file, signUpRequest.getIinBin());
+        newUser(signUpRequest, company, filepath);
     }
 
-    private void newUser(SignupRequest signUpRequest, Set<ERole> strRoles, Company company) {
-        User user = new User(signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()),
-               signUpRequest.getPhone());
+    Company findUserCompany(SignupRequest user){
+        Company company = companyRepository.findOneByIdentifier(user.getIinBin());
+        if (company == null) {
+            company = new Company(user.getIinBin(), user.getAddress(),
+                    user.getCompanyName(), user.getCompanyDirector(),
+                    user.isCompany(), user.getKato());
+            if (user.isCompany()) {
+                company.setBin(user.getIinBin());
+            } else {
+                company.setIin(user.getIinBin());
+            }
+            companyRepository.save(company);
+        }
+        return  company;
+    }
 
-        Set<Role> roles = roleRepository.findByNameIn(strRoles);
+    private void newUser(SignupRequest signUpRequest, Company company, String filepath) {
+        User user = new User(
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getPhone()
+        );
+
+        Set<Role> roles = roleRepository.findByNameIn(signUpRequest.getRoles());
         user.setCompany(company);
         setActivationKey(user);
         user.setRoles(roles);
+        user.setRegisterFilePath(filepath);
         userRepository.save(user);
         mailService.sendActivationEmail(user);
     }

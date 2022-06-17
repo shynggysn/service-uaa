@@ -1,19 +1,23 @@
-package kz.ne.railways.tezcustoms.service.util;
+package kz.ne.railways.tezcustoms.service.service.impl;
 
 import com.jcraft.jsch.*;
+import kz.ne.railways.tezcustoms.service.service.SftpService;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 import java.util.Vector;
 
+@Service
 @Slf4j
-@Component
-public class SFtpSend {
+public class SftpServiceImpl implements SftpService {
 
     @Value("${services.internal.fileServer.prod.host}")
     private String host;
@@ -27,8 +31,11 @@ public class SFtpSend {
     @Value("${services.internal.fileServer.prod.password}")
     private String password;
 
-    public boolean send(InputStream is, String path, String invoiceUn)
-                    throws JSchException, SftpException, FileNotFoundException {
+    private final String invoicesPath = "/tezcustoms/files/invoices/";
+    private final String registrationDocsPath = "/tezcustoms/files/registration_docs/";
+
+    @Override
+    public boolean sendInvoice(InputStream is, String filename, String invoiceUn) throws JSchException, SftpException, FileNotFoundException {
         boolean result = false;
         try {
             JSch jsch = new JSch();
@@ -38,7 +45,6 @@ public class SFtpSend {
             session.setConfig("StrictHostKeyChecking", "no");
             session.setPassword(password);
             session.connect();
-            // File file = new File(path);
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp sftpChannel = (ChannelSftp) channel;
@@ -50,19 +56,19 @@ public class SFtpSend {
             }
 
             try {
-                sftpChannel.mkdir("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath);
+                sftpChannel.mkdir(invoicesPath + invoiceIdPath);
             } catch (SftpException ex) {
                 log.debug("in SFtp send: folder already exists");
             }
 
             try {
-                sftpChannel.mkdir("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceUn);
+                sftpChannel.mkdir(invoicesPath + invoiceIdPath + "/" + invoiceUn);
             } catch (SftpException ex) {
                 log.debug("in SFtp send: folder already exists");
             }
 
-            sftpChannel.cd("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceUn);
-            sftpChannel.put(is, path);
+            sftpChannel.cd(invoicesPath + invoiceIdPath + "/" + invoiceUn);
+            sftpChannel.put(is, filename);
             sftpChannel.exit();
             session.disconnect();
             result = true;
@@ -73,8 +79,8 @@ public class SFtpSend {
         return result;
     }
 
-    public void get(String invoiceId, String uuid, java.io.OutputStream out)
-                    throws JSchException, SftpException, FileNotFoundException {
+    @Override
+    public void getInvoice(String invoiceId, String uuid, OutputStream out) throws JSchException, SftpException, FileNotFoundException {
         JSch jsch = new JSch();
         Session session;
 
@@ -86,18 +92,18 @@ public class SFtpSend {
         Channel channel = session.openChannel("sftp");
         channel.connect();
         ChannelSftp sftpChannel = (ChannelSftp) channel;
-        // sftpChannel.cd("/dkrdata/EPDDOCFILES/"+invoiceUn);
-        System.out.println("path: " + "/dkrdata/files/EPDDOCFILES/" + invoiceId + "/" + uuid);
+        // sftpChannel.cd("/tezcustoms/files/invoices/"+invoiceUn);
+        log.info("path: " + invoicesPath + invoiceId + "/" + uuid);
         String invoiceIdPath = "";
         if (NumberUtils.isCreatable(invoiceId)) {
             int invoiceIdPathInt = (Integer.parseInt(invoiceId) / 10000) * 10000;
             invoiceIdPath = Integer.toString(invoiceIdPathInt);
         }
-        String newPath = "/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceId + "/" + uuid;
-        String oldPath = "/dkrdata/files/EPDDOCFILES/" + invoiceId + "/" + uuid;
-        Vector<LsEntry> lsEntryVector = new Vector<>();
+        String newPath = invoicesPath + invoiceIdPath + "/" + invoiceId + "/" + uuid;
+        String oldPath = invoicesPath + invoiceId + "/" + uuid;
+        Vector<ChannelSftp.LsEntry> lsEntryVector = new Vector<>();
         try {
-            lsEntryVector = sftpChannel.ls("/dkrdata/files/EPDDOCFILES/" + invoiceIdPath + "/" + invoiceId);
+            lsEntryVector = sftpChannel.ls(invoicesPath + invoiceIdPath + "/" + invoiceId);
         } catch (SftpException ex) {
             // TODO: handle exception
         }
@@ -115,5 +121,43 @@ public class SFtpSend {
         }
         sftpChannel.exit();
         session.disconnect();
+    }
+
+    @Override
+    public String sendRegistrationDoc(MultipartFile file, String iin) {
+        String filepath = null;
+        try {
+            JSch jsch = new JSch();
+            Session session;
+
+            session = jsch.getSession(user, host, port);
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setPassword(password);
+            session.connect();
+            Channel channel = session.openChannel("sftp");
+            channel.connect();
+            ChannelSftp sftpChannel = (ChannelSftp) channel;
+
+            try {
+                sftpChannel.mkdir(registrationDocsPath + iin);
+            } catch (SftpException ex) {
+                log.debug("in SFtp send: folder already exists");
+            }
+
+            sftpChannel.cd(registrationDocsPath + iin);
+
+            InputStream inputStream = file.getInputStream();
+            String filename = UUID.randomUUID().toString();
+
+            sftpChannel.put(inputStream, filename);
+            filepath = registrationDocsPath + iin + "/" + filename;
+
+            sftpChannel.exit();
+            session.disconnect();
+        } catch (Exception ex) {
+            log.debug("in SFtp send: could not save registration document");
+        }
+
+        return filepath;
     }
 }

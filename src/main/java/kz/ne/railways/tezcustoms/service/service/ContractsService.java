@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public interface ContractsService {
 
-    FormData loadContract(String expCode, String invoiceNum, int year, int month) throws IOException;
+    FormData loadContract(String expCode, String invoiceNum, int year, int month);
 
 }

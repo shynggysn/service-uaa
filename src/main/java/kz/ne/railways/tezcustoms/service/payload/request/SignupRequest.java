@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
@@ -46,6 +47,7 @@ public class SignupRequest {
 
     private boolean isCompany;
 
+    @NotNull
     private Set<ERole> roles;
 
     @NotBlank

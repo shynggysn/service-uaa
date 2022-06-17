@@ -15,9 +15,11 @@ import kz.ne.railways.tezcustoms.service.service.AuthService;
 import kz.ne.railways.tezcustoms.service.service.bean.ForDataBeanLocal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
@@ -50,9 +52,9 @@ public class AuthController {
     @Operation(summary = "Sign up")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully signed up",
                     content = {@Content(mediaType = "application/json")})})
-    @PostMapping("/signup")
-    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        authService.createUser(signUpRequest);
+    @PostMapping(value = "/signup")
+    public ResponseEntity<MessageResponse> registerUser( @RequestPart("file") MultipartFile file, SignupRequest signupRequest ) {
+        authService.createUser(signupRequest, file);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 

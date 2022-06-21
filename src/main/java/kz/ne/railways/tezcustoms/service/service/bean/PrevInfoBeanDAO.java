@@ -3,11 +3,15 @@ package kz.ne.railways.tezcustoms.service.service.bean;
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.DataCaneVagInfo;
 import kz.ne.railways.tezcustoms.service.model.VagonItem;
+import kz.ne.railways.tezcustoms.service.payload.response.VagInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -20,6 +24,11 @@ import java.util.*;
 public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
     private final EntityManager entityManager;
+    private final RestTemplate restTemplate;
+
+    @Value("${services.external.gateway.vagonInfo.url}")
+    private String gatewayVagInfoUrl;
+
 
     public Integer existLikeInvoiceByNumAndSta(Long invoiceId) {
         Integer count = 0; // Если 0 даем отправить!
@@ -63,46 +72,39 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
         if (dataCaneVagons.isEmpty())
             return map;
         Map<String, String> cacheMap = new HashMap<>();
-        StringBuilder buffer = new StringBuilder("select " + "NUM_VAG/*Номер вагона*/," + "VZ_D/*Собственник*/,"
-                        + "KOD_S/*Код собственника*/," + "VCHD_PRIPIS/*Депо*/," + "NAME_SOB/*Имя собственника*/,"
-                        + "TIP/*Тип Вагона*/," + "TARA/*Тара TARA/10*/," + "KOD_SOB/*Администрация*/,"
-                        + "GRUZ/*Груз GRUZ/10*/," + "KOD_AR," + "KOD_AR_MG," + "PRIZ_AR," + "PRIZ_AR_MG," + "KOL_OSEY,"
-                        + "KV2_6,/*желтый пробег*/" + "KV2_5/*красный пробег*/");
-        buffer.append(" from ASOUP.AKPV_VAGON_DOR ");
-        buffer.append(" where NUM_VAG in (");
-        for (int i = 0; i < dataCaneVagons.size(); i++) {
-            String toDataCane = StringUtils.leftPad(dataCaneVagons.get(i), 12, "0");
-            cacheMap.put(toDataCane, dataCaneVagons.get(i));
-            buffer.append(i == 0 ? "" : ",").append("'").append(toDataCane).append("'");
+        for (String dataCaneVagon : dataCaneVagons) {
+            String toDataCane = StringUtils.leftPad(dataCaneVagon, 12, "0");
+            cacheMap.put(toDataCane, dataCaneVagon);
         }
-        buffer.append(")");
         List<Object[]> result = new ArrayList<>();
         try {
-            System.out.println(buffer);
-            result = entityManager.createNativeQuery(buffer.toString()).getResultList();
+            result = getVagInfo(dataCaneVagons);
+            if (result == null)
+                return map;
+            //result = entityManager.createNativeQuery(buffer.toString()).getResultList();
         } catch (RuntimeException e) {
         }
         for (Object[] row : result) {
-            System.out.println("row: " + row[0]);
+            log.info("row: " + row[0]);
             DataCaneVagInfo info = new DataCaneVagInfo();
             String vagNo = (String) row[0];
             info.setVagNoDC(vagNo.trim());
-            Short prop = (Short) row[1];
-            info.setPropertyDC(Integer.valueOf(prop));
+            int prop = (int) row[1];
+            info.setPropertyDC(prop);
             info.setOwnerCodeDC((Integer) row[2]);
-            Short depo = (Short) row[3];
-            info.setDepoDC(Integer.valueOf(depo));
+            int depo = (int) row[3];
+            info.setDepoDC(depo);
             info.setOwnerNameDC((String) row[4]);
-            Short type = (Short) row[5];
-            info.setTypeVagDC(Integer.valueOf(type));
-            Short tara = (Short) row[6];
-            info.setTaraDC(Integer.valueOf(tara));
-            Short rail = (Short) row[7];
-            info.setRailwayNoDC(Integer.valueOf(rail));
-            Short gp = (Short) row[8];
-            info.setGpDC(Integer.valueOf(gp));
+            int type = (int) row[5];
+            info.setTypeVagDC(type);
+            int tara = (int) row[6];
+            info.setTaraDC(tara);
+            int rail = (int) row[7];
+            info.setRailwayNoDC(rail);
+            int gp = (int) row[8];
+            info.setGpDC(gp);
 
-            info.setAxisCount(Integer.valueOf((Short) row[13]));
+            info.setAxisCount((int) row[13]);
             // info.setYellowMileage((String) row[14]);
             // info.setRedMileage((String) row[15]);
             if (info.getDepoDC() != null && info.getPropertyDC() != null) {
@@ -112,8 +114,8 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
                     info.setOwnerNameDC("АО \"Казтемиртранс\"");
                 }
             }
-            int prizAr = (Short) (row[11] == null ? 0 : row[11]);
-            int prizArMg = (Short) (row[12] == null ? 0 : row[12]);
+            int prizAr = (int) (row[11] == null ? 0 : row[11]);
+            int prizArMg = (int) (row[12] == null ? 0 : row[12]);
             if (prizAr > 0 || prizArMg > 0) {
                 int ownerCode = (Integer) (row[9] == null ? 0 : row[9]);
                 info.setOwnerCodeDC(ownerCode);
@@ -133,9 +135,19 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
 
         }
         cacheMap = null;
-        buffer = null;
         result = null;
         return map;
+    }
+
+    private List<Object[]> getVagInfo (List<String> dataCaneVagons){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        Map<String, Object> values = new HashMap<>();
+        values.put("list", dataCaneVagons);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(values, headers);
+        ResponseEntity<VagInfoResponse> response = restTemplate.postForEntity(gatewayVagInfoUrl, entity, VagInfoResponse.class);
+        return response.getBody().getLists();
     }
 
     public NeCustomsOrgs getCustomsOrgs(Long customOrgUn) {

@@ -85,7 +85,7 @@ public class PrevInfoBeanDAO implements PrevInfoBeanDAOLocal {
         } catch (RuntimeException e) {
         }
         for (Object[] row : result) {
-            System.out.println("row: " + row[0]);
+            log.info("row: " + row[0]);
             DataCaneVagInfo info = new DataCaneVagInfo();
             String vagNo = (String) row[0];
             info.setVagNoDC(vagNo.trim());

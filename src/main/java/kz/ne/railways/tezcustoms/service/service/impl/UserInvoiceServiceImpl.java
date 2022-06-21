@@ -1,6 +1,6 @@
 package kz.ne.railways.tezcustoms.service.service.impl;
 
-import kz.ne.railways.tezcustoms.service.model.FormData;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.FormData;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
 import kz.ne.railways.tezcustoms.service.repository.asudkr.NeInvoiceRepository;
 import kz.ne.railways.tezcustoms.service.service.UserInvoiceService;

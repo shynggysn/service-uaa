@@ -1,6 +1,8 @@
 package kz.ne.railways.tezcustoms.service.service;
 
-import kz.ne.railways.tezcustoms.service.model.*;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.ContainerDatas;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.FormData;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.VagonItem;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 
 import java.util.Date;

@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.constants.errors.Errors;
 import kz.ne.railways.tezcustoms.service.exception.FLCException;
-import kz.ne.railways.tezcustoms.service.model.FormData;
-import kz.ne.railways.tezcustoms.service.model.InvoiceData;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.FormData;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.InvoiceData;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.payload.request.InvoiceRequest;
@@ -66,9 +66,9 @@ public class ContractController {
     public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) throws FLCException {
         log.debug("In loadContract...");
 
-        if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
-            throw new FLCException(Errors.INVOICE_EXISTS);
-        }
+//        if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
+//            throw new FLCException(Errors.INVOICE_EXISTS);
+//        }
         FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum(), request.getYear(), request.getMonth());
         if (formData == null) {
             throw new FLCException(Errors.INVALID_PARAMETERS);

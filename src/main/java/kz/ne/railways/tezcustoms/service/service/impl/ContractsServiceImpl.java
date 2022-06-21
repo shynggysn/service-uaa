@@ -3,7 +3,9 @@ package kz.ne.railways.tezcustoms.service.service.impl;
 import com.google.gson.Gson;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import kz.ne.railways.tezcustoms.service.model.FormData;
+import kz.ne.railways.tezcustoms.service.dto.FormDataDto;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.DkrData;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.FormData;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.SftpService;
 import kz.ne.railways.tezcustoms.service.service.ForDataService;
@@ -43,9 +45,11 @@ public class ContractsServiceImpl implements ContractsService {
 
     @Override
     public FormData loadContract(String expCode, String invoiceNum, int year, int month){
-        FormData formData = getContractData(expCode, invoiceNum, year, month);
+        DkrData dkrData = getContractData(expCode, invoiceNum, year, month);
+        FormData formData = null;
 
-        if (formData != null) {
+        if (dkrData != null) {
+            formData = FormDataDto.toFormData(dkrData);
             forDataService.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
             byte[] arr = getContractDoc(formData.getInvoiceId());
             saveDocIntoFtp(arr, formData.getInvoiceId());
@@ -92,9 +96,9 @@ public class ContractsServiceImpl implements ContractsService {
         return null;
     }
 
-    public FormData getContractData(String expCode, String invoiceNum, int year, int month) {
-        String url = gatewayContractDataUrl;
-//        String url = "http://localhost:8078/servlet?method=getContractData";
+    public DkrData getContractData(String expCode, String invoiceNum, int year, int month) {
+//        String url = gatewayContractDataUrl;
+        String url = "http://localhost:8078/servlet?method=getContractData";
         if (expCode != null)
             url += "&expCode=" + expCode;
         url += "&invoiceNum=" + invoiceNum;
@@ -116,7 +120,7 @@ public class ContractsServiceImpl implements ContractsService {
                 String strResponse;
                 if (entity != null) {
                     strResponse = EntityUtils.toString(entity, "UTF-8");
-                    return gson.fromJson(strResponse, FormData.class);
+                    return gson.fromJson(strResponse, DkrData.class);
                 }
 
             }

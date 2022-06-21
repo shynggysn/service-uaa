@@ -66,9 +66,9 @@ public class ContractController {
     public ResponseEntity<?> loadContract(@Valid @RequestBody InvoiceRequest request) throws FLCException {
         log.debug("In loadContract...");
 
-        if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
-            throw new FLCException(Errors.INVOICE_EXISTS);
-        }
+//        if (userInvoiceService.existsByInvcNum(request.getInvoiceNum())) {
+//            throw new FLCException(Errors.INVOICE_EXISTS);
+//        }
         FormData formData = contractsService.loadContract(request.getExpCode(), request.getInvoiceNum(), request.getYear(), request.getMonth());
         if (formData == null) {
             throw new FLCException(Errors.INVALID_PARAMETERS);

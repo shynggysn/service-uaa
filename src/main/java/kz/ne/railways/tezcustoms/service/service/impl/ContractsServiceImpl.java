@@ -97,8 +97,8 @@ public class ContractsServiceImpl implements ContractsService {
     }
 
     public DkrData getContractData(String expCode, String invoiceNum, int year, int month) {
-//        String url = gatewayContractDataUrl;
-        String url = "http://localhost:8078/servlet?method=getContractData";
+        String url = gatewayContractDataUrl;
+//        String url = "http://localhost:8078/servlet?method=getContractData";
         if (expCode != null)
             url += "&expCode=" + expCode;
         url += "&invoiceNum=" + invoiceNum;

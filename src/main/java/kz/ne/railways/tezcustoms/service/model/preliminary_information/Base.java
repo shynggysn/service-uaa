@@ -15,11 +15,9 @@ public abstract class Base {
     private String name;
 
     @Schema(description = "Краткое наименование")
-    @NotBlank
     private String shortName;
 
     @Schema(description = "Код страны")
-    @NotBlank
     private String сountryCode;
 
     @Schema(description = "Страна")
@@ -28,6 +26,5 @@ public abstract class Base {
     @Schema(description = "Почтовый индекс")
     private String index = "000000";
 
-    @NotBlank
     private Address address;
 }

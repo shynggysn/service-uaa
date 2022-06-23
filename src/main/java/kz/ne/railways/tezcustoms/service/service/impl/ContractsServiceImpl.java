@@ -3,8 +3,7 @@ package kz.ne.railways.tezcustoms.service.service.impl;
 import com.google.gson.Gson;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import kz.ne.railways.tezcustoms.service.dto.FormDataDto;
-import kz.ne.railways.tezcustoms.service.model.preliminary_information.DkrData;
+import kz.ne.railways.tezcustoms.service.mapper.FormDataMapper;
 import kz.ne.railways.tezcustoms.service.model.preliminary_information.FormData;
 import kz.ne.railways.tezcustoms.service.service.ContractsService;
 import kz.ne.railways.tezcustoms.service.service.SftpService;
@@ -45,11 +44,11 @@ public class ContractsServiceImpl implements ContractsService {
 
     @Override
     public FormData loadContract(String expCode, String invoiceNum, int year, int month){
-        DkrData dkrData = getContractData(expCode, invoiceNum, year, month);
+        FormDataMapper dkrData = getContractData(expCode, invoiceNum, year, month);
         FormData formData = null;
 
         if (dkrData != null) {
-            formData = FormDataDto.toFormData(dkrData);
+            formData = dkrData.toFormData();
             forDataService.saveContractData(-1L, formData, formData.getVagonList(), formData.getContainerDatas());
             byte[] arr = getContractDoc(formData.getInvoiceId());
             saveDocIntoFtp(arr, formData.getInvoiceId());
@@ -96,7 +95,7 @@ public class ContractsServiceImpl implements ContractsService {
         return null;
     }
 
-    public DkrData getContractData(String expCode, String invoiceNum, int year, int month) {
+    public FormDataMapper getContractData(String expCode, String invoiceNum, int year, int month) {
         String url = gatewayContractDataUrl;
 //        String url = "http://localhost:8078/servlet?method=getContractData";
         if (expCode != null)
@@ -120,7 +119,7 @@ public class ContractsServiceImpl implements ContractsService {
                 String strResponse;
                 if (entity != null) {
                     strResponse = EntityUtils.toString(entity, "UTF-8");
-                    return gson.fromJson(strResponse, DkrData.class);
+                    return gson.fromJson(strResponse, FormDataMapper.class);
                 }
 
             }

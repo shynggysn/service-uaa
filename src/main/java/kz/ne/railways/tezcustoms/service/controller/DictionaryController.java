@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -60,7 +61,7 @@ public class DictionaryController {
 
     @Operation(summary = "Get transit direction code")
     @GetMapping("/tnved")
-    public ResponseEntity<List<TnVed>> getTnVedCodes(@RequestParam(required = false) Long parentId) throws FLCException {
+    public ResponseEntity<List<TnVed>> getTnVedCodes(@RequestParam(required = false) Long parentId){
         return ResponseEntity.ok(dictionaryService.getTnVedCodes(parentId));
     }
 }

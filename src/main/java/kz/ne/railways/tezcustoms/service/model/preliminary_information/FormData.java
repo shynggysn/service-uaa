@@ -1,14 +1,10 @@
-package kz.ne.railways.tezcustoms.service.model;
+package kz.ne.railways.tezcustoms.service.model.preliminary_information;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kz.ne.railways.tezcustoms.service.model.preliminary_information.CommodityPart;
-import kz.ne.railways.tezcustoms.service.model.preliminary_information.Declarant;
-import kz.ne.railways.tezcustoms.service.model.preliminary_information.DestinationInformation;
-import kz.ne.railways.tezcustoms.service.model.preliminary_information.Expeditor;
+import kz.ne.railways.tezcustoms.service.model.DicDao;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +30,6 @@ public class FormData {
 
     @Schema(description = "Индекс поезда")
     private String trainIndex;
-
-    @Schema(description = "Принадлежность вагона ")
-    private String transportOwner;
 
     @Schema(description = "Код груза ГНГ")
     @NotBlank

@@ -2,6 +2,7 @@ package kz.ne.railways.tezcustoms.service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kz.ne.railways.tezcustoms.service.constants.errors.Errors;
+import kz.ne.railways.tezcustoms.service.entity.TnVed;
 import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.payload.response.*;
 import kz.ne.railways.tezcustoms.service.service.DictionaryService;
@@ -57,4 +58,9 @@ public class DictionaryController {
         throw new FLCException(Errors.TRANSIT_CODE_NOT_FOUND);
     }
 
+    @Operation(summary = "Get transit direction code")
+    @GetMapping("/tnved")
+    public ResponseEntity<List<TnVed>> getTnVedCodes(@RequestParam(required = false) Long parentId){
+        return ResponseEntity.ok(dictionaryService.getTnVedCodes(parentId));
+    }
 }

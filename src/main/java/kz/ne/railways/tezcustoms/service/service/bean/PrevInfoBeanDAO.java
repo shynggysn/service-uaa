@@ -2,7 +2,7 @@ package kz.ne.railways.tezcustoms.service.service.bean;
 
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.DataCaneVagInfo;
-import kz.ne.railways.tezcustoms.service.model.VagonItem;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.VagonItem;
 import kz.ne.railways.tezcustoms.service.payload.response.VagInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

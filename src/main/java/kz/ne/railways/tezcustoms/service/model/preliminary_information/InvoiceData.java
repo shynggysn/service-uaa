@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.model;
+package kz.ne.railways.tezcustoms.service.model.preliminary_information;
 
 import lombok.Data;
 import java.util.ArrayList;

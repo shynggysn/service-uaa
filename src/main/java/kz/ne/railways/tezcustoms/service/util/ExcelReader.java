@@ -1,7 +1,7 @@
 package kz.ne.railways.tezcustoms.service.util;
 
-import kz.ne.railways.tezcustoms.service.model.InvoiceData;
-import kz.ne.railways.tezcustoms.service.model.InvoiceRow;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.InvoiceData;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.InvoiceRow;
 import kz.ne.railways.tezcustoms.service.repository.TnVedRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +73,7 @@ public class ExcelReader {
     }
 
     private String getDescriptionTnVed(String code) {
-        return kz.ne.railways.tezcustoms.service.util.StringUtils.merge(
+        return StringUtils.merge(
                 tnVedRepository.findTextListByCode(code), System.lineSeparator());
     }
 

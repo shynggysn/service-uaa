@@ -25,19 +25,19 @@ public class TnVed extends AbstractAuditingEntity {
     @Column
     private String code;
 
-    @Column
+    @Column(name = "code_ex")
     private String codeEx;
 
     @Column(columnDefinition = "TEXT")
     private String text;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", name = "text_ex")
     private String textEx;
 
     @Column
     private String unit;
 
-    @Column
+    @Column(name = "unit_code")
     private String unitCode;
 
     @JsonIgnore

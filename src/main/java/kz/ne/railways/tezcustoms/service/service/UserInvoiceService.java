@@ -1,6 +1,6 @@
 package kz.ne.railways.tezcustoms.service.service;
 
-import kz.ne.railways.tezcustoms.service.model.FormData;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.FormData;
 import kz.ne.railways.tezcustoms.service.model.UserInvoices;
 
 import java.util.List;

@@ -1,6 +1,8 @@
 package kz.ne.railways.tezcustoms.service.service.impl;
 
+import kz.ne.railways.tezcustoms.service.entity.TnVed;
 import kz.ne.railways.tezcustoms.service.payload.response.SimpleResponse;
+import kz.ne.railways.tezcustoms.service.repository.TnVedRepository;
 import kz.ne.railways.tezcustoms.service.service.DictionaryService;
 import kz.ne.railways.tezcustoms.service.util.LocaleUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.*;
 public class DictionaryServiceImpl implements DictionaryService {
 
     private final EntityManager entityManager;
+    private final TnVedRepository tnVedRepository;
     List<String> defaultStations = Arrays.asList("Достык (эксп.)", "Алтынколь", "Хоргос");
 
     private List<SimpleResponse> transitDirectionCodes;
@@ -166,6 +169,11 @@ public class DictionaryServiceImpl implements DictionaryService {
             );
         }
         return transitDirectionCodes;
+    }
+
+    @Override
+    public List<TnVed> getTnVedCodes(Long parentId) {
+        return tnVedRepository.findByParentId(parentId);
     }
 
 //    public DataDao<DicDao> getVagonCountryList(String name) {

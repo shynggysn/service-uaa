@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.model;
+package kz.ne.railways.tezcustoms.service.model.preliminary_information;
 
 public class ContainerData {
     private Long containerListUn;

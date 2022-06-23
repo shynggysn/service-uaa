@@ -22,4 +22,5 @@ public interface TnVedRepository extends JpaRepository<TnVed, Long> {
             "    select text from tnv_tree order by level ", nativeQuery = true)
     List<String> findTextListByCode(@Param("code") String code);
 
+    List<TnVed> findByParentId(Long parentId);
 }

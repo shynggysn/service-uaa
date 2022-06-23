@@ -2,6 +2,7 @@ package kz.ne.railways.tezcustoms.service.service.impl;
 
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
 import kz.ne.railways.tezcustoms.service.model.*;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.*;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
 import kz.ne.railways.tezcustoms.service.service.ForDataService;
 import kz.ne.railways.tezcustoms.service.service.bean.PrevInfoBeanDAOLocal;

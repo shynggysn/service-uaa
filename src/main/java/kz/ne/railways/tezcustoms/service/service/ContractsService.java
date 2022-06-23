@@ -1,8 +1,6 @@
 package kz.ne.railways.tezcustoms.service.service;
 
-import kz.ne.railways.tezcustoms.service.model.FormData;
-
-import java.io.IOException;
+import kz.ne.railways.tezcustoms.service.model.preliminary_information.FormData;
 
 public interface ContractsService {
 

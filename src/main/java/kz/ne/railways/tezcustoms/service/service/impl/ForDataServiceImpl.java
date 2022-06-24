@@ -1,9 +1,11 @@
 package kz.ne.railways.tezcustoms.service.service.impl;
 
 import kz.ne.railways.tezcustoms.service.entity.asudkr.*;
+import kz.ne.railways.tezcustoms.service.mapper.NeInvoiceMapper;
 import kz.ne.railways.tezcustoms.service.model.*;
 import kz.ne.railways.tezcustoms.service.model.preliminary_information.*;
 import kz.ne.railways.tezcustoms.service.model.transit_declaration.SaveDeclarationResponseType;
+import kz.ne.railways.tezcustoms.service.repository.asudkr.NeInvoiceDetailsRepository;
 import kz.ne.railways.tezcustoms.service.service.ForDataService;
 import kz.ne.railways.tezcustoms.service.service.bean.PrevInfoBeanDAOLocal;
 import kz.ne.railways.tezcustoms.service.util.PIHelper;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class ForDataServiceImpl implements ForDataService {
 
     private final PrevInfoBeanDAOLocal prevInfoBeanDAOLocal;
+    private final NeInvoiceDetailsRepository neInvoiceDetailsRepository;
     private final EntityManager entityManager;
 
     private static final Long NEW_INVOICE = -1L;
@@ -313,13 +316,14 @@ public class ForDataServiceImpl implements ForDataService {
         */
         if(formData.getInvoiceData() == null || formData.getInvoiceData().getInvoiceItems() == null)
             return;
+        Long invoiceId = (long) Integer.parseInt(formData.getInvoiceId());
 
         for (InvoiceRow invoiceRow: formData.getInvoiceData().getInvoiceItems()) {
             NeSmgsTnVed neTnved = new NeSmgsTnVed();
             neTnved.setBruttoWeight(invoiceRow.getBrutto());
             neTnved.setNettoWeight(invoiceRow.getNetto());
             neTnved.setCountByUnit(invoiceRow.getQuantity());
-            neTnved.setInvoiceUn((long) Integer.parseInt(formData.getInvoiceId()));
+            neTnved.setInvoiceUn(invoiceId);
             neTnved.setUnitName(invoiceRow.getUnit());
             neTnved.setPriceByOne(invoiceRow.getPrice());
             neTnved.setPriceByFull(invoiceRow.getTotalPrice());
@@ -335,7 +339,24 @@ public class ForDataServiceImpl implements ForDataService {
             if (cnt.intValue() == 0)
                 entityManager.persist(neTnved);
         }
+        saveInvoiceDetails(formData, invoiceId);
+     }
 
+    private void saveInvoiceDetails (FormData formData, Long invoiceId) {
+        NeInvoice neInvoice = NeInvoiceMapper.fromId(invoiceId);
+        NeInvoiceDetails neInvoiceDetails = new NeInvoiceDetails();
+        neInvoiceDetails.setNeInvoice(neInvoice);
+        neInvoiceDetails.setContainerIndicator(formData.getContainerIndicator());
+        neInvoiceDetails.setSpecificationNumber(formData.getSpecificationNumber());
+        neInvoiceDetails.setTotalSheetNumber(formData.getTotalSheetNumber());
+        neInvoiceDetails.setPrecedingDocumentNumber(formData.getPrecedingDocumentNumber());
+        neInvoiceDetails.setTransportMeans(formData.getTransportMeans());
+        neInvoiceDetails.setReloadPlaceAndCountry(formData.getReloadPlaceAndCountry());
+        neInvoiceDetails.setReloadContainerNumber(formData.getReloadContainerNumber());
+        neInvoiceDetails.setTransportMeansNationalityCode(formData.getTransportMeansNationalityCode());
+        neInvoiceDetails.setGuaranteeDocNumber(formData.getGuaranteeDocNumber());
+        neInvoiceDetails.setGuaranteeMeasureCode(formData.getGuaranteeMeasureCode());
+        neInvoiceDetailsRepository.save(neInvoiceDetails);
     }
 
     @Override

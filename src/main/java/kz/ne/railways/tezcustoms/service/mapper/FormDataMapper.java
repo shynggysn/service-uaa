@@ -174,8 +174,6 @@ public class FormDataMapper {
     private ContainerDatas containerDatas;
     private List<VagonItem> vagonList = new ArrayList<VagonItem>();
 
-
-
     public void addContainer(ContainerData container) {
         containers.add(container);
     }

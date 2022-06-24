@@ -1,6 +1,5 @@
 package kz.ne.railways.tezcustoms.service.entity.asudkr;
 
-import kz.ne.railways.tezcustoms.service.entity.User;
 import lombok.Data;
 
 import javax.persistence.*;

@@ -344,7 +344,7 @@ public class ForDataServiceImpl implements ForDataService {
 
     private void saveInvoiceDetails (FormData formData, Long invoiceId) {
         NeInvoice neInvoice = NeInvoiceMapper.fromId(invoiceId);
-        NeInvoiceDetails neInvoiceDetails = new NeInvoiceDetails();
+        NeInvoiceDetails neInvoiceDetails = neInvoiceDetailsRepository.findByNeInvoice(neInvoice).orElse(new NeInvoiceDetails());
         neInvoiceDetails.setNeInvoice(neInvoice);
         neInvoiceDetails.setContainerIndicator(formData.getContainerIndicator());
         neInvoiceDetails.setSpecificationNumber(formData.getSpecificationNumber());

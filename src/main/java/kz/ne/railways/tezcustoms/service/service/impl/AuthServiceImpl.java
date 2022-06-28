@@ -60,8 +60,10 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final SftpService fileserver;
-    @Value("${server.redirectUrl}")
-    private String url;
+    @Value("${server.redirectUrl1}")
+    private String emailActivationUrl;
+    @Value("${server.redirectUrl2}")
+    private String passwordResetUrl;
 
     @Override
     public void createUser (SignupRequest signUpRequest, MultipartFile file) {
@@ -138,7 +140,7 @@ public class AuthServiceImpl implements AuthService {
         RedirectView redirectView = new RedirectView();
         User user = userRepository.findOneByActivationKey(key);
         if (user == null) {
-            redirectView.setUrl(url + "3");
+            redirectView.setUrl(emailActivationUrl + "3");
             return redirectView;
             //new FLCException(Errors.EMAIL_IS_ACTIVATED, LocaleUtils.getDefaultBundle("activation.key.time2")));
         }
@@ -146,7 +148,7 @@ public class AuthServiceImpl implements AuthService {
             setActivationKey(user);
             userRepository.save(user);
             mailService.sendActivationEmail(user);
-            redirectView.setUrl(url + "2");
+            redirectView.setUrl(emailActivationUrl + "2");
             return redirectView;
             //return new MessageResponse(Errors.ACTIVATION_CODE_IS_EXPIRED, LocaleUtils.getDefaultBundle("activation.key.time0"));
         }
@@ -154,7 +156,7 @@ public class AuthServiceImpl implements AuthService {
         user.setActivationKey(null);
         user.setActivationKeyDate(null);
         userRepository.save(user);
-        redirectView.setUrl(url + "1");
+        redirectView.setUrl(emailActivationUrl + "1");
         return redirectView;
         //return new MessageResponse(LocaleUtils.getDefaultBundle("activation.key.time1"));
     }
@@ -196,12 +198,48 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void requestPasswordReset (String email) {
+    public void requestPasswordReset(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new FLCException(Errors.EMAIL_NOT_FOUND));
+        saveAndSendPasswordResetKey(user);
+    }
+
+    private void saveAndSendPasswordResetKey(User user) {
         setPasswordResetKey(user);
         userRepository.save(user);
         mailService.sendPasswordResetMail(user);
+    }
+
+    @Override
+    public RedirectView redirectPasswordReset(String key) {
+        RedirectView redirectView = new RedirectView();
+        String keyParam = "&key=";
+        User user = userRepository.findByPasswordResetKey(key);
+        if (user == null) {
+            redirectView.setUrl(passwordResetUrl + "3");
+            return redirectView;
+        }
+        if (user.getPasswordResetKeyDate().before(Timestamp.from(Instant.now()))) {
+            redirectView.setUrl(passwordResetUrl + "2");
+            return redirectView;
+        }
+        redirectView.setUrl(passwordResetUrl + "1" + keyParam + key);
+        return redirectView;
+    }
+
+    @Override
+    public void resetPassword(String key, String password) {
+        User user = userRepository.findByPasswordResetKey(key);
+        if (user == null) {
+            throw new FLCException(Errors.INVALID_PASSWORD_RESET_KEY);
+        }
+        if (user.getPasswordResetKeyDate().before(Timestamp.from(Instant.now()))) {
+            throw new FLCException(Errors.PASSWORD_RESET_KEY_IS_EXPIRED);
+        }
+        user.setPasswordResetKey(null);
+        user.setPasswordResetKeyDate(null);
+        user.setPassword(encoder.encode(password));
+        userRepository.save(user);
     }
 
 }

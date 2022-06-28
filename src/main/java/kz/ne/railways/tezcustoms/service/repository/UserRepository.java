@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailAndEmailActivatedTrue(String email);
 
+    User findByPasswordResetKey(String passwordResetKey);
+
 }

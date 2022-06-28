@@ -11,4 +11,6 @@ public interface MailService {
 
         void sendActivationChangedEmail(User user);
 
+        void sendPasswordResetMail(User user);
+
 }

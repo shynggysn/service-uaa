@@ -23,12 +23,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         System.out.println("loadUserByUsername " + email);
         User user = userRepository.findByEmail(email)
                         .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
-        //
-        // BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        // User user = new User();
-        // user.setPassword(passwordEncoder.encode("12345"));
-        // user.setId(1L);
-        // user.setEmail(email);
         return UserDetailsImpl.build(user);
     }
 }

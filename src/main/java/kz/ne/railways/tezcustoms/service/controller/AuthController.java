@@ -16,7 +16,6 @@ import kz.ne.railways.tezcustoms.service.service.ForDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
@@ -31,7 +30,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final PasswordEncoder encoder;
     private final ForDataService forDataService;
     private final EcpService ecpService;
     private final AuthService authService;
@@ -43,8 +41,6 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content)})
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws FLCException {
-        log.info("request password: " + loginRequest.getPassword());
-        log.info("encoded password: " + encoder.encode(loginRequest.getPassword()));
         return ResponseEntity.ok(authService.authenticateUser(loginRequest));
     }
 

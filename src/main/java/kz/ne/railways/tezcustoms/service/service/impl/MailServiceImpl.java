@@ -89,5 +89,11 @@ public class MailServiceImpl implements MailService {
         sendEmailFromTemplate(user, "activationEmail", "email.activation.title");
     }
 
+    @Async
+    @Override
+    public void sendActivationChangedEmail(User user) {
+        log.debug("Sending activation email to '{}'", user.getEmail());
+        sendEmailFromTemplate(user, "changeEmail", "email.activation.title");
+    }
 
 }

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.service.exception.FLCException;
+import kz.ne.railways.tezcustoms.service.payload.request.ForgotPasswordRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
@@ -87,5 +88,11 @@ public class AuthController {
         } catch (Exception exception) {
             throw new FLCException(exception.getMessage());
         }
+    }
+
+    @PostMapping("/resetPassword/request")
+    public ResponseEntity<?> requestResetPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        authService.requestPasswordReset(forgotPasswordRequest.getEmail());
+        return ResponseEntity.ok("email was sent");
     }
 }

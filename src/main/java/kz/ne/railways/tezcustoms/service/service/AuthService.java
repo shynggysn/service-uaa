@@ -19,4 +19,6 @@ public interface AuthService {
 
     BinResponse getCompanyByBin(String bin) throws IOException;
 
+    void requestPasswordReset(String email);
+
 }

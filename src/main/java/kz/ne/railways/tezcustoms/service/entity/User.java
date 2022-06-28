@@ -98,6 +98,20 @@ public class User implements Serializable {
     @Column(name = "activation_key_date")
     private Timestamp activationKeyDate;
 
+    /**
+     * Код для сброса пароля
+     */
+    @Size(max = 20)
+    @Column(name = "password_reset_key", length = 20)
+    @JsonIgnore
+    private String passwordResetKey;
+
+    /**
+     * Срок кода для сброса пароля
+     */
+    @Column(name = "password_reset_key_date")
+    private Timestamp passwordResetKeyDate;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", schema = "TEZ",
                     joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

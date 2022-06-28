@@ -188,4 +188,20 @@ public class AuthServiceImpl implements AuthService {
         user.setActivationKeyDate(Timestamp.valueOf(tomorrow));
     }
 
+    private void setPasswordResetKey (User user) {
+        user.setPasswordResetKey(RandomUtil.generateActivationKey());
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime tomorrow = today.plusMinutes(10);
+        user.setPasswordResetKeyDate(Timestamp.valueOf(tomorrow));
+    }
+
+    @Override
+    public void requestPasswordReset (String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new FLCException(Errors.EMAIL_NOT_FOUND));
+        setPasswordResetKey(user);
+        userRepository.save(user);
+        mailService.sendPasswordResetMail(user);
+    }
+
 }

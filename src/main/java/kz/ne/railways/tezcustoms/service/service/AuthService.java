@@ -24,4 +24,9 @@ public interface AuthService {
 
     void setActivationKey (User user);
 
+    void requestPasswordReset(String email);
+
+    RedirectView redirectPasswordReset(String key);
+
+    void resetPassword(String key, String password);
 }

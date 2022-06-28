@@ -9,4 +9,6 @@ public interface MailService {
 
         void sendActivationEmail(User user);
 
+        void sendActivationChangedEmail(User user);
+
 }

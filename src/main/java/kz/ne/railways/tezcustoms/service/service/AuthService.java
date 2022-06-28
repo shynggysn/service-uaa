@@ -1,5 +1,8 @@
 package kz.ne.railways.tezcustoms.service.service;
 
+import kz.ne.railways.tezcustoms.service.entity.Company;
+import kz.ne.railways.tezcustoms.service.entity.User;
+import kz.ne.railways.tezcustoms.service.exception.FLCException;
 import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
 import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
@@ -17,6 +20,8 @@ public interface AuthService {
 
     RedirectView activateEmail (String key);
 
-    BinResponse getCompanyByBin(String bin) throws IOException;
+    BinResponse getCompanyByBin(String bin) throws FLCException;
+
+    void setActivationKey (User user);
 
 }

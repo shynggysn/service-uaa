@@ -19,7 +19,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/")
+    @GetMapping
     public User getUser(){
         return userService.getUser();
     }

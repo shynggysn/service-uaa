@@ -15,4 +15,8 @@ public interface DictionaryService {
     List<SimpleResponse> getTransitDirectionCodes();
 
     List<TnVed> getTnVedCodes(Long parentId);
+
+    List<TnVed> getSearchResults(String query);
+
+    List<TnVed> getTree(Long id);
 }

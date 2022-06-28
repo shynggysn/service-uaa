@@ -23,4 +23,21 @@ public interface TnVedRepository extends JpaRepository<TnVed, Long> {
     List<String> findTextListByCode(@Param("code") String code);
 
     List<TnVed> findByParentId(Long parentId);
+
+
+    @Query("select t from TnVed t where t.code like %:query% or t.text like %:query%")
+    List<TnVed> findAllByQuery(@Param("query") String query);
+
+    @Query(value = "WITH RECURSIVE tnv_tree AS" +
+            "    (select *" +
+            "       from tez.tn_ved" +
+            "      where tn_ved.id = :id" +
+            "     UNION ALL" +
+            "     select tv.*" +
+            "       from tez.tn_ved tv" +
+            "       JOIN tnv_tree t ON t.parent_id = tv.id)" +
+            "    select * from tnv_tree order by level ", nativeQuery = true)
+    List<TnVed> getTreeById(@Param("id") Long id);
+
+
 }

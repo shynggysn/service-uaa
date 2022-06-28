@@ -8,10 +8,7 @@ import kz.ne.railways.tezcustoms.service.payload.response.*;
 import kz.ne.railways.tezcustoms.service.service.DictionaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -58,9 +55,21 @@ public class DictionaryController {
         throw new FLCException(Errors.TRANSIT_CODE_NOT_FOUND);
     }
 
-    @Operation(summary = "Get transit direction code")
+    @Operation(summary = "Get level below goods by parent id")
     @GetMapping("/tnved")
     public ResponseEntity<List<TnVed>> getTnVedCodes(@RequestParam(required = false) Long parentId){
         return ResponseEntity.ok(dictionaryService.getTnVedCodes(parentId));
+    }
+
+    @Operation(summary = "Search goods by tnved codes or text")
+    @GetMapping("/tnved-search")
+    public ResponseEntity<List<TnVed>> searchTnved(@RequestParam(required = false) String query){
+        return ResponseEntity.ok(dictionaryService.getSearchResults(query));
+    }
+
+    @Operation(summary = "Returns a tnved tree for particular good")
+    @GetMapping("/tnved/{id}/tree")
+    public ResponseEntity<List<TnVed>> getTree(@PathVariable Long id){
+        return ResponseEntity.ok(dictionaryService.getTree(id));
     }
 }

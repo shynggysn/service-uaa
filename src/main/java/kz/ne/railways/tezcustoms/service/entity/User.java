@@ -60,10 +60,12 @@ public class User implements Serializable {
     @Size(max = 50)
     private String middleName;
 
+    @JsonIgnore
     @Column(name = "created_date")
     @CreatedDate
     private Date createdDate;
 
+    @JsonIgnore
     @Column(name = "last_modified_date")
     @LastModifiedDate
     private Date lastModifiedDate;
@@ -75,12 +77,14 @@ public class User implements Serializable {
     /**
      * Учетка активирована
      */
+    @JsonIgnore
     @Column(name = "activated", nullable = false)
     private boolean activated = false;
 
     /**
      * E-mail активирован
      */
+    @JsonIgnore
     @Column(name = "email_activated", nullable = false)
     private boolean emailActivated = false;
 
@@ -95,6 +99,7 @@ public class User implements Serializable {
     /**
      * Срок кода активации
      */
+    @JsonIgnore
     @Column(name = "activation_key_date")
     private Timestamp activationKeyDate;
 

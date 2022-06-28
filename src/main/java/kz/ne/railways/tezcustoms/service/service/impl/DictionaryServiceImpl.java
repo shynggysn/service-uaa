@@ -176,19 +176,13 @@ public class DictionaryServiceImpl implements DictionaryService {
         return tnVedRepository.findByParentId(parentId);
     }
 
-//    public DataDao<DicDao> getVagonCountryList(String name) {
-//        String sql = "select m.manag_un, c.COUNTRY_NAME from nsi.MANAGEMENT as m join nsi.COUNTRY as c on m.cou_un =c.cou_un where m.manag_end > CURRENT_TIMESTAMP";
-//        if(name!=null){
-//            sql+=(" and c.COUNTRY_NAME like UCASE('"+name+"%')");
-//        }
-//        Query q = em.createNativeQuery(sql);
-//        List<Object[]> result = q.getResultList();
-//        DataDao<DicDao> list = new DataDao<DicDao>();
-//        for(Object[] country : result) {
-//            list.addRow(new DicDao(((BigInteger)country[0]).longValue(),(String)country[1]));
-//        }
-//        list.setSuccess(true);
-//        return list;
-//    }
+    @Override
+    public List<TnVed> getSearchResults(String query) {
+        return tnVedRepository.findAllByQuery(query);
+    }
 
+    @Override
+    public List<TnVed> getTree(Long id) {
+        return tnVedRepository.getTreeById(id);
+    }
 }

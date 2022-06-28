@@ -65,6 +65,8 @@ public class AuthServiceImpl implements AuthService {
     @Value("${server.redirectUrl2}")
     private String passwordResetUrl;
 
+    @Value("${stat.gov.kz}")
+    private String statGovKz;
     @Override
     public void createUser (SignupRequest signUpRequest, MultipartFile file) {
         // TODO check iin after eds validation added
@@ -142,7 +144,6 @@ public class AuthServiceImpl implements AuthService {
         if (user == null) {
             redirectView.setUrl(emailActivationUrl + "3");
             return redirectView;
-            //new FLCException(Errors.EMAIL_IS_ACTIVATED, LocaleUtils.getDefaultBundle("activation.key.time2")));
         }
         if (user.getActivationKeyDate().before(Timestamp.from(Instant.now()))) {
             setActivationKey(user);
@@ -150,7 +151,6 @@ public class AuthServiceImpl implements AuthService {
             mailService.sendActivationEmail(user);
             redirectView.setUrl(emailActivationUrl + "2");
             return redirectView;
-            //return new MessageResponse(Errors.ACTIVATION_CODE_IS_EXPIRED, LocaleUtils.getDefaultBundle("activation.key.time0"));
         }
         user.setEmailActivated(true);
         user.setActivationKey(null);
@@ -158,36 +158,40 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
         redirectView.setUrl(emailActivationUrl + "1");
         return redirectView;
-        //return new MessageResponse(LocaleUtils.getDefaultBundle("activation.key.time1"));
     }
 
     @Override
-    public BinResponse getCompanyByBin(String bin) throws IOException {
-        String formatUrl = String.format("https://stat.gov.kz/api/juridical/counter/api/?bin=%s&lang=ru", bin);
-        URL url = new URL(formatUrl);
+    public BinResponse getCompanyByBin(String bin) throws FLCException {
+        return getCompanyDetails(bin);
+    }
+
+    @Override
+    public void setActivationKey (User user) {
+        user.setActivationKey(RandomUtil.generateActivationKey());
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime tomorrow = today.plusDays(1);
+        user.setActivationKeyDate(Timestamp.valueOf(tomorrow));
+    }
+
+    public BinResponse getCompanyDetails(String bin) throws FLCException {
+        String formatUrl = String.format(statGovKz, bin);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> map = null;
+
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            log.info("Bin response: \n");
-            Map<String, Object> map = objectMapper.readValue(url, new TypeReference<HashMap<String, Object>>() {});
-            log.info("map: " + map);
-            if (map.get("obj") == null) {
-                throw new FLCException(Errors.COMPANY_NOT_FOUND_BY_BIN);
-            }
-            BinResponse binResponse = new BinResponse((HashMap<String, String>) map.get("obj"));
-            log.info(String.valueOf(binResponse));
-            return binResponse;
+            URL url = new URL(formatUrl);
+            map = objectMapper.readValue(url, new TypeReference<HashMap<String, Object>>() {});
         } catch (IOException e) {
             throw new FLCException(Errors.SERVICE_IS_UNAVAILABLE, e.getMessage());
         } catch (Exception e) {
             throw new FLCException(e.getMessage());
         }
-    }
 
-    private void setActivationKey (User user) {
-        user.setActivationKey(RandomUtil.generateActivationKey());
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime tomorrow = today.plusDays(1);
-        user.setActivationKeyDate(Timestamp.valueOf(tomorrow));
+        if (map.get("obj") == null) {
+            throw new FLCException(Errors.COMPANY_NOT_FOUND_BY_BIN);
+        }
+
+        return new BinResponse((HashMap<String, String>) map.get("obj"));
     }
 
     private void setPasswordResetKey (User user) {

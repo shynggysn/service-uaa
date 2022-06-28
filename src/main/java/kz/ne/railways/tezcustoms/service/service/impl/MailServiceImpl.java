@@ -91,6 +91,13 @@ public class MailServiceImpl implements MailService {
 
     @Async
     @Override
+    public void sendActivationChangedEmail(User user) {
+        log.debug("Sending activation email to '{}'", user.getEmail());
+        sendEmailFromTemplate(user, "changeEmail", "email.activation.title");
+    }
+
+    @Async
+    @Override
     public void sendPasswordResetMail(User user) {
         log.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "passwordResetEmail", "email.reset.title");

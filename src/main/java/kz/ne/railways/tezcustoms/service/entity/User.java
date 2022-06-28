@@ -31,11 +31,11 @@ public class User implements Serializable {
     @Email
     private String email;
 
+    @JsonIgnore
     @NotBlank
     @Size(max = 120)
     private String password;
 
-//    @NotBlank
     @Column(name = "iin")
     @Size(max = 12)
     private String iin;

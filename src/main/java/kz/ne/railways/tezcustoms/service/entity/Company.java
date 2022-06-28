@@ -1,12 +1,13 @@
 package kz.ne.railways.tezcustoms.service.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @Entity
 @Data
 @Table(name = "company", uniqueConstraints = {@UniqueConstraint(columnNames = "identifier")}, schema = "tez")

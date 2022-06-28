@@ -79,9 +79,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Company updateCompany(String companyId) {
-        BinResponse companyUpdatedInfo = authService.getCompanyByBin(companyId);
-        Company company = companyRepository.findOneByIdentifier(companyId);
+    public Company updateCompany(String identifier) {
+        BinResponse companyUpdatedInfo = authService.getCompanyByBin(identifier);
+        Company company = companyRepository.findOneByIdentifier(identifier);
 
         company.setName(companyUpdatedInfo.getOrganizationName());
         company.setDirectorName(companyUpdatedInfo.getFio());

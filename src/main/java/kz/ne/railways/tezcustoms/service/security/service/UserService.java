@@ -18,7 +18,7 @@ public interface UserService extends UserDetailsService {
 
     void updatePassword(User user);
 
-    Company updateCompany(String companyId);
+    Company updateCompany(String identifier);
 
     User updateUser(User user, String newEmail);
 

@@ -72,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
 //        if (userRepository.existsByIin(signUpRequest.getIinBin())) {
 //            throw new FLCException(Errors.IIN_TAKEN);
 //        }
-            if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new FLCException(Errors.EMAIL_IN_USE);
         }
         Set<ERole> strRoles = signUpRequest.getRoles();

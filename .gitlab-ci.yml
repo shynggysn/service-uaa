@@ -10,9 +10,8 @@ building-tez-service:
     - dev
   script:
     - mvn clean package
-    - sudo /root/TezCustoms/scripts/deploy_service.sh
-#    - curl "https://api.telegram.org/bot5576851566:AAE3yAb0b7Rd5mGFw2_mIiZpGdAR4s-FShE/sendMessage?chat_id=-674806486&text=Service+build+is+successful+✅"
-    
+    - sudo /root/TezCustoms/scripts/deploy_uaa.sh
+
 error-test:
   stage: error
   only:
@@ -21,5 +20,4 @@ error-test:
     - dev36
   script:
     - echo "Error"
-#    - curl "https://api.telegram.org/bot5576851566:AAE3yAb0b7Rd5mGFw2_mIiZpGdAR4s-FShE/sendMessage?chat_id=-674806486&text=Service+build+is+failed+🆘"
   when: on_failure

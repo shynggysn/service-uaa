@@ -1,16 +1,13 @@
 package kz.ne.railways.tezcustoms.service.service;
 
-import kz.ne.railways.tezcustoms.service.entity.Company;
-import kz.ne.railways.tezcustoms.service.entity.User;
-import kz.ne.railways.tezcustoms.service.exception.FLCException;
-import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
-import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
-import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.JwtResponse;
+import kz.ne.railways.tezcustoms.common.entity.User;
+import kz.ne.railways.tezcustoms.common.exception.FLCException;
+import kz.ne.railways.tezcustoms.common.payload.request.LoginRequest;
+import kz.ne.railways.tezcustoms.common.payload.request.SignupRequest;
+import kz.ne.railways.tezcustoms.common.payload.response.BinResponse;
+import kz.ne.railways.tezcustoms.common.payload.response.JwtResponse;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
-
-import java.io.IOException;
 
 public interface AuthService {
 

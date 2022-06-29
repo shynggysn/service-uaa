@@ -2,25 +2,25 @@ package kz.ne.railways.tezcustoms.service.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kz.ne.railways.tezcustoms.service.constants.errors.Errors;
-import kz.ne.railways.tezcustoms.service.entity.Company;
-import kz.ne.railways.tezcustoms.service.entity.Role;
-import kz.ne.railways.tezcustoms.service.entity.User;
-import kz.ne.railways.tezcustoms.service.exception.FLCException;
-import kz.ne.railways.tezcustoms.service.model.ERole;
-import kz.ne.railways.tezcustoms.service.payload.request.LoginRequest;
-import kz.ne.railways.tezcustoms.service.payload.request.SignupRequest;
-import kz.ne.railways.tezcustoms.service.payload.response.BinResponse;
-import kz.ne.railways.tezcustoms.service.payload.response.JwtResponse;
-import kz.ne.railways.tezcustoms.service.repository.CompanyRepository;
-import kz.ne.railways.tezcustoms.service.repository.RoleRepository;
-import kz.ne.railways.tezcustoms.service.repository.UserRepository;
-import kz.ne.railways.tezcustoms.service.security.jwt.JwtUtils;
-import kz.ne.railways.tezcustoms.service.security.service.impl.UserDetailsImpl;
-import kz.ne.railways.tezcustoms.service.service.MailService;
+import kz.ne.railways.tezcustoms.common.constants.errors.Errors;
+import kz.ne.railways.tezcustoms.common.entity.Company;
+import kz.ne.railways.tezcustoms.common.entity.Role;
+import kz.ne.railways.tezcustoms.common.entity.User;
+import kz.ne.railways.tezcustoms.common.exception.FLCException;
+import kz.ne.railways.tezcustoms.common.model.ERole;
+import kz.ne.railways.tezcustoms.common.payload.request.LoginRequest;
+import kz.ne.railways.tezcustoms.common.payload.request.SignupRequest;
+import kz.ne.railways.tezcustoms.common.payload.response.BinResponse;
+import kz.ne.railways.tezcustoms.common.payload.response.JwtResponse;
+import kz.ne.railways.tezcustoms.common.repository.CompanyRepository;
+import kz.ne.railways.tezcustoms.common.repository.RoleRepository;
+import kz.ne.railways.tezcustoms.common.repository.UserRepository;
+import kz.ne.railways.tezcustoms.common.security.jwt.JwtUtils;
+import kz.ne.railways.tezcustoms.common.security.service.impl.UserDetailsImpl;
+import kz.ne.railways.tezcustoms.common.service.MailService;
+import kz.ne.railways.tezcustoms.common.service.SftpService;
 import kz.ne.railways.tezcustoms.service.service.AuthService;
-import kz.ne.railways.tezcustoms.service.service.SftpService;
-import kz.ne.railways.tezcustoms.service.util.RandomUtil;
+import kz.ne.railways.tezcustoms.common.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,6 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Value("${stat.gov.kz}")
     private String statGovKz;
+
     @Override
     public void createUser (SignupRequest signUpRequest, MultipartFile file) {
         // TODO check iin after eds validation added
@@ -176,7 +177,7 @@ public class AuthServiceImpl implements AuthService {
     public BinResponse getCompanyDetails(String bin) throws FLCException {
         String formatUrl = String.format(statGovKz, bin);
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> map = null;
+        Map<String, Object> map;
 
         try {
             URL url = new URL(formatUrl);

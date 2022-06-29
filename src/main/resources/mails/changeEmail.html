@@ -12,7 +12,7 @@
 
     <p>
         <a th:href="@{|http://${baseUrl}/api/service/auth/activate?key=${user.activationKey}|}"
-           th:text="@{|http://${baseUrl}/api/service/user/activate?key=${user.activationKey}|}">Activation Link</a>
+           th:text="@{|http://${baseUrl}/api/service/auth/activate?key=${user.activationKey}|}">Activation Link</a>
     </p>
 
     <p th:text="#{email.activation.text2}"> Expire time 24 hours </p>

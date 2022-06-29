@@ -1,6 +1,6 @@
 package kz.ne.railways.tezcustoms.service.config;
 
-import kz.ne.railways.tezcustoms.service.security.AuditorAwareImpl;
+import kz.ne.railways.tezcustoms.common.security.AuditorAwareImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;

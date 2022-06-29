@@ -36,9 +36,6 @@ public class UserServiceImpl implements UserService {
     private final CompanyRepository companyRepository;
     private final MailService mailService;
 
-    @Value("${server.redirectUrl1}")
-    private String url;
-
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
                     RoleRepository roleRepository, AuthService authService, CompanyRepository companyRepository, MailService mailService) {

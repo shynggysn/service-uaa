@@ -8,8 +8,11 @@ import kz.ne.railways.tezcustoms.service.payload.response.*;
 import kz.ne.railways.tezcustoms.service.service.DictionaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @RestController
@@ -63,7 +66,7 @@ public class DictionaryController {
 
     @Operation(summary = "Search goods by tnved codes or text")
     @GetMapping("/tnved-search")
-    public ResponseEntity<List<TnVed>> searchTnved(@RequestParam(required = false) String query){
+    public ResponseEntity<List<TnVed>> searchTnved(@RequestParam String query){
         return ResponseEntity.ok(dictionaryService.getSearchResults(query));
     }
 

@@ -2,7 +2,7 @@ stages:
   - build
   - error
 
-building-tez-service:
+building-tez-uaa:
   stage: build
   tags:
     - dev36

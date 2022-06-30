@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.config;
+package kz.ne.railways.tezcustoms.uaa.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

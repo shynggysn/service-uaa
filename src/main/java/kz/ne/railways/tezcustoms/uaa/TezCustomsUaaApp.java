@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service;
+package kz.ne.railways.tezcustoms.uaa;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;

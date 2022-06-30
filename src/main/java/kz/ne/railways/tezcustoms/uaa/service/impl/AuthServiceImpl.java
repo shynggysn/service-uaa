@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.service.impl;
+package kz.ne.railways.tezcustoms.uaa.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,7 @@ import kz.ne.railways.tezcustoms.common.security.jwt.JwtUtils;
 import kz.ne.railways.tezcustoms.common.security.service.impl.UserDetailsImpl;
 import kz.ne.railways.tezcustoms.common.service.MailService;
 import kz.ne.railways.tezcustoms.common.service.SftpService;
-import kz.ne.railways.tezcustoms.service.service.AuthService;
+import kz.ne.railways.tezcustoms.uaa.service.AuthService;
 import kz.ne.railways.tezcustoms.common.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

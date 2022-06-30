@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.config;
+package kz.ne.railways.tezcustoms.uaa.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,8 @@
-package kz.ne.railways.tezcustoms.service.controller;
+package kz.ne.railways.tezcustoms.uaa.controller;
 
 import kz.ne.railways.tezcustoms.common.entity.Company;
 import kz.ne.railways.tezcustoms.common.entity.User;
-import kz.ne.railways.tezcustoms.service.service.UserService;
+import kz.ne.railways.tezcustoms.uaa.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

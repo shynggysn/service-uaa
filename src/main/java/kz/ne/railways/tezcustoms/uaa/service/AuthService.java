@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.service;
+package kz.ne.railways.tezcustoms.uaa.service;
 
 import kz.ne.railways.tezcustoms.common.entity.User;
 import kz.ne.railways.tezcustoms.common.exception.FLCException;

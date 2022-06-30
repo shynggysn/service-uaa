@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.config;
+package kz.ne.railways.tezcustoms.uaa.config;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.config;
+package kz.ne.railways.tezcustoms.uaa.config;
 
 import kz.ne.railways.tezcustoms.common.security.AuditorAwareImpl;
 import org.springframework.context.annotation.Bean;

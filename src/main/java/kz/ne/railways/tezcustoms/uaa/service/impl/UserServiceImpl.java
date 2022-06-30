@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.service.impl;
+package kz.ne.railways.tezcustoms.uaa.service.impl;
 
 import kz.ne.railways.tezcustoms.common.constants.errors.Errors;
 import kz.ne.railways.tezcustoms.common.entity.Company;
@@ -7,8 +7,8 @@ import kz.ne.railways.tezcustoms.common.exception.FLCException;
 import kz.ne.railways.tezcustoms.common.payload.response.BinResponse;
 import kz.ne.railways.tezcustoms.common.repository.CompanyRepository;
 import kz.ne.railways.tezcustoms.common.repository.UserRepository;
-import kz.ne.railways.tezcustoms.service.service.UserService;
-import kz.ne.railways.tezcustoms.service.service.AuthService;
+import kz.ne.railways.tezcustoms.uaa.service.UserService;
+import kz.ne.railways.tezcustoms.uaa.service.AuthService;
 import kz.ne.railways.tezcustoms.common.service.MailService;
 import kz.ne.railways.tezcustoms.common.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;

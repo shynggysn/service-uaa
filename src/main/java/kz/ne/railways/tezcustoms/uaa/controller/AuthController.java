@@ -1,4 +1,4 @@
-package kz.ne.railways.tezcustoms.service.controller;
+package kz.ne.railways.tezcustoms.uaa.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,7 +11,7 @@ import kz.ne.railways.tezcustoms.common.payload.request.ResetPasswordRequest;
 import kz.ne.railways.tezcustoms.common.payload.request.SignupRequest;
 import kz.ne.railways.tezcustoms.common.payload.response.BinResponse;
 import kz.ne.railways.tezcustoms.common.payload.response.MessageResponse;
-import kz.ne.railways.tezcustoms.service.service.AuthService;
+import kz.ne.railways.tezcustoms.uaa.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

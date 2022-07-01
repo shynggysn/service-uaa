@@ -7,7 +7,10 @@ import kz.ne.railways.tezcustoms.common.entity.Company;
 import kz.ne.railways.tezcustoms.common.entity.Role;
 import kz.ne.railways.tezcustoms.common.entity.User;
 import kz.ne.railways.tezcustoms.common.exception.FLCException;
+import kz.ne.railways.tezcustoms.common.model.EDS.VerificationResult;
+import kz.ne.railways.tezcustoms.common.model.EDSResponse;
 import kz.ne.railways.tezcustoms.common.model.ERole;
+import kz.ne.railways.tezcustoms.common.payload.request.EDSRequest;
 import kz.ne.railways.tezcustoms.common.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.common.payload.request.SignupRequest;
 import kz.ne.railways.tezcustoms.common.payload.response.BinResponse;
@@ -21,6 +24,7 @@ import kz.ne.railways.tezcustoms.common.service.MailService;
 import kz.ne.railways.tezcustoms.common.service.SftpService;
 import kz.ne.railways.tezcustoms.uaa.service.AuthService;
 import kz.ne.railways.tezcustoms.common.util.RandomUtil;
+import kz.ne.railways.tezcustoms.common.service.EdsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +64,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final SftpService fileserver;
+    private final EdsService edsService;
     @Value("${server.redirectUrl1}")
     private String emailActivationUrl;
     @Value("${server.redirectUrl2}")
@@ -70,10 +75,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void createUser (SignupRequest signUpRequest, MultipartFile file) {
-        // TODO check iin after eds validation added
-//        if (userRepository.existsByIin(signUpRequest.getIinBin())) {
-//            throw new FLCException(Errors.IIN_TAKEN);
-//        }
+        EDSRequest request = new EDSRequest();
+        request.setData(signUpRequest.getXmlData());
+        EDSResponse eds = edsService.edsValidation(request);
+        if (eds.getResult() != VerificationResult.SUCCESS) {
+            String edsError = "result:" + eds.getResult() + " errorMessage:" + eds.getErrorMessage();
+            throw new FLCException(Errors.INVALID_SIGNATURE, edsError);
+        }
+        User user = userRepository.findByIin(eds.getSubjectInfo().getIin());
+        if (user != null) {
+            if (user.isEmailActivated())
+                throw new FLCException(Errors.USER_EXISTS);
+            else
+                throw new FLCException(Errors.NOT_ACTIVATED_USER_FOUND);
+        }
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new FLCException(Errors.EMAIL_IN_USE);
         }
@@ -84,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
 
         Company company = findUserCompany(signUpRequest);
         String filepath = fileserver.sendRegistrationDoc(file, signUpRequest.getIinBin());
-        newUser(signUpRequest, company, filepath);
+        newUser(signUpRequest, company, filepath, eds);
     }
 
     Company findUserCompany(SignupRequest user){
@@ -100,17 +115,22 @@ public class AuthServiceImpl implements AuthService {
             }
             companyRepository.save(company);
         }
-        return  company;
+        return company;
     }
 
-    private void newUser(SignupRequest signUpRequest, Company company, String filepath) {
+    private void newUser(SignupRequest signUpRequest, Company company, String filepath, EDSResponse eds) {
+        Set<Role> roles = roleRepository.findByNameIn(signUpRequest.getRoles());
+        String[] commonName = eds.getSubjectInfo().getCommonName().split(" ");
         User user = new User(
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getPhone()
+                eds.getSubjectInfo().getIin(),
+                signUpRequest.getPhone(),
+                commonName[1],
+                commonName[0]
         );
-
-        Set<Role> roles = roleRepository.findByNameIn(signUpRequest.getRoles());
+        if (eds.getSubjectInfo().getGivenName() != null)
+            user.setMiddleName(eds.getSubjectInfo().getGivenName());
         user.setCompany(company);
         setActivationKey(user);
         user.setRoles(roles);

@@ -80,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
         EDSResponse eds = edsService.edsValidation(request);
         if (eds.getResult() != VerificationResult.SUCCESS) {
             String edsError = "result:" + eds.getResult() + " errorMessage:" + eds.getErrorMessage();
-            throw new FLCException(Errors.INVALID_EDC, edsError);
+            throw new FLCException(Errors.INVALID_SIGNATURE, edsError);
         }
         User user = userRepository.findByIin(eds.getSubjectInfo().getIin());
         if (user != null) {

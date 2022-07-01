@@ -82,8 +82,12 @@ public class AuthServiceImpl implements AuthService {
             String edsError = "result:" + eds.getResult() + " errorMessage:" + eds.getErrorMessage();
             throw new FLCException(Errors.INVALID_EDC, edsError);
         }
-        if (userRepository.existsByIin(eds.getSubjectInfo().getIin())) {
-            throw new FLCException(Errors.IIN_TAKEN);
+        User user = userRepository.findByIin(eds.getSubjectInfo().getIin());
+        if (user != null) {
+            if (user.isEmailActivated())
+                throw new FLCException(Errors.USER_EXISTS);
+            else
+                throw new FLCException(Errors.NOT_ACTIVATED_USER_FOUND);
         }
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new FLCException(Errors.EMAIL_IN_USE);
@@ -111,23 +115,22 @@ public class AuthServiceImpl implements AuthService {
             }
             companyRepository.save(company);
         }
-        return  company;
+        return company;
     }
 
     private void newUser(SignupRequest signUpRequest, Company company, String filepath, EDSResponse eds) {
+        Set<Role> roles = roleRepository.findByNameIn(signUpRequest.getRoles());
+        String[] commonName = eds.getSubjectInfo().getCommonName().split(" ");
         User user = new User(
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getPhone()
+                eds.getSubjectInfo().getIin(),
+                signUpRequest.getPhone(),
+                commonName[1],
+                commonName[0]
         );
-
-        Set<Role> roles = roleRepository.findByNameIn(signUpRequest.getRoles());
-        String[] commonName = eds.getSubjectInfo().getCommonName().split(" ");
-        user.setLastName(commonName[0]);
-        user.setFirstName(commonName[1]);
         if (eds.getSubjectInfo().getGivenName() != null)
             user.setMiddleName(eds.getSubjectInfo().getGivenName());
-        user.setIin(eds.getSubjectInfo().getIin());
         user.setCompany(company);
         setActivationKey(user);
         user.setRoles(roles);

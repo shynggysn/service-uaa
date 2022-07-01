@@ -24,7 +24,7 @@ import kz.ne.railways.tezcustoms.common.service.MailService;
 import kz.ne.railways.tezcustoms.common.service.SftpService;
 import kz.ne.railways.tezcustoms.uaa.service.AuthService;
 import kz.ne.railways.tezcustoms.common.util.RandomUtil;
-import kz.ne.railways.tezcustoms.uaa.service.EDSService;
+import kz.ne.railways.tezcustoms.common.service.EdsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final SftpService fileserver;
-    private final EDSService edsService;
+    private final EdsService edsService;
     @Value("${server.redirectUrl1}")
     private String emailActivationUrl;
     @Value("${server.redirectUrl2}")

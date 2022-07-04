@@ -2,7 +2,7 @@ package kz.ne.railways.tezcustoms.uaa.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.RetryableException;
+import feign.FeignException;
 import kz.ne.railways.tezcustoms.common.constants.errors.Errors;
 import kz.ne.railways.tezcustoms.common.entity.Company;
 import kz.ne.railways.tezcustoms.common.entity.Role;
@@ -81,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
         EDSResponse eds;
         try {
             eds = edsService.edsValidation(request);
-        } catch (RetryableException e) {
+        } catch (FeignException e) {
             throw new FLCException(Errors.SERVICE_IS_UNAVAILABLE, e.getMessage());
         }
         if (eds.getResult() != VerificationResult.SUCCESS) {

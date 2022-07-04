@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             eds = edsService.edsValidation(request);
         } catch (FeignException e) {
-            throw new FLCException(Errors.SERVICE_IS_UNAVAILABLE, e.getMessage());
+            throw new FLCException("EDS_" + Errors.SERVICE_IS_UNAVAILABLE, e.getMessage());
         }
         if (eds.getResult() != VerificationResult.SUCCESS) {
             String edsError = "result:" + eds.getResult() + " errorMessage:" + eds.getErrorMessage();

@@ -11,8 +11,8 @@
     <p th:text="#{email.activation.text1}"></p>
 
     <p>
-        <a th:href="@{|http://${baseUrl}/api/service/auth/activate?key=${user.activationKey}|}"
-           th:text="@{|http://${baseUrl}/api/service/auth/activate?key=${user.activationKey}|}">Activation Link</a>
+        <a th:href="@{|http://${baseUrl}/api/uaa/auth/activate?key=${user.activationKey}|}"
+           th:text="@{|Ссылка для подтверждения почты|}">Activation Link</a>
     </p>
 
     <p th:text="#{email.activation.text2}"> Expire time 24 hours </p>

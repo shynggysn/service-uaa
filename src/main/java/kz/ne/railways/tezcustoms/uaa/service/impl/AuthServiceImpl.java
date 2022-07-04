@@ -2,6 +2,7 @@ package kz.ne.railways.tezcustoms.uaa.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.RetryableException;
 import kz.ne.railways.tezcustoms.common.constants.errors.Errors;
 import kz.ne.railways.tezcustoms.common.entity.Company;
 import kz.ne.railways.tezcustoms.common.entity.Role;
@@ -77,7 +78,12 @@ public class AuthServiceImpl implements AuthService {
     public void createUser (SignupRequest signUpRequest, MultipartFile file) {
         EDSRequest request = new EDSRequest();
         request.setData(signUpRequest.getXmlData());
-        EDSResponse eds = edsService.edsValidation(request);
+        EDSResponse eds;
+        try {
+            eds = edsService.edsValidation(request);
+        } catch (RetryableException e) {
+            throw new FLCException(Errors.SERVICE_IS_UNAVAILABLE, e.getMessage());
+        }
         if (eds.getResult() != VerificationResult.SUCCESS) {
             String edsError = "result:" + eds.getResult() + " errorMessage:" + eds.getErrorMessage();
             throw new FLCException(Errors.INVALID_SIGNATURE, edsError);

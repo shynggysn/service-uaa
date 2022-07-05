@@ -46,8 +46,9 @@ public class AuthController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Successfully signed up",
                     content = {@Content(mediaType = "application/json")})})
     @PostMapping(value = "/signup")
-    public ResponseEntity<MessageResponse> registerUser(@RequestBody SignupRequest signupRequest) {
-        authService.createUser(signupRequest, null);
+    public ResponseEntity<MessageResponse> registerUser(@RequestPart MultipartFile file,
+                                                        @RequestPart SignupRequest signupRequest) {
+        authService.createUser(signupRequest, file);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 

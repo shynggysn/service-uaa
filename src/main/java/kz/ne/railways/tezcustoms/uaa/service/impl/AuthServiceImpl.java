@@ -104,8 +104,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
         Company company = findUserCompany(signUpRequest);
-        //String filepath = fileserver.sendRegistrationDoc(file, signUpRequest.getIinBin());
-        newUser(signUpRequest, company, null, eds);
+        String filepath = fileserver.sendRegistrationDoc(file, signUpRequest.getIinBin());
+        newUser(signUpRequest, company, filepath, eds);
     }
 
     Company findUserCompany(SignupRequest user){

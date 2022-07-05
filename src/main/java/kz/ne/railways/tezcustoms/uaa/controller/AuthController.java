@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kz.ne.railways.tezcustoms.common.exception.FLCException;
+import kz.ne.railways.tezcustoms.common.mapper.XmlResponseMapper;
 import kz.ne.railways.tezcustoms.common.payload.request.ForgotPasswordRequest;
 import kz.ne.railways.tezcustoms.common.payload.request.LoginRequest;
 import kz.ne.railways.tezcustoms.common.payload.request.ResetPasswordRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
+import javax.xml.datatype.DatatypeConfigurationException;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Slf4j
@@ -75,4 +77,11 @@ public class AuthController {
         authService.resetPassword(resetPasswordRequest.getKey(), resetPasswordRequest.getPassword());
         return ResponseEntity.ok("Password was changed");
     }
+
+    @GetMapping("/gen-xml")
+    public ResponseEntity<String> genXml() throws DatatypeConfigurationException {
+        String xml = XmlResponseMapper.createXmlObject();
+        return ResponseEntity.ok(xml);
+    }
+
 }

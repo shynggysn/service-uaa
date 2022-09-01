@@ -1,18 +1,13 @@
 package kz.ne.railways.tezcustoms.uaa.controller;
 
-import kz.ne.railways.tezcustoms.common.dto.NotificationDto;
 import kz.ne.railways.tezcustoms.common.entity.Company;
 import kz.ne.railways.tezcustoms.common.entity.User;
-import kz.ne.railways.tezcustoms.common.model.UserNotifications;
-import kz.ne.railways.tezcustoms.common.payload.request.NewNotificationRequest;
 import kz.ne.railways.tezcustoms.common.payload.response.UserProfile;
 import kz.ne.railways.tezcustoms.uaa.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Slf4j
@@ -43,15 +38,5 @@ public class UserController {
     public ResponseEntity<User> updateUser(@PathVariable String newEmail){
         User user = userService.getUser();
         return ResponseEntity.ok(userService.updateUser(user, newEmail));
-    }
-
-    @GetMapping("/notification")
-    public ResponseEntity<List<UserNotifications>> getUserNotifications(){
-        return ResponseEntity.ok(userService.getUserNotifications());
-    }
-
-    @PostMapping("/notification")
-    public ResponseEntity<NotificationDto> addNotification(@RequestBody NewNotificationRequest notification){
-        return ResponseEntity.ok(userService.addNotification(notification));
     }
 }

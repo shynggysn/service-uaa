@@ -3,7 +3,7 @@ package kz.ne.railways.tezcustoms.uaa.controller;
 import kz.ne.railways.tezcustoms.common.entity.Company;
 import kz.ne.railways.tezcustoms.common.entity.User;
 import kz.ne.railways.tezcustoms.common.payload.response.UserProfile;
-import kz.ne.railways.tezcustoms.uaa.service.UserService;
+import kz.ne.railways.tezcustoms.common.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

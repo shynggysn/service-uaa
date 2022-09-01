@@ -2,6 +2,7 @@ package kz.ne.railways.tezcustoms.uaa.controller;
 
 import kz.ne.railways.tezcustoms.common.entity.Company;
 import kz.ne.railways.tezcustoms.common.entity.User;
+import kz.ne.railways.tezcustoms.common.payload.response.UserProfile;
 import kz.ne.railways.tezcustoms.uaa.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,11 @@ public class UserController {
         return userService.getUser();
     }
 
+    @GetMapping("/profile")
+    public UserProfile getUserProfile(){
+        return userService.getUserProfile();
+    }
+
     @PutMapping("/company")
     public ResponseEntity<Company> updateCompany(){
         User user = userService.getUser();
@@ -33,5 +39,4 @@ public class UserController {
         User user = userService.getUser();
         return ResponseEntity.ok(userService.updateUser(user, newEmail));
     }
-
 }
